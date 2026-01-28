@@ -1,0 +1,68 @@
+[15/1/2026, 10:52:58] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Graciela","action":"1"}
+[15/1/2026, 10:52:58] Searching for player: "graciela" (Original: "Graciela")
+[15/1/2026, 10:52:58] Matched player by name: "Graciela" (ID: 940b0f80-5af3-4f8d-8e94-e6f8633ec1dc, Active: true)
+[15/1/2026, 10:54:46] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Yeyu","action":"1"}
+[15/1/2026, 10:54:46] Searching for player: "yeyu" (Original: "Yeyu")
+[15/1/2026, 10:54:46] Matched player by name: "Yeyu" (ID: 713b8917-3dbe-40b3-8396-ac776d60c06c, Active: true)
+[15/1/2026, 10:54:56] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Graciela😎","action":"1"}
+[15/1/2026, 10:54:56] Searching for player: "graciela" (Original: "Graciela😎")
+[15/1/2026, 10:54:56] Matched player by name: "Graciela" (ID: 940b0f80-5af3-4f8d-8e94-e6f8633ec1dc, Active: true)
+[15/1/2026, 10:59:14] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Yeyu","action":"2"}
+[15/1/2026, 10:59:14] Searching for player: "yeyu" (Original: "Yeyu")
+[15/1/2026, 10:59:14] Matched player by name: "Yeyu" (ID: 713b8917-3dbe-40b3-8396-ac776d60c06c, Active: true)
+[15/1/2026, 10:59:29] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Graciela😎","action":"1"}
+[15/1/2026, 10:59:29] Searching for player: "graciela" (Original: "Graciela😎")
+[15/1/2026, 10:59:29] Matched player by name: "Graciela" (ID: 940b0f80-5af3-4f8d-8e94-e6f8633ec1dc, Active: true)
+[15/1/2026, 10:59:47] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"Voy"}
+[15/1/2026, 11:00:00] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"1"}
+[15/1/2026, 11:00:00] Searching for player: "alexander" (Original: "Alexander")
+[15/1/2026, 11:00:00] Matched player by name: "Alexander W" (ID: db4cff89-d8a8-4289-bd44-8dc377557d6b, Active: true)
+[15/1/2026, 11:01:15] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Keev😎🤳🏻","action":"1"}
+[15/1/2026, 11:01:15] Searching for player: "keev" (Original: "Keev😎🤳🏻")
+[15/1/2026, 11:01:15] Player not found in list. Available names: "Lucas ", "Dario", "Cope", "Nico", "Alexander W", "Farfy", "Agus Arquero", "Agus Morel", "Nahuel Pitu", "Chula", "Pablo", "Hippie", "Ale", "Tibio", "Brai", "Pipo", "Fede", "Diego", "Coco", "Pewen", "Juan", "Cangre", "Paolo", "Homero", "Papi", "Papi", "Amigo de Homero", "Leandro", "Kevv", "Yeyu", "Kevin", "Graciela"
+[15/1/2026, 11:13:04] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Keev😎🤳🏻","action":"2"}
+[15/1/2026, 11:13:04] Searching for player: "keev" (Original: "Keev😎🤳🏻")
+[15/1/2026, 11:13:04] Matched player by name: "Keev😎🤳🏻" (ID: 33e4fe2b-30fd-44b0-accd-cf71ba44e90e, Active: true)
+[15/1/2026, 11:17:22] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/registrar"}
+[15/1/2026, 11:25:33] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Yeyu","action":"Indeciso"}
+[15/1/2026, 11:25:33] Action ignored or not recognized: "indeciso"
+[15/1/2026, 11:26:10] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Yeyu","action":"Confirmo más tarde"}
+[15/1/2026, 11:26:10] Action ignored or not recognized: "confirmo más tarde"
+[17/1/2026, 01:36:12] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"hola","telegramId":7686267855}
+[17/1/2026, 01:36:12] Action ignored or not recognized: "hola"
+[17/1/2026, 01:38:33] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/ayuda@n8ntestfutbolbot","telegramId":7686267855}
+[17/1/2026, 01:40:30] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/perfil@n8ntestfutbolbot","telegramId":7686267855}
+[17/1/2026, 01:42:07] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/soy@n8ntestfutbolbot","telegramId":7686267855}
+[17/1/2026, 01:42:07] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/soy Alexander","telegramId":7686267855}
+[17/1/2026, 01:42:26] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/soy Alexander","telegramId":7686267855}
+[17/1/2026, 01:43:29] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/soy Alexander W","telegramId":7686267855}
+[17/1/2026, 01:43:29] ✅ *¡Vinculación Exitosa!*
+
+Tu cuenta de Telegram ahora está unida a *Alexander W*.
+
+Ya podés confirmar mandando un '1'.
+[17/1/2026, 01:43:44] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"1","telegramId":7686267855}
+[17/1/2026, 01:43:44] Searching for player: "alexander" (ID: 7686267855)
+[17/1/2026, 01:44:00] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/perfil@n8ntestfutbolbot","telegramId":7686267855}
+[17/1/2026, 01:44:13] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"genial esta funcionando","telegramId":7686267855}
+[17/1/2026, 01:44:13] Acción no reconocida: "genial esta funcionando"
+[17/1/2026, 01:52:31] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"2","telegramId":7686267855}
+[17/1/2026, 01:52:31] Searching for player: "alexander" (ID: 7686267855)
+[17/1/2026, 01:57:20] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"1","telegramId":7686267855}
+[17/1/2026, 01:57:20] Searching for player: "alexander" (ID: 7686267855)
+[17/1/2026, 01:57:29] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"2","telegramId":7686267855}
+[17/1/2026, 01:57:29] Searching for player: "alexander" (ID: 7686267855)
+[17/1/2026, 01:57:38] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"3","telegramId":7686267855}
+[17/1/2026, 01:57:38] Searching for player: "alexander" (ID: 7686267855)
+[17/1/2026, 01:58:07] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"4","telegramId":7686267855}
+[17/1/2026, 01:58:07] Searching for player: "alexander" (ID: 7686267855)
+[17/1/2026, 02:02:40] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"5","telegramId":7686267855}
+[17/1/2026, 02:02:40] Searching for player: "alexander" (ID: 7686267855)
+[17/1/2026, 02:02:48] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"4","telegramId":7686267855}
+[17/1/2026, 02:02:48] Searching for player: "alexander" (ID: 7686267855)
+[17/1/2026, 02:24:49] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/proximo@n8ntestfutbolbot","telegramId":7686267855}
+[17/1/2026, 02:25:05] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/ranking@n8ntestfutbolbot","telegramId":7686267855}
+[17/1/2026, 02:28:31] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/equipos@n8ntestfutbolbot","telegramId":7686267855}
+[17/1/2026, 02:33:34] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"/equipos@n8ntestfutbolbot","telegramId":7686267855}
+[17/1/2026, 02:33:42] Incoming: {"matchId":"82506597-5afe-4dc6-bc66-00d1ebf1f4a0","playerName":"Alexander","action":"belleza","telegramId":7686267855}
+[17/1/2026, 02:33:42] Acción no reconocida: "belleza"

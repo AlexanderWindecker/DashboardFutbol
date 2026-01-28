@@ -1,0 +1,1660 @@
+{
+  "players": [
+    {
+      "id": "b71ac087-ccbf-4fb3-a699-7e3805773672",
+      "name": "Lucas ",
+      "position": "Defensor",
+      "preferredFoot": "Zurdo",
+      "skills": {
+        "ritmo": 64,
+        "tiros": 80,
+        "regates": 66,
+        "velocidad": 45,
+        "pases": 74
+      },
+      "positions": [
+        "Defensor"
+      ],
+      "traits": [],
+      "isInjured": false,
+      "affinities": [
+        "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+        "3cd3fed4-7c34-4ed3-9e93-260450310ec9",
+        "94b25d26-358c-4a9f-a189-49f779ac954d",
+        "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+        "3cd3fed4-7c34-4ed3-9e93-260450310ec9"
+      ],
+      "conflicts": [
+        "be8b0060-2a7e-4f5c-a934-a65a152a95e4"
+      ]
+    },
+    {
+      "id": "3cd3fed4-7c34-4ed3-9e93-260450310ec9",
+      "name": "Dario",
+      "position": "Defensor",
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 50,
+        "tiros": 75,
+        "regates": 35,
+        "velocidad": 73,
+        "pases": 65
+      },
+      "traits": [],
+      "isInjured": false,
+      "positions": [
+        "Defensor",
+        "Arquero"
+      ],
+      "affinities": [
+        "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+        "b71ac087-ccbf-4fb3-a699-7e3805773672",
+        "d3bdb637-afb3-463f-b834-3addfaf393fb"
+      ],
+      "conflicts": [
+        "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd",
+        "fdfa2360-2f45-4d04-bf10-20b1ed6b97fc",
+        "be04ea23-d55c-4a74-8552-1daff1184241",
+        "be8b0060-2a7e-4f5c-a934-a65a152a95e4"
+      ]
+    },
+    {
+      "id": "d3bdb637-afb3-463f-b834-3addfaf393fb",
+      "name": "Cope",
+      "position": "Mediocampista",
+      "preferredFoot": "Zurdo",
+      "skills": {
+        "ritmo": 37,
+        "tiros": 56,
+        "regates": 42,
+        "velocidad": 39,
+        "pases": 37
+      },
+      "traits": [
+        "Solidario",
+        "Motivador"
+      ],
+      "isInjured": false,
+      "positions": [
+        "Delantero",
+        "Arquero"
+      ],
+      "affinities": [
+        "b71ac087-ccbf-4fb3-a699-7e3805773672",
+        "3cd3fed4-7c34-4ed3-9e93-260450310ec9",
+        "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+        "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+        "3cd3fed4-7c34-4ed3-9e93-260450310ec9"
+      ],
+      "conflicts": []
+    },
+    {
+      "id": "7b17cbcd-ad2a-4c27-bc3a-deb5db25c6c0",
+      "name": "Nico",
+      "positions": [
+        "Mediocampista"
+      ],
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 59,
+        "tiros": 80,
+        "regates": 73,
+        "velocidad": 61,
+        "pases": 79
+      },
+      "traits": [],
+      "isInjured": false
+    },
+    {
+      "id": "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+      "name": "Alexander W",
+      "position": "Delantero",
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 48,
+        "tiros": 61,
+        "regates": 56,
+        "velocidad": 67,
+        "pases": 62
+      },
+      "traits": [
+        "Motivador",
+        "Tiros Libres",
+        "Recuperador"
+      ],
+      "isInjured": false,
+      "positions": [
+        "Delantero",
+        "Defensor",
+        "Arquero"
+      ],
+      "phone": "+5491162481844",
+      "telegramId": "7686267855",
+      "affinities": [
+        "b71ac087-ccbf-4fb3-a699-7e3805773672",
+        "3cd3fed4-7c34-4ed3-9e93-260450310ec9",
+        "d3bdb637-afb3-463f-b834-3addfaf393fb",
+        "e64ab5b9-f880-449a-90b8-64cc66a67eb0",
+        "1e1b2e4c-d66b-4161-b02a-1b41d12aa25e"
+      ],
+      "conflicts": [
+        "be8b0060-2a7e-4f5c-a934-a65a152a95e4",
+        "fdfa2360-2f45-4d04-bf10-20b1ed6b97fc",
+        "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd",
+        "1a4e277c-4ff8-4164-ad25-14d58ca3384c"
+      ],
+      "isVacation": false
+    },
+    {
+      "id": "3591dec3-5400-4ec4-8618-1e9c354ae82a",
+      "name": "Farfy",
+      "position": "Delantero",
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 81,
+        "tiros": 78,
+        "regates": 83,
+        "velocidad": 92,
+        "pases": 72
+      },
+      "traits": [],
+      "positions": [
+        "Delantero",
+        "Mediocampista"
+      ],
+      "isInjured": false
+    },
+    {
+      "id": "ae34ca69-f813-4739-81c0-859680bf22d9",
+      "name": "Agus Arquero",
+      "isActive": true,
+      "positions": [
+        "Arquero"
+      ],
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      },
+      "traits": [],
+      "isInjured": false
+    },
+    {
+      "id": "1a4e277c-4ff8-4164-ad25-14d58ca3384c",
+      "name": "Agus Morel",
+      "isActive": true,
+      "positions": [
+        "Defensor",
+        "Mediocampista"
+      ],
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 71,
+        "tiros": 72,
+        "regates": 68,
+        "velocidad": 66,
+        "pases": 79
+      },
+      "traits": [],
+      "isInjured": false,
+      "conflicts": [
+        "db4cff89-d8a8-4289-bd44-8dc377557d6b"
+      ],
+      "affinities": []
+    },
+    {
+      "id": "be8b0060-2a7e-4f5c-a934-a65a152a95e4",
+      "name": "Nahuel Pitu",
+      "positions": [
+        "Mediocampista"
+      ],
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 59,
+        "tiros": 82,
+        "regates": 75,
+        "velocidad": 59,
+        "pases": 86
+      },
+      "traits": [],
+      "isInjured": false,
+      "affinities": [
+        "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd"
+      ],
+      "conflicts": [
+        "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+        "3cd3fed4-7c34-4ed3-9e93-260450310ec9"
+      ],
+      "isVacation": true
+    },
+    {
+      "id": "be04ea23-d55c-4a74-8552-1daff1184241",
+      "name": "Chula",
+      "conflicts": [
+        "3cd3fed4-7c34-4ed3-9e93-260450310ec9"
+      ],
+      "affinities": []
+    },
+    {
+      "id": "e64ab5b9-f880-449a-90b8-64cc66a67eb0",
+      "name": "Pablo",
+      "positions": [
+        "Defensor",
+        "Mediocampista",
+        "Delantero"
+      ],
+      "preferredFoot": "Zurdo",
+      "skills": {
+        "ritmo": 69,
+        "tiros": 67,
+        "regates": 75,
+        "velocidad": 71,
+        "pases": 70
+      },
+      "traits": [],
+      "isInjured": true,
+      "affinities": [
+        "db4cff89-d8a8-4289-bd44-8dc377557d6b"
+      ],
+      "conflicts": []
+    },
+    {
+      "id": "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd",
+      "name": "Hippie",
+      "positions": [
+        "Defensor",
+        "Arquero"
+      ],
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 58,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      },
+      "traits": [],
+      "isInjured": false,
+      "affinities": [
+        "fdfa2360-2f45-4d04-bf10-20b1ed6b97fc",
+        "be8b0060-2a7e-4f5c-a934-a65a152a95e4"
+      ],
+      "conflicts": [
+        "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+        "3cd3fed4-7c34-4ed3-9e93-260450310ec9"
+      ]
+    },
+    {
+      "id": "1e1b2e4c-d66b-4161-b02a-1b41d12aa25e",
+      "name": "Ale",
+      "positions": [
+        "Delantero",
+        "Mediocampista"
+      ],
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 82,
+        "tiros": 72,
+        "regates": 68,
+        "velocidad": 71,
+        "pases": 77
+      },
+      "traits": [],
+      "isInjured": false,
+      "affinities": [
+        "db4cff89-d8a8-4289-bd44-8dc377557d6b"
+      ],
+      "conflicts": [],
+      "isVacation": true
+    },
+    {
+      "id": "372f2653-449c-4726-b8f3-056f4f6d3f05",
+      "name": "Tibio",
+      "positions": [
+        "Mediocampista"
+      ],
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 36,
+        "tiros": 46,
+        "regates": 49,
+        "velocidad": 46,
+        "pases": 53
+      },
+      "traits": [],
+      "isInjured": false
+    },
+    {
+      "id": "2d0dc93c-7f7b-4ba3-9ce0-45a10f1e71e2",
+      "name": "Brai",
+      "positions": [
+        "Arquero",
+        "Defensor",
+        "Mediocampista"
+      ],
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 60,
+        "tiros": 56,
+        "regates": 42,
+        "velocidad": 48,
+        "pases": 54
+      },
+      "traits": [],
+      "isInjured": false
+    },
+    {
+      "id": "3affba1e-4581-4386-86ad-b21f67476997",
+      "name": "Pipo"
+    },
+    {
+      "id": "b122ca2c-c977-414a-a5cc-1f159be59306",
+      "name": "Fede",
+      "position": "Mediocampista",
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 74,
+        "tiros": 80,
+        "regates": 83,
+        "velocidad": 79,
+        "pases": 86
+      },
+      "traits": []
+    },
+    {
+      "id": "efc1a108-c26f-4a0d-a08a-83a540028a1c",
+      "name": "Diego"
+    },
+    {
+      "id": "fe335cc1-4681-447f-864e-9a678f0a011a",
+      "name": "Coco"
+    },
+    {
+      "id": "10e034cd-62dd-4d2d-8551-5daf822421a7",
+      "name": "Pewen",
+      "positions": [
+        "Delantero"
+      ],
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 70,
+        "tiros": 73,
+        "regates": 61,
+        "velocidad": 80,
+        "pases": 64
+      },
+      "traits": [],
+      "isInjured": false,
+      "affinities": [
+        "b71ac087-ccbf-4fb3-a699-7e3805773672"
+      ],
+      "conflicts": []
+    },
+    {
+      "id": "b043e103-5b21-479c-a53a-673090cbf226",
+      "name": "Juan",
+      "positions": [
+        "Defensor",
+        "Delantero"
+      ],
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 32,
+        "tiros": 47,
+        "regates": 44,
+        "velocidad": 53,
+        "pases": 51
+      },
+      "traits": [],
+      "isInjured": false
+    },
+    {
+      "id": "a02e72a6-5f18-4ade-8e1b-18b67514758c",
+      "name": "Cangre",
+      "isActive": true
+    },
+    {
+      "id": "e408fed4-e5be-47d2-9975-e11a48e5e6f2",
+      "name": "Paolo",
+      "isActive": true
+    },
+    {
+      "id": "94b25d26-358c-4a9f-a189-49f779ac954d",
+      "name": "Homero",
+      "isActive": true,
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      }
+    },
+    {
+      "id": "0ce20010-d3f3-4032-b000-6bc432c2a8ec",
+      "name": "Papi",
+      "isActive": false,
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      }
+    },
+    {
+      "id": "b4093fb7-f5f2-4731-8dfb-93c11cc0b2cb",
+      "name": "Papi",
+      "isActive": true,
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      },
+      "positions": [
+        "Arquero"
+      ],
+      "preferredFoot": "Derecho",
+      "traits": [],
+      "isInjured": false
+    },
+    {
+      "id": "c67ceffe-c614-4aa2-bccb-7195fccf3c18",
+      "name": "Amigo de Homero",
+      "isActive": true,
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      }
+    },
+    {
+      "id": "7da5077d-8b2a-4426-b604-42dd896d5b6c",
+      "name": "Leandro",
+      "isActive": true,
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      }
+    },
+    {
+      "id": "e99dbf1b-bf1b-4b58-bd53-5a668bf82e3d",
+      "name": "Kevv",
+      "isActive": true,
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      }
+    },
+    {
+      "id": "713b8917-3dbe-40b3-8396-ac776d60c06c",
+      "name": "Yeyu",
+      "isActive": true,
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      },
+      "positions": [
+        "Mediocampista"
+      ],
+      "preferredFoot": "Derecho",
+      "traits": [],
+      "isInjured": false,
+      "phone": "+5491153755122"
+    },
+    {
+      "id": "33e4fe2b-30fd-44b0-accd-cf71ba44e90e",
+      "name": "Keev😎🤳🏻",
+      "isActive": true,
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      },
+      "positions": [
+        "Mediocampista"
+      ],
+      "preferredFoot": "Derecho",
+      "traits": [],
+      "isInjured": false,
+      "phone": "+541168020921"
+    },
+    {
+      "id": "940b0f80-5af3-4f8d-8e94-e6f8633ec1dc",
+      "name": "Graciela",
+      "phone": "+541130792971",
+      "isActive": true,
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      }
+    },
+    {
+      "id": "20fffb5f-df9e-4da7-bea7-3927faa8f4bd",
+      "name": "Miguel",
+      "isActive": true,
+      "skills": {
+        "ritmo": 82,
+        "tiros": 74,
+        "regates": 67,
+        "velocidad": 71,
+        "pases": 75
+      },
+      "positions": [
+        "Defensor",
+        "Mediocampista"
+      ],
+      "preferredFoot": "Derecho",
+      "traits": [],
+      "isInjured": false
+    },
+    {
+      "id": "fdfa2360-2f45-4d04-bf10-20b1ed6b97fc",
+      "name": "Flaco",
+      "isActive": true,
+      "skills": {
+        "ritmo": 54,
+        "tiros": 73,
+        "regates": 62,
+        "velocidad": 64,
+        "pases": 76
+      },
+      "affinities": [
+        "be8b0060-2a7e-4f5c-a934-a65a152a95e4",
+        "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd",
+        "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd"
+      ],
+      "conflicts": [
+        "b71ac087-ccbf-4fb3-a699-7e3805773672",
+        "3cd3fed4-7c34-4ed3-9e93-260450310ec9",
+        "10e034cd-62dd-4d2d-8551-5daf822421a7",
+        "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+        "3cd3fed4-7c34-4ed3-9e93-260450310ec9"
+      ],
+      "positions": [
+        "Mediocampista"
+      ],
+      "preferredFoot": "Derecho",
+      "traits": [],
+      "isInjured": false
+    },
+    {
+      "id": "60eb5b18-b7d1-4811-8ae0-e94cfd8d3818",
+      "name": "Gabo",
+      "isActive": true,
+      "skills": {
+        "ritmo": 54,
+        "tiros": 61,
+        "regates": 53,
+        "velocidad": 66,
+        "pases": 64
+      },
+      "positions": [
+        "Defensor"
+      ],
+      "preferredFoot": "Derecho",
+      "traits": [],
+      "isInjured": false
+    },
+    {
+      "id": "f2bcd575-fb12-4e3c-b10d-0cc7d1bf1824",
+      "name": "Amigo Miguel",
+      "isActive": true,
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      }
+    },
+    {
+      "id": "5ca09e70-0ca9-42e0-a614-06b99134df0a",
+      "name": "Franco",
+      "isActive": true,
+      "skills": {
+        "ritmo": 50,
+        "tiros": 50,
+        "regates": 50,
+        "velocidad": 50,
+        "pases": 50
+      }
+    }
+  ],
+  "matches": [
+    {
+      "id": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "date": "2026-01-05",
+      "mode": "8v8",
+      "location": "Granja Lily",
+      "result": "Azul",
+      "seasonId": "6ddae95f-7ee2-4f26-937d-a5aba0de75f3"
+    },
+    {
+      "id": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "date": "2026-01-19",
+      "mode": "6v6",
+      "location": "GyG Pearson",
+      "result": "Celeste",
+      "seasonId": "6ddae95f-7ee2-4f26-937d-a5aba0de75f3"
+    },
+    {
+      "id": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "date": "2026-01-26",
+      "mode": "6v6",
+      "location": "GyG Pearson",
+      "seasonId": "6ddae95f-7ee2-4f26-937d-a5aba0de75f3",
+      "result": "Azul"
+    }
+  ],
+  "participations": [
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "b71ac087-ccbf-4fb3-a699-7e3805773672",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Defensor"
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "3cd3fed4-7c34-4ed3-9e93-260450310ec9",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Defensor"
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "d3bdb637-afb3-463f-b834-3addfaf393fb",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": true
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "7b17cbcd-ad2a-4c27-bc3a-deb5db25c6c0",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Defensor"
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "3591dec3-5400-4ec4-8618-1e9c354ae82a",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "1a4e277c-4ff8-4164-ad25-14d58ca3384c",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "be8b0060-2a7e-4f5c-a934-a65a152a95e4",
+      "team": "Celeste",
+      "status": "LateCancel",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "e64ab5b9-f880-449a-90b8-64cc66a67eb0",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "goals": 1
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "1e1b2e4c-d66b-4161-b02a-1b41d12aa25e",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "2d0dc93c-7f7b-4ba3-9ce0-45a10f1e71e2",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "10e034cd-62dd-4d2d-8551-5daf822421a7",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "94b25d26-358c-4a9f-a189-49f779ac954d",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Mediocampista"
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "b4093fb7-f5f2-4731-8dfb-93c11cc0b2cb",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Arquero"
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "c67ceffe-c614-4aa2-bccb-7195fccf3c18",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Mediocampista"
+    },
+    {
+      "matchId": "09ff89ff-d7c3-4440-8e7f-0c48b84969a8",
+      "playerId": "7da5077d-8b2a-4426-b604-42dd896d5b6c",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "3cd3fed4-7c34-4ed3-9e93-260450310ec9",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "d3bdb637-afb3-463f-b834-3addfaf393fb",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": true,
+      "tacticalRole": null,
+      "goals": 5
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "goals": 2
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "1a4e277c-4ff8-4164-ad25-14d58ca3384c",
+      "team": "Celeste",
+      "status": "LateCancel",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Arquero"
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "1e1b2e4c-d66b-4161-b02a-1b41d12aa25e",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "2d0dc93c-7f7b-4ba3-9ce0-45a10f1e71e2",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "10e034cd-62dd-4d2d-8551-5daf822421a7",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "goals": 2
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "20fffb5f-df9e-4da7-bea7-3927faa8f4bd",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Mediocampista",
+      "goals": 4
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "3591dec3-5400-4ec4-8618-1e9c354ae82a",
+      "team": "Azul",
+      "status": "LateCancel",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Mediocampista"
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "60eb5b18-b7d1-4811-8ae0-e94cfd8d3818",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "b043e103-5b21-479c-a53a-673090cbf226",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "goals": 1
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "f2bcd575-fb12-4e3c-b10d-0cc7d1bf1824",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Defensor",
+      "goals": 0
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "be8b0060-2a7e-4f5c-a934-a65a152a95e4",
+      "team": null,
+      "status": "Declined",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "be04ea23-d55c-4a74-8552-1daff1184241",
+      "team": null,
+      "status": "Declined",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "e64ab5b9-f880-449a-90b8-64cc66a67eb0",
+      "team": null,
+      "status": "Declined",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "efc1a108-c26f-4a0d-a08a-83a540028a1c",
+      "team": null,
+      "status": "Declined",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "b71ac087-ccbf-4fb3-a699-7e3805773672",
+      "team": null,
+      "status": "Declined",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "7b17cbcd-ad2a-4c27-bc3a-deb5db25c6c0",
+      "team": null,
+      "status": "Declined",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "ae34ca69-f813-4739-81c0-859680bf22d9",
+      "team": null,
+      "status": "Declined",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "cc5ea167-f96d-48c6-80be-9b97533df6dd",
+      "playerId": "372f2653-449c-4726-b8f3-056f4f6d3f05",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Mediocampista",
+      "goals": 3
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "b71ac087-ccbf-4fb3-a699-7e3805773672",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "goals": 3
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "7b17cbcd-ad2a-4c27-bc3a-deb5db25c6c0",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Mediocampista",
+      "goals": 2
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "db4cff89-d8a8-4289-bd44-8dc377557d6b",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Arquero"
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "3591dec3-5400-4ec4-8618-1e9c354ae82a",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "be04ea23-d55c-4a74-8552-1daff1184241",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Delantero"
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": true,
+      "tacticalRole": "Arquero"
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "b122ca2c-c977-414a-a5cc-1f159be59306",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Mediocampista"
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "efc1a108-c26f-4a0d-a08a-83a540028a1c",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Defensor",
+      "goals": 2
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "10e034cd-62dd-4d2d-8551-5daf822421a7",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "goals": 2
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "b043e103-5b21-479c-a53a-673090cbf226",
+      "team": "Azul",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "e408fed4-e5be-47d2-9975-e11a48e5e6f2",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "goals": 2,
+      "tacticalRole": "Suplente"
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "60eb5b18-b7d1-4811-8ae0-e94cfd8d3818",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false
+    },
+    {
+      "matchId": "0f8a09ef-0b31-4fbd-a964-11d369255ca5",
+      "playerId": "5ca09e70-0ca9-42e0-a614-06b99134df0a",
+      "team": "Celeste",
+      "status": "Attended",
+      "assists": 0,
+      "isMvp": false,
+      "tacticalRole": "Mediocampista",
+      "goals": 1
+    }
+  ],
+  "specialtyRules": [
+    {
+      "id": "confiable",
+      "name": "Confiable",
+      "type": "specialty",
+      "category": "stats",
+      "conditions": [
+        {
+          "skill": "matchesAttended",
+          "operator": ">=",
+          "value": 5
+        }
+      ],
+      "description": "5+ partidos asistidos"
+    },
+    {
+      "id": "lider",
+      "name": "Líder",
+      "type": "specialty",
+      "category": "stats",
+      "conditions": [
+        {
+          "skill": "mvpCount",
+          "operator": ">=",
+          "value": 3
+        }
+      ],
+      "description": "3+ premios MVP"
+    },
+    {
+      "id": "pasajero",
+      "name": "Pasajero 🧳",
+      "type": "specialty",
+      "category": "low",
+      "conditions": [
+        {
+          "skill": "matchesAttended",
+          "operator": ">=",
+          "value": 10
+        },
+        {
+          "skill": "mvpCount",
+          "operator": "==",
+          "value": 0
+        },
+        {
+          "skill": "average",
+          "operator": "<",
+          "value": 60
+        }
+      ],
+      "description": "10+ partidos sin MVP"
+    },
+    {
+      "id": "pulemon",
+      "name": "Pulmón",
+      "type": "specialty",
+      "category": "high",
+      "conditions": [
+        {
+          "skill": "ritmo",
+          "operator": ">=",
+          "value": 85
+        }
+      ]
+    },
+    {
+      "id": "asistidor",
+      "name": "Asistidor nato",
+      "type": "specialty",
+      "category": "high",
+      "conditions": [
+        {
+          "skill": "pases",
+          "operator": ">=",
+          "value": 85
+        }
+      ]
+    },
+    {
+      "id": "tactico",
+      "name": "Jugador táctico",
+      "type": "specialty",
+      "category": "playstyle",
+      "conditions": [
+        {
+          "skill": "pases",
+          "operator": ">=",
+          "value": 80
+        },
+        {
+          "skill": "regates",
+          "operator": ">=",
+          "value": 80
+        }
+      ]
+    },
+    {
+      "id": "sniper",
+      "name": "Francotirador",
+      "type": "specialty",
+      "category": "high",
+      "conditions": [
+        {
+          "skill": "tiros",
+          "operator": ">=",
+          "value": 90
+        }
+      ]
+    },
+    {
+      "id": "mago",
+      "name": "Mago",
+      "type": "specialty",
+      "category": "high",
+      "conditions": [
+        {
+          "skill": "pases",
+          "operator": ">=",
+          "value": 80
+        },
+        {
+          "skill": "regates",
+          "operator": ">=",
+          "value": 80
+        },
+        {
+          "skill": "ritmo",
+          "operator": ">=",
+          "value": 73
+        },
+        {
+          "skill": "tiros",
+          "operator": ">=",
+          "value": 78
+        }
+      ]
+    },
+    {
+      "id": "clase-mundial",
+      "name": "Clase Mundial",
+      "type": "specialty",
+      "category": "high",
+      "conditions": [
+        {
+          "skill": "average",
+          "operator": ">=",
+          "value": 85
+        }
+      ]
+    },
+    {
+      "id": "cohete",
+      "name": "Cohete 🚀",
+      "type": "specialty",
+      "category": "high",
+      "conditions": [
+        {
+          "skill": "velocidad",
+          "operator": ">=",
+          "value": 90
+        }
+      ]
+    },
+    {
+      "id": "flash",
+      "name": "Flash ⚡",
+      "type": "specialty",
+      "category": "high",
+      "conditions": [
+        {
+          "skill": "velocidad",
+          "operator": ">=",
+          "value": 85
+        },
+        {
+          "skill": "velocidad",
+          "operator": "<",
+          "value": 90
+        }
+      ]
+    },
+    {
+      "id": "malabarista",
+      "name": "Malabarista 🎪",
+      "type": "specialty",
+      "category": "high",
+      "conditions": [
+        {
+          "skill": "regates",
+          "operator": ">=",
+          "value": 90
+        }
+      ]
+    },
+    {
+      "id": "arquitecto",
+      "name": "Arquitecto 📐",
+      "type": "specialty",
+      "category": "high",
+      "conditions": [
+        {
+          "skill": "pases",
+          "operator": ">=",
+          "value": 90
+        }
+      ]
+    },
+    {
+      "id": "tanque",
+      "name": "Tanque 🛡️",
+      "type": "specialty",
+      "category": "playstyle",
+      "conditions": [
+        {
+          "skill": "tiros",
+          "operator": ">=",
+          "value": 85
+        },
+        {
+          "skill": "velocidad",
+          "operator": "<",
+          "value": 60
+        }
+      ]
+    },
+    {
+      "id": "motor",
+      "name": "Motor 🔥",
+      "type": "specialty",
+      "category": "high",
+      "conditions": [
+        {
+          "skill": "ritmo",
+          "operator": ">=",
+          "value": 85
+        },
+        {
+          "skill": "velocidad",
+          "operator": ">=",
+          "value": 85
+        }
+      ]
+    },
+    {
+      "id": "canon",
+      "name": "Cañón 💣",
+      "type": "specialty",
+      "category": "high",
+      "conditions": [
+        {
+          "skill": "tiros",
+          "operator": ">=",
+          "value": 85
+        }
+      ]
+    },
+    {
+      "id": "equilibrista",
+      "name": "Equilibrista ⚖️",
+      "type": "specialty",
+      "category": "playstyle",
+      "conditions": [
+        {
+          "skill": "ritmo",
+          "operator": ">",
+          "value": 65
+        },
+        {
+          "skill": "tiros",
+          "operator": ">",
+          "value": 65
+        },
+        {
+          "skill": "regates",
+          "operator": ">",
+          "value": 65
+        },
+        {
+          "skill": "velocidad",
+          "operator": ">",
+          "value": 65
+        },
+        {
+          "skill": "pases",
+          "operator": ">",
+          "value": 65
+        },
+        {
+          "skill": "average",
+          "operator": "<",
+          "value": 85
+        }
+      ]
+    },
+    {
+      "id": "egoista",
+      "name": "Egoísta Goleador 🥅",
+      "type": "specialty",
+      "category": "playstyle",
+      "conditions": [
+        {
+          "skill": "tiros",
+          "operator": ">",
+          "value": 75
+        },
+        {
+          "skill": "pases",
+          "operator": "<",
+          "value": 50
+        }
+      ]
+    },
+    {
+      "id": "solidario-spec",
+      "name": "Solidario 🤝",
+      "type": "specialty",
+      "category": "playstyle",
+      "conditions": [
+        {
+          "skill": "pases",
+          "operator": ">",
+          "value": 75
+        },
+        {
+          "skill": "tiros",
+          "operator": "<",
+          "value": 50
+        }
+      ]
+    },
+    {
+      "id": "tortuga",
+      "name": "Tortuga 🐢",
+      "type": "specialty",
+      "category": "low",
+      "conditions": [
+        {
+          "skill": "velocidad",
+          "operator": "<",
+          "value": 40
+        }
+      ]
+    },
+    {
+      "id": "zombie",
+      "name": "Zombi 🧟",
+      "type": "specialty",
+      "category": "low",
+      "conditions": [
+        {
+          "skill": "ritmo",
+          "operator": "<",
+          "value": 20
+        }
+      ]
+    },
+    {
+      "id": "sonambulo",
+      "name": "Sonámbulo 💤",
+      "type": "specialty",
+      "category": "low",
+      "conditions": [
+        {
+          "skill": "ritmo",
+          "operator": "<",
+          "value": 40
+        }
+      ]
+    },
+    {
+      "id": "cono",
+      "name": "Cono ⚠️",
+      "type": "specialty",
+      "category": "low",
+      "conditions": [
+        {
+          "skill": "regates",
+          "operator": "<",
+          "value": 30
+        },
+        {
+          "skill": "ritmo",
+          "operator": "<",
+          "value": 30
+        }
+      ]
+    },
+    {
+      "id": "stormtrooper",
+      "name": "Stormtrooper 🔫",
+      "type": "specialty",
+      "category": "low",
+      "conditions": [
+        {
+          "skill": "tiros",
+          "operator": "<",
+          "value": 35
+        }
+      ]
+    },
+    {
+      "id": "patadura",
+      "name": "Patadura 🪵",
+      "type": "specialty",
+      "category": "low",
+      "conditions": [
+        {
+          "skill": "pases",
+          "operator": "<",
+          "value": 40
+        },
+        {
+          "skill": "regates",
+          "operator": "<",
+          "value": 40
+        }
+      ]
+    },
+    {
+      "id": "lenador",
+      "name": "Leñador 🪓",
+      "type": "specialty",
+      "category": "low",
+      "conditions": [
+        {
+          "skill": "regates",
+          "operator": "<",
+          "value": 35
+        }
+      ]
+    },
+    {
+      "id": "pecho-frio",
+      "name": "Pecho Frío ❄️",
+      "type": "specialty",
+      "category": "low",
+      "conditions": [
+        {
+          "skill": "velocidad",
+          "operator": "<",
+          "value": 50
+        },
+        {
+          "skill": "ritmo",
+          "operator": "<",
+          "value": 50
+        },
+        {
+          "skill": "tiros",
+          "operator": ">",
+          "value": 70
+        }
+      ]
+    },
+    {
+      "id": "mascota",
+      "name": "Mascota 🧸",
+      "type": "specialty",
+      "category": "low",
+      "conditions": [
+        {
+          "skill": "average",
+          "operator": "<",
+          "value": 45
+        },
+        {
+          "skill": "matchesAttended",
+          "operator": ">",
+          "value": 5
+        }
+      ],
+      "description": "Promedio < 45 y +5 partidos"
+    },
+    {
+      "id": "promesa-eterna",
+      "name": "Promesa Eterna ⏳",
+      "type": "specialty",
+      "category": "low",
+      "conditions": [
+        {
+          "skill": "average",
+          "operator": "<",
+          "value": 55
+        },
+        {
+          "skill": "matchesAttended",
+          "operator": ">",
+          "value": 15
+        }
+      ],
+      "description": "Promedio < 55 y +15 partidos"
+    }
+  ],
+  "traitRules": [
+    {
+      "id": "solidario-trait",
+      "name": "Solidario",
+      "type": "trait",
+      "conditions": []
+    },
+    {
+      "id": "motivador",
+      "name": "Motivador",
+      "type": "trait",
+      "conditions": []
+    },
+    {
+      "id": "cabezazo",
+      "name": "Cabezazo",
+      "type": "trait",
+      "conditions": []
+    },
+    {
+      "id": "tiros-libres",
+      "name": "Tiros Libres",
+      "type": "trait",
+      "conditions": []
+    },
+    {
+      "id": "recuperador",
+      "name": "Recuperador",
+      "type": "trait",
+      "conditions": []
+    },
+    {
+      "id": "potencia",
+      "name": "Potencia",
+      "type": "trait",
+      "conditions": []
+    }
+  ],
+  "settings": {
+    "n8nWebhookUrl": "",
+    "whatsappGroupName": ""
+  },
+  "seasons": [
+    {
+      "id": "6ddae95f-7ee2-4f26-937d-a5aba0de75f3",
+      "name": "Apertura 2026",
+      "startDate": "2026-01-01",
+      "endDate": "2026-06-30"
+    }
+  ],
+  "activeSeasonId": "6ddae95f-7ee2-4f26-937d-a5aba0de75f3"
+}

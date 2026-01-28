@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
+
+:root {
+  /* Force dark mode */
+  --background: #0f172a; /* slab-900 like */
+  --foreground: #f8fafc;
+  
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
+  
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
+  
+  --primary: #6366f1; /* indigo-500 */
+  --primary-foreground: #f8fafc;
+  
+  --secondary: #334155; /* slate-700 */
+  --secondary-foreground: #f8fafc;
+  
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+  
+  --destructive: #ef4444;
+  --destructive-foreground: #f8fafc;
+  
+  --border: #334155;
+  --input: #334155;
+  --ring: #6366f1;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}

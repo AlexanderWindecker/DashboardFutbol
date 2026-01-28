@@ -1,0 +1,476 @@
+[
+    {
+        "id": "confiable",
+        "name": "Confiable",
+        "type": "specialty",
+        "category": "stats",
+        "conditions": [],
+        "description": "Asistencia > 80% y 5+ partidos (Nota: Estas reglas de stats se manejarán temporalmente aparte o se expandirá el motor)"
+    },
+    {
+        "id": "pulemon",
+        "name": "Pulmón",
+        "type": "specialty",
+        "category": "high",
+        "conditions": [
+            {
+                "skill": "ritmo",
+                "operator": ">=",
+                "value": 85
+            }
+        ]
+    },
+    {
+        "id": "asistidor",
+        "name": "Asistidor nato",
+        "type": "specialty",
+        "category": "high",
+        "conditions": [
+            {
+                "skill": "pases",
+                "operator": ">=",
+                "value": 85
+            }
+        ]
+    },
+    {
+        "id": "tactico",
+        "name": "Jugador táctico",
+        "type": "specialty",
+        "category": "playstyle",
+        "conditions": [
+            {
+                "skill": "pases",
+                "operator": ">=",
+                "value": 80
+            },
+            {
+                "skill": "regates",
+                "operator": ">=",
+                "value": 80
+            }
+        ]
+    },
+    {
+        "id": "sniper",
+        "name": "Francotirador",
+        "type": "specialty",
+        "category": "high",
+        "conditions": [
+            {
+                "skill": "tiros",
+                "operator": ">=",
+                "value": 90
+            }
+        ]
+    },
+    {
+        "id": "mago",
+        "name": "Mago",
+        "type": "specialty",
+        "category": "high",
+        "conditions": [
+            {
+                "skill": "pases",
+                "operator": ">=",
+                "value": 80
+            },
+            {
+                "skill": "regates",
+                "operator": ">=",
+                "value": 80
+            },
+            {
+                "skill": "ritmo",
+                "operator": ">=",
+                "value": 73
+            },
+            {
+                "skill": "tiros",
+                "operator": ">=",
+                "value": 78
+            }
+        ]
+    },
+    {
+        "id": "clase-mundial",
+        "name": "Clase Mundial",
+        "type": "specialty",
+        "category": "high",
+        "conditions": [
+            {
+                "skill": "average",
+                "operator": ">=",
+                "value": 85
+            }
+        ]
+    },
+    {
+        "id": "cohete",
+        "name": "Cohete 🚀",
+        "type": "specialty",
+        "category": "high",
+        "conditions": [
+            {
+                "skill": "velocidad",
+                "operator": ">=",
+                "value": 90
+            }
+        ]
+    },
+    {
+        "id": "flash",
+        "name": "Flash ⚡",
+        "type": "specialty",
+        "category": "high",
+        "conditions": [
+            {
+                "skill": "velocidad",
+                "operator": ">=",
+                "value": 85
+            },
+            {
+                "skill": "velocidad",
+                "operator": "<",
+                "value": 90
+            }
+        ]
+    },
+    {
+        "id": "malabarista",
+        "name": "Malabarista 🎪",
+        "type": "specialty",
+        "category": "high",
+        "conditions": [
+            {
+                "skill": "regates",
+                "operator": ">=",
+                "value": 90
+            }
+        ]
+    },
+    {
+        "id": "arquitecto",
+        "name": "Arquitecto 📐",
+        "type": "specialty",
+        "category": "high",
+        "conditions": [
+            {
+                "skill": "pases",
+                "operator": ">=",
+                "value": 90
+            }
+        ]
+    },
+    {
+        "id": "tanque",
+        "name": "Tanque 🛡️",
+        "type": "specialty",
+        "category": "playstyle",
+        "conditions": [
+            {
+                "skill": "tiros",
+                "operator": ">=",
+                "value": 85
+            },
+            {
+                "skill": "velocidad",
+                "operator": "<",
+                "value": 60
+            }
+        ]
+    },
+    {
+        "id": "motor",
+        "name": "Motor 🔥",
+        "type": "specialty",
+        "category": "high",
+        "conditions": [
+            {
+                "skill": "ritmo",
+                "operator": ">=",
+                "value": 85
+            },
+            {
+                "skill": "velocidad",
+                "operator": ">=",
+                "value": 85
+            }
+        ]
+    },
+    {
+        "id": "canon",
+        "name": "Cañón 💣",
+        "type": "specialty",
+        "category": "high",
+        "conditions": [
+            {
+                "skill": "tiros",
+                "operator": ">=",
+                "value": 85
+            }
+        ]
+    },
+    {
+        "id": "equilibrista",
+        "name": "Equilibrista ⚖️",
+        "type": "specialty",
+        "category": "playstyle",
+        "conditions": [
+            {
+                "skill": "ritmo",
+                "operator": ">",
+                "value": 65
+            },
+            {
+                "skill": "tiros",
+                "operator": ">",
+                "value": 65
+            },
+            {
+                "skill": "regates",
+                "operator": ">",
+                "value": 65
+            },
+            {
+                "skill": "velocidad",
+                "operator": ">",
+                "value": 65
+            },
+            {
+                "skill": "pases",
+                "operator": ">",
+                "value": 65
+            },
+            {
+                "skill": "average",
+                "operator": "<",
+                "value": 85
+            }
+        ]
+    },
+    {
+        "id": "egoista",
+        "name": "Egoísta Goleador 🥅",
+        "type": "specialty",
+        "category": "playstyle",
+        "conditions": [
+            {
+                "skill": "tiros",
+                "operator": ">",
+                "value": 75
+            },
+            {
+                "skill": "pases",
+                "operator": "<",
+                "value": 50
+            }
+        ]
+    },
+    {
+        "id": "solidario-spec",
+        "name": "Solidario 🤝",
+        "type": "specialty",
+        "category": "playstyle",
+        "conditions": [
+            {
+                "skill": "pases",
+                "operator": ">",
+                "value": 75
+            },
+            {
+                "skill": "tiros",
+                "operator": "<",
+                "value": 50
+            }
+        ]
+    },
+    {
+        "id": "tortuga",
+        "name": "Tortuga 🐢",
+        "type": "specialty",
+        "category": "low",
+        "conditions": [
+            {
+                "skill": "velocidad",
+                "operator": "<",
+                "value": 40
+            }
+        ]
+    },
+    {
+        "id": "zombie",
+        "name": "Zombi 🧟",
+        "type": "specialty",
+        "category": "low",
+        "conditions": [
+            {
+                "skill": "ritmo",
+                "operator": "<",
+                "value": 20
+            }
+        ]
+    },
+    {
+        "id": "sonambulo",
+        "name": "Sonámbulo 💤",
+        "type": "specialty",
+        "category": "low",
+        "conditions": [
+            {
+                "skill": "ritmo",
+                "operator": "<",
+                "value": 40
+            }
+        ]
+    },
+    {
+        "id": "cono",
+        "name": "Cono ⚠️",
+        "type": "specialty",
+        "category": "low",
+        "conditions": [
+            {
+                "skill": "regates",
+                "operator": "<",
+                "value": 30
+            },
+            {
+                "skill": "ritmo",
+                "operator": "<",
+                "value": 30
+            }
+        ]
+    },
+    {
+        "id": "stormtrooper",
+        "name": "Stormtrooper 🔫",
+        "type": "specialty",
+        "category": "low",
+        "conditions": [
+            {
+                "skill": "tiros",
+                "operator": "<",
+                "value": 35
+            }
+        ]
+    },
+    {
+        "id": "patadura",
+        "name": "Patadura 🪵",
+        "type": "specialty",
+        "category": "low",
+        "conditions": [
+            {
+                "skill": "pases",
+                "operator": "<",
+                "value": 40
+            },
+            {
+                "skill": "regates",
+                "operator": "<",
+                "value": 40
+            }
+        ]
+    },
+    {
+        "id": "lenador",
+        "name": "Leñador 🪓",
+        "type": "specialty",
+        "category": "low",
+        "conditions": [
+            {
+                "skill": "regates",
+                "operator": "<",
+                "value": 35
+            }
+        ]
+    },
+    {
+        "id": "pecho-frio",
+        "name": "Pecho Frío ❄️",
+        "type": "specialty",
+        "category": "low",
+        "conditions": [
+            {
+                "skill": "velocidad",
+                "operator": "<",
+                "value": 50
+            },
+            {
+                "skill": "ritmo",
+                "operator": "<",
+                "value": 50
+            },
+            {
+                "skill": "tiros",
+                "operator": ">",
+                "value": 70
+            }
+        ]
+    },
+    {
+        "id": "mascota",
+        "name": "Mascota 🧸",
+        "type": "specialty",
+        "category": "low",
+        "conditions": [
+            {
+                "skill": "average",
+                "operator": "<",
+                "value": 45
+            }
+        ],
+        "description": "+5 partidos"
+    },
+    {
+        "id": "promesa-eterna",
+        "name": "Promesa Eterna ⏳",
+        "type": "specialty",
+        "category": "low",
+        "conditions": [
+            {
+                "skill": "average",
+                "operator": "<",
+                "value": 55
+            }
+        ],
+        "description": "+15 partidos"
+    },
+    {
+        "id": "solidario-trait",
+        "name": "Solidario",
+        "type": "trait",
+        "conditions": []
+    },
+    {
+        "id": "motivador",
+        "name": "Motivador",
+        "type": "trait",
+        "conditions": []
+    },
+    {
+        "id": "cabezazo",
+        "name": "Cabezazo",
+        "type": "trait",
+        "conditions": []
+    },
+    {
+        "id": "tiros-libres",
+        "name": "Tiros Libres",
+        "type": "trait",
+        "conditions": []
+    },
+    {
+        "id": "recuperador",
+        "name": "Recuperador",
+        "type": "trait",
+        "conditions": []
+    },
+    {
+        "id": "potencia",
+        "name": "Potencia",
+        "type": "trait",
+        "conditions": []
+    }
+]
