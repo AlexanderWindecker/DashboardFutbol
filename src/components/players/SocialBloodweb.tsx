@@ -22,19 +22,18 @@ interface Node {
 
 export function SocialBloodweb({ players, privacyMode = false }: SocialBloodwebProps) {
     const [centerId, setCenterId] = useState<string>(() => {
-        // Try to load from localStorage first
-        if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem('social_center_id');
-            if (saved && players.some(p => p.id === saved)) return saved;
-        }
-
-        // Search for Alexander as primary default
+        // Default to Alexander if exists, otherwise first player
         const alex = players.find(p => p.name.toLowerCase().includes('alexander'));
-        if (alex) return alex.id;
-
-        // Fallback to first player
-        return players[0]?.id || '';
+        return alex?.id || players[0]?.id || '';
     });
+
+    // Hydrate state from localStorage on mount
+    useEffect(() => {
+        const saved = localStorage.getItem('social_center_id');
+        if (saved && players.some(p => p.id === saved)) {
+            setCenterId(saved);
+        }
+    }, [players]);
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 1000, height: 700 });
 

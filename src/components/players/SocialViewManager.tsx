@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Player } from '@/types';
 import { RelationshipPanels } from './RelationshipPanels';
 import { SocialBloodweb } from './SocialBloodweb';
@@ -12,13 +12,16 @@ interface SocialViewManagerProps {
 }
 
 export function SocialViewManager({ players }: SocialViewManagerProps) {
-    const [viewMode, setViewMode] = useState<'panels' | 'bloodweb'>(() => {
-        if (typeof window !== 'undefined') {
-            return (localStorage.getItem('social_view_mode') as 'panels' | 'bloodweb') || 'panels';
-        }
-        return 'panels';
-    });
+    const [viewMode, setViewMode] = useState<'panels' | 'bloodweb'>('panels');
     const [privacyMode, setPrivacyMode] = useState(false);
+
+    // Hydrate state from localStorage on mount
+    useEffect(() => {
+        const saved = localStorage.getItem('social_view_mode') as 'panels' | 'bloodweb';
+        if (saved && (saved === 'panels' || saved === 'bloodweb')) {
+            setViewMode(saved);
+        }
+    }, []);
 
     return (
         <div className="space-y-6">
