@@ -57,8 +57,9 @@ export function SocialBloodweb({ players, privacyMode = false }: SocialBloodwebP
 
         const centerX = dimensions.width / 2;
         const centerY = dimensions.height / 2;
+        const isMobile = dimensions.width < 640;
         // Adjust radius based on screen size, max 260
-        const radius = Math.min(centerX, centerY) * 0.7;
+        const radius = Math.min(centerX, centerY) * (isMobile ? 0.6 : 0.75);
 
         const relationships: Node[] = [];
 
@@ -254,7 +255,9 @@ export function SocialBloodweb({ players, privacyMode = false }: SocialBloodwebP
                         key={node.player.id}
                         className={cn(
                             "absolute flex flex-col items-center justify-center rounded-full cursor-pointer pointer-events-auto transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300",
-                            node.type === 'center' ? "w-40 h-40 z-20" : "w-32 h-32 hover:scale-105 z-10"
+                            dimensions.width < 640
+                                ? (node.type === 'center' ? "w-28 h-28 z-20" : "w-20 h-20 hover:scale-105 z-10")
+                                : (node.type === 'center' ? "w-40 h-40 z-20" : "w-32 h-32 hover:scale-105 z-10")
                         )}
                         style={{ left: node.x, top: node.y }}
                         initial={{ scale: 0, opacity: 0 }}
@@ -274,12 +277,19 @@ export function SocialBloodweb({ players, privacyMode = false }: SocialBloodwebP
                         {/* Avatar Ring */}
                         <div className={cn(
                             "relative rounded-full flex items-center justify-center border-[3px] shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden bg-black transition-colors z-10",
-                            node.type === 'center' ? "w-32 h-32 border-amber-500 shadow-amber-500/40" :
-                                node.type === 'affinity' ? "w-20 h-20 border-emerald-500 shadow-emerald-500/60 hover:border-emerald-400" :
-                                    node.type === 'conflict' ? "w-20 h-20 border-rose-500 shadow-rose-500/60 hover:border-rose-400" :
-                                        "w-20 h-20 border-cyan-500 shadow-cyan-500/60 hover:border-cyan-400"
+                            dimensions.width < 640
+                                ? (node.type === 'center' ? "w-20 h-20 border-amber-500" : "w-14 h-14 border-emerald-500 shadow-emerald-500/60")
+                                : (node.type === 'center' ? "w-32 h-32 border-amber-500 shadow-amber-500/40" :
+                                    node.type === 'affinity' ? "w-20 h-20 border-emerald-500 shadow-emerald-500/60 hover:border-emerald-400" :
+                                        node.type === 'conflict' ? "w-20 h-20 border-rose-500 shadow-rose-500/60 hover:border-rose-400" :
+                                            "w-20 h-20 border-cyan-500 shadow-cyan-500/60 hover:border-cyan-400"),
+                            // Correction for non-center styles in mobile
+                            dimensions.width < 640 && node.type !== 'center' && (
+                                node.type === 'affinity' ? "border-emerald-500" :
+                                    node.type === 'conflict' ? "border-rose-500" : "border-cyan-500"
+                            )
                         )}>
-                            <User size={node.type === 'center' ? 56 : 32} className={cn(
+                            <User size={dimensions.width < 640 ? (node.type === 'center' ? 32 : 24) : (node.type === 'center' ? 56 : 32)} className={cn(
                                 "text-slate-200",
                                 node.type === 'center' && "text-amber-100",
                                 node.type === 'affinity' && "text-emerald-50",
@@ -294,14 +304,15 @@ export function SocialBloodweb({ players, privacyMode = false }: SocialBloodwebP
                         {/* Floating Icon Badge */}
                         {node.type !== 'center' && (
                             <div className={cn(
-                                "absolute bottom-6 -right-1 w-8 h-8 rounded-full flex items-center justify-center border-2 border-slate-900 text-white shadow-lg z-30",
+                                "absolute bottom-6 -right-1 rounded-full flex items-center justify-center border-2 border-slate-900 text-white shadow-lg z-30",
+                                dimensions.width < 640 ? "w-6 h-6" : "w-8 h-8",
                                 node.type === 'affinity' ? "bg-emerald-600 shadow-[0_0_10px_rgba(16,185,129,0.8)]" :
                                     node.type === 'conflict' ? "bg-rose-600 shadow-[0_0_10px_rgba(244,63,94,0.8)]" :
                                         "bg-cyan-600 shadow-[0_0_10px_rgba(6,182,212,0.8)]"
                             )}>
-                                {node.type === 'affinity' ? <Heart size={14} fill="currentColor" /> :
-                                    node.type === 'conflict' ? <Zap size={14} fill="currentColor" /> :
-                                        <div className="w-2.5 h-2.5 rounded-full border border-white/50" />
+                                {node.type === 'affinity' ? <Heart size={dimensions.width < 640 ? 10 : 14} fill="currentColor" /> :
+                                    node.type === 'conflict' ? <Zap size={dimensions.width < 640 ? 10 : 14} fill="currentColor" /> :
+                                        <div className="w-2 h-2 rounded-full border border-white/50" />
                                 }
                             </div>
                         )}
@@ -314,7 +325,8 @@ export function SocialBloodweb({ players, privacyMode = false }: SocialBloodwebP
                             transition={{ delay: 1 + (i * 0.1) }}
                         >
                             <span className={cn(
-                                "px-3 py-1 rounded-full bg-black/90 backdrop-blur-md text-sm font-bold whitespace-nowrap border shadow-xl z-40",
+                                "px-3 py-1 rounded-full bg-black/90 backdrop-blur-md font-bold whitespace-nowrap border shadow-xl z-40",
+                                dimensions.width < 640 ? "text-[10px]" : "text-sm",
                                 node.type === 'center' ? "text-amber-400 border-amber-500/50" :
                                     node.type === 'affinity' ? "text-emerald-400 border-emerald-500/50" :
                                         node.type === 'conflict' ? "text-rose-400 border-rose-500/50" :

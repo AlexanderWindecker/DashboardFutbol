@@ -62,9 +62,13 @@ export default async function DashboardPage() {
             </div>
             <div className="divide-y divide-slate-800">
               {recentMatches.map(match => (
-                <div key={match.id} className="p-4 flex items-center justify-between hover:bg-slate-800/50 transition-colors">
-                  <div>
-                    <p className="text-white font-medium">
+                <Link
+                  key={match.id}
+                  href={`/matches/${match.id}`}
+                  className="p-4 flex items-center justify-between hover:bg-slate-800/80 transition-all active:scale-[0.99] group"
+                >
+                  <div className="flex-1">
+                    <p className="text-white font-medium group-hover:text-indigo-400 transition-colors">
                       {format(parseISO(match.date), "EEEE d 'de' MMMM", { locale: es })}
                     </p>
                     <div className="flex gap-2 mt-1">
@@ -72,14 +76,17 @@ export default async function DashboardPage() {
                       <span className="text-xs text-slate-500">{match.location}</span>
                     </div>
                   </div>
-                  <div className="text-right">
-                    {match.result ? (
-                      <Badge variant={match.result}>{match.result}</Badge>
-                    ) : (
-                      <Badge variant="outline">Pendiente</Badge>
-                    )}
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      {match.result ? (
+                        <Badge variant={match.result}>{match.result}</Badge>
+                      ) : (
+                        <Badge variant="outline">Pendiente</Badge>
+                      )}
+                    </div>
+                    <ArrowRight size={16} className="text-slate-600 group-hover:text-indigo-400 transition-colors" />
                   </div>
-                </div>
+                </Link>
               ))}
               {recentMatches.length === 0 && <p className="p-6 text-slate-500">No hay actividad reciente.</p>}
             </div>
