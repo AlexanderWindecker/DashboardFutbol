@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { Player, PlayerStats, Team } from '@/types';
 import { cn } from '@/lib/utils';
-import { Shield, User } from 'lucide-react';
+import { Shield, User, LayoutGrid, Users2, Swords } from 'lucide-react';
 
 interface MatchPitchProps {
     players: Player[];
@@ -12,7 +13,11 @@ interface MatchPitchProps {
     mode?: string;
 }
 
+type ViewMode = 'versus' | 'team1' | 'team2';
+
 export function MatchPitch({ players, participations, team1Name = 'Celeste', team2Name = 'Azul', mode }: MatchPitchProps) {
+    const [viewMode, setViewMode] = useState<ViewMode>('versus');
+
     // Parse mode to get max players per team (e.g., "6v6" -> 6)
     const maxPlayersPerTeam = mode ? parseInt(mode.split('v')[0]) : 6;
 
@@ -54,6 +59,11 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
     const getOvr = (p: Player | undefined) => {
         if (!p || !p.skills) return 50;
         const s = p.skills;
+        // Check if GK
+        const isGk = p.positions?.includes('Arquero') && p.positions?.length === 1;
+        if (isGk && s.reflejos !== undefined) {
+            return Math.round(((s.reflejos || 50) + (s.posicionamiento || 50) + (s.estirada || 50) + (s.saque || 50) + (s.seguridad || 50)) / 5);
+        }
         return Math.round((s.ritmo + s.tiros + s.pases + s.regates + s.velocidad) / 5);
     };
 
@@ -68,37 +78,81 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
 
     return (
         <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Shield size={20} className="text-indigo-400" />
-                Previsualización Táctica
-            </h3>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <Shield size={20} className="text-indigo-400" />
+                    Previsualización Táctica
+                </h3>
+
+                {/* Tab Switcher */}
+                <div className="flex p-1 bg-slate-900/80 backdrop-blur-sm border border-slate-800 rounded-xl">
+                    <button
+                        onClick={() => setViewMode('versus')}
+                        className={cn(
+                            "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2",
+                            viewMode === 'versus' ? "bg-indigo-600 text-white shadow-lg" : "text-slate-400 hover:text-slate-200"
+                        )}
+                    >
+                        <Swords size={14} />
+                        <span>Versus</span>
+                    </button>
+                    <button
+                        onClick={() => setViewMode('team1')}
+                        className={cn(
+                            "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2",
+                            viewMode === 'team1' ? "bg-sky-500 text-white shadow-lg" : "text-slate-400 hover:text-slate-200"
+                        )}
+                    >
+                        <Users2 size={14} />
+                        <span>{team1Name}</span>
+                    </button>
+                    <button
+                        onClick={() => setViewMode('team2')}
+                        className={cn(
+                            "px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2",
+                            viewMode === 'team2' ? "bg-blue-600 text-white shadow-lg" : "text-slate-400 hover:text-slate-200"
+                        )}
+                    >
+                        <Users2 size={14} />
+                        <span>{team2Name}</span>
+                    </button>
+                </div>
+            </div>
 
             <div className="flex flex-col xl:flex-row gap-4 justify-center items-stretch">
 
                 {/* Left Panel (Celeste List) - Top aligned */}
-                <div className="hidden xl:block w-48 bg-slate-950 border border-slate-800 rounded-xl p-4 shadow-lg shrink-0 border-r-4 border-r-sky-500/50 self-start">
-                    <h4 className="text-sky-400 font-bold uppercase tracking-wider text-xs mb-3 border-b border-slate-800 pb-2">{team1Name.toUpperCase()}</h4>
+                <div className={cn(
+                    "hidden xl:block w-48 bg-slate-950 border border-slate-800 rounded-xl p-4 shadow-lg shrink-0 border-r-4 border-r-sky-500/50 self-start transition-opacity",
+                    viewMode === 'team2' ? "opacity-30" : "opacity-100"
+                )}>
+                    <h4 className="text-sky-400 font-bold uppercase tracking-wider text-xs mb-3 border-b border-slate-800 pb-2">{team1Name.toUpperCase()} {celesteAvg > 0 && `(${celesteAvg})`}</h4>
                     <PlayerList players={allCeleste} />
                 </div>
 
                 <div className="flex flex-col gap-4 w-full max-w-4xl mx-auto">
                     <div className="flex items-start gap-1.5 md:gap-4 px-2">
                         {/* Celeste Subs Dugout */}
-                        <div className={cn(
-                            "flex flex-col gap-3 p-2 rounded-xl border-2 border-sky-500/30 bg-sky-950/40 backdrop-blur-md self-start min-w-[50px] md:min-w-[64px] transition-all duration-300 shadow-xl z-30",
-                            celesteSubs.length === 0 ? "opacity-0 scale-95 pointer-events-none" : "opacity-100 scale-100"
-                        )}>
-                            <div className="text-center border-b border-sky-500/20 pb-1 mb-1">
-                                <span className="text-[7px] md:text-[9px] font-black text-sky-400 uppercase tracking-tighter">SUPL.</span>
+                        {(viewMode === 'versus' || viewMode === 'team1') && (
+                            <div className={cn(
+                                "flex flex-col gap-3 p-2 rounded-xl border-2 border-sky-500/30 bg-sky-950/40 backdrop-blur-md self-start min-w-[50px] md:min-w-[64px] transition-all duration-300 shadow-xl z-30",
+                                celesteSubs.length === 0 ? "opacity-0 scale-95 pointer-events-none" : "opacity-100 scale-100"
+                            )}>
+                                <div className="text-center border-b border-sky-500/20 pb-1 mb-1">
+                                    <span className="text-[7px] md:text-[9px] font-black text-sky-400 uppercase tracking-tighter">SUPL.</span>
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    {celesteSubs.map(s => (
+                                        <SideSubMarker key={s.playerId} player={s} color="bg-sky-500" getOvr={getOvr} align="left" />
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-4">
-                                {celesteSubs.map(s => (
-                                    <SideSubMarker key={s.playerId} player={s} color="bg-sky-500" getOvr={getOvr} align="left" />
-                                ))}
-                            </div>
-                        </div>
+                        )}
 
                         <div className="relative flex-1 aspect-[3/4] bg-emerald-900 rounded-2xl border-4 border-slate-800 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-hidden group/pitch">
+                            {/* Grass Pattern */}
+                            <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 10%, rgba(255,255,255,0.05) 10%, rgba(255,255,255,0.05) 20%)' }} />
+
                             {/* Field Markings */}
                             <div className="absolute inset-4 border-2 border-emerald-400/30 rounded-lg pointer-events-none overflow-hidden">
                                 {/* Halfway Line */}
@@ -112,54 +166,85 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
 
                             {/* Teams Layout */}
                             <div className="absolute inset-0 flex flex-col p-4">
-                                {/* Top Team */}
-                                <div className="flex-1 relative pt-6">
-                                    <div className="absolute -top-3 -left-2 flex items-center gap-2 z-10 transition-transform group-hover/pitch:scale-105">
-                                        <div className="px-2 py-1 rounded-lg bg-sky-950/80 backdrop-blur-sm border border-sky-500/30 text-sky-400 text-[10px] font-bold uppercase tracking-widest shadow-lg">
-                                            {team1Name || 'Celeste'}
+                                {viewMode === 'versus' && (
+                                    <>
+                                        {/* Top Team */}
+                                        <div className="flex-1 relative pt-6 animate-in fade-in zoom-in-95 duration-300">
+                                            <div className="absolute -top-3 -left-2 flex items-center gap-2 z-10 transition-transform group-hover/pitch:scale-105">
+                                                <div className="px-2 py-1 rounded-lg bg-sky-950/80 backdrop-blur-sm border border-sky-500/30 text-sky-400 text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                                                    {team1Name}
+                                                </div>
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-b from-white via-slate-200 to-slate-400 border border-white/50 flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.3)] ring-1 ring-black/10">
+                                                    <span className="text-slate-900 font-black text-sm drop-shadow-sm">{celesteAvg}</span>
+                                                </div>
+                                            </div>
+                                            <PositionGrid teamPlayers={celestePlayers} isTop={true} color="bg-sky-500" getOvr={getOvr} isSmall={true} />
                                         </div>
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-b from-white via-slate-200 to-slate-400 border border-white/50 flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.3)] ring-1 ring-black/10">
-                                            <span className="text-slate-900 font-black text-sm drop-shadow-sm">{celesteAvg}</span>
-                                        </div>
-                                    </div>
-                                    <PositionGrid teamPlayers={celestePlayers} isTop={true} color="bg-sky-500" getOvr={getOvr} />
-                                </div>
 
-                                {/* Bottom Team */}
-                                <div className="flex-1 relative pb-6 border-t border-emerald-400/20">
-                                    <div className="absolute -bottom-3 -right-2 flex items-center gap-2 z-10 transition-transform group-hover/pitch:scale-105">
-                                        <div className="w-10 h-10 rounded-full bg-gradient-to-b from-white via-slate-200 to-slate-400 border border-white/50 flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.3)] ring-1 ring-black/10">
-                                            <span className="text-slate-900 font-black text-sm drop-shadow-sm">{azulAvg}</span>
+                                        {/* Bottom Team */}
+                                        <div className="flex-1 relative pb-6 border-t border-emerald-400/20 animate-in fade-in zoom-in-95 duration-300">
+                                            <div className="absolute -bottom-3 -right-2 flex items-center gap-2 z-10 transition-transform group-hover/pitch:scale-105">
+                                                <div className="w-10 h-10 rounded-full bg-gradient-to-b from-white via-slate-200 to-slate-400 border border-white/50 flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.3)] ring-1 ring-black/10">
+                                                    <span className="text-slate-900 font-black text-sm drop-shadow-sm">{azulAvg}</span>
+                                                </div>
+                                                <div className="px-2 py-1 rounded-lg bg-blue-950/80 backdrop-blur-sm border border-blue-500/30 text-blue-400 text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                                                    {team2Name}
+                                                </div>
+                                            </div>
+                                            <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isSmall={true} />
                                         </div>
-                                        <div className="px-2 py-1 rounded-lg bg-blue-950/80 backdrop-blur-sm border border-blue-500/30 text-blue-400 text-[10px] font-bold uppercase tracking-widest shadow-lg">
-                                            {team2Name || 'Azul'}
+                                    </>
+                                )}
+
+                                {viewMode === 'team1' && (
+                                    <div className="flex-1 relative py-8 animate-in fade-in slide-in-from-top-4 duration-500">
+                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-3 z-10">
+                                            <div className="px-3 py-1.5 rounded-xl bg-sky-950/80 backdrop-blur-md border-2 border-sky-500/50 text-sky-400 text-xs font-black uppercase tracking-widest shadow-2xl">
+                                                {team1Name} - OVR {celesteAvg}
+                                            </div>
                                         </div>
+                                        <PositionGrid teamPlayers={celestePlayers} isTop={false} color="bg-sky-500" getOvr={getOvr} isFullHeight={true} />
                                     </div>
-                                    <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} />
-                                </div>
+                                )}
+
+                                {viewMode === 'team2' && (
+                                    <div className="flex-1 relative py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 flex items-center gap-3 z-10">
+                                            <div className="px-3 py-1.5 rounded-xl bg-blue-950/80 backdrop-blur-md border-2 border-blue-500/50 text-blue-400 text-xs font-black uppercase tracking-widest shadow-2xl">
+                                                {team2Name} - OVR {azulAvg}
+                                            </div>
+                                        </div>
+                                        <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isFullHeight={true} />
+                                    </div>
+                                )}
                             </div>
                         </div>
 
                         {/* Azul Subs Dugout */}
-                        <div className={cn(
-                            "flex flex-col gap-3 p-2 rounded-xl border-2 border-blue-600/30 bg-blue-950/40 backdrop-blur-md self-end min-w-[50px] md:min-w-[64px] transition-all duration-300 shadow-xl z-30",
-                            azulSubs.length === 0 ? "opacity-0 scale-95 pointer-events-none" : "opacity-100 scale-100"
-                        )}>
-                            <div className="text-center border-b border-blue-600/20 pb-1 mb-1">
-                                <span className="text-[7px] md:text-[9px] font-black text-blue-400 uppercase tracking-tighter">SUPL.</span>
+                        {(viewMode === 'versus' || viewMode === 'team2') && (
+                            <div className={cn(
+                                "flex flex-col gap-3 p-2 rounded-xl border-2 border-blue-600/30 bg-blue-950/40 backdrop-blur-md self-end min-w-[50px] md:min-w-[64px] transition-all duration-300 shadow-xl z-30",
+                                azulSubs.length === 0 ? "opacity-0 scale-95 pointer-events-none" : "opacity-100 scale-100"
+                            )}>
+                                <div className="text-center border-b border-blue-600/20 pb-1 mb-1">
+                                    <span className="text-[7px] md:text-[9px] font-black text-blue-400 uppercase tracking-tighter">SUPL.</span>
+                                </div>
+                                <div className="flex flex-col gap-4">
+                                    {azulSubs.map(s => (
+                                        <SideSubMarker key={s.playerId} player={s} color="bg-blue-600" getOvr={getOvr} align="right" />
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-4">
-                                {azulSubs.map(s => (
-                                    <SideSubMarker key={s.playerId} player={s} color="bg-blue-600" getOvr={getOvr} align="right" />
-                                ))}
-                            </div>
-                        </div>
+                        )}
                     </div>
                 </div>
 
                 {/* Right Panel (Azul List) - Bottom aligned */}
-                <div className="hidden xl:block w-48 bg-slate-950 border border-slate-800 rounded-xl p-4 shadow-lg shrink-0 border-l-4 border-l-blue-600/50 self-end">
-                    <h4 className="text-blue-400 font-bold uppercase tracking-wider text-xs mb-3 border-b border-slate-800 pb-2 text-right">{team2Name.toUpperCase()}</h4>
+                <div className={cn(
+                    "hidden xl:block w-48 bg-slate-950 border border-slate-800 rounded-xl p-4 shadow-lg shrink-0 border-l-4 border-l-blue-600/50 self-end transition-opacity",
+                    viewMode === 'team1' ? "opacity-30" : "opacity-100"
+                )}>
+                    <h4 className="text-blue-400 font-bold uppercase tracking-wider text-xs mb-3 border-b border-slate-800 pb-2 text-right">{team2Name.toUpperCase()} {azulAvg > 0 && `(${azulAvg})`}</h4>
                     <PlayerList players={allAzul} alignRight />
                 </div>
 
@@ -167,11 +252,11 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
 
             {/* Mobile Lists (Visible only on small screens) */}
             <div className="grid grid-cols-2 gap-4 xl:hidden">
-                <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                <div className={cn("bg-slate-950 border border-slate-800 rounded-xl p-4 transition-opacity", viewMode === 'team2' ? "opacity-30" : "opacity-100")}>
                     <h4 className="text-sky-400 font-bold uppercase tracking-wider text-xs mb-2">{team1Name} ({celesteAvg})</h4>
                     <PlayerList players={allCeleste} />
                 </div>
-                <div className="bg-slate-950 border border-slate-800 rounded-xl p-4">
+                <div className={cn("bg-slate-950 border border-slate-800 rounded-xl p-4 transition-opacity", viewMode === 'team1' ? "opacity-30" : "opacity-100")}>
                     <h4 className="text-blue-400 font-bold uppercase tracking-wider text-xs mb-2 text-right">{team2Name} ({azulAvg})</h4>
                     <PlayerList players={allAzul} alignRight />
                 </div>
@@ -239,7 +324,7 @@ function PlayerList({ players, alignRight = false }: { players: any[], alignRigh
     );
 }
 
-function PositionGrid({ teamPlayers, isTop, color, getOvr }: { teamPlayers: any[], isTop: boolean, color: string, getOvr: (p: any) => number }) {
+function PositionGrid({ teamPlayers, isTop, color, getOvr, isSmall, isFullHeight }: { teamPlayers: any[], isTop: boolean, color: string, getOvr: (p: any) => number, isSmall?: boolean, isFullHeight?: boolean }) {
     // Robust position helper
     const getPos = (p: any): string => {
         const val = String(p.tacticalRole || p.info?.positions?.[0] || '').toLowerCase().trim();
@@ -258,30 +343,46 @@ function PositionGrid({ teamPlayers, isTop, color, getOvr }: { teamPlayers: any[
     // Others (if any) or shared
     const others = teamPlayers.filter(p => !['arquero', 'defensor', 'mediocampista', 'delantero'].includes(getPos(p)));
 
-    // Merge midfielders and others in the center row
-    const rows = isTop
-        ? [goalie, defenders, [...midfielders, ...others], forwards]
-        : [forwards, [...midfielders, ...others], defenders, goalie];
+    // In full height mode, we always want GK at the bottom like a standard tactical view
+    const rows = (isFullHeight || !isTop)
+        ? [forwards, [...midfielders, ...others], defenders, goalie]
+        : [goalie, defenders, [...midfielders, ...others], forwards];
 
     return (
-        <div className="w-full h-full flex flex-col justify-around items-center py-2">
+        <div className={cn(
+            "w-full flex flex-col items-center",
+            isFullHeight ? "h-full justify-between" : "h-full justify-around"
+        )}>
             {rows.map((row, idx) => (
-                <div key={idx} className="flex justify-center gap-12 md:gap-32 w-full min-h-[4.5rem]">
+                <div key={idx} className={cn(
+                    "flex justify-center w-full",
+                    isSmall ? "gap-6 md:gap-16" : "gap-12 md:gap-24"
+                )}>
                     {row.map((p: any) => (
                         <div key={p.playerId} className="group relative flex flex-col items-center">
                             <div className={cn(
-                                "w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg transition-transform group-hover:scale-110",
-                                color
+                                "rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg transition-all duration-300 group-hover:scale-110",
+                                color,
+                                isSmall ? "w-8 h-8 md:w-10 md:h-10" : "w-11 h-11 md:w-14 md:h-14 bg-gradient-to-br from-white/10 to-transparent"
                             )}>
-                                <User size={20} className="text-white md:hidden" />
-                                <span className="hidden md:block text-[13px] font-black text-white">
+                                <User size={isSmall ? 14 : 20} className="text-white md:hidden" />
+                                <span className={cn(
+                                    "hidden md:block font-black text-white drop-shadow-sm",
+                                    isSmall ? "text-xs" : "text-base"
+                                )}>
                                     {getOvr(p.info)}
                                 </span>
 
                                 {/* Rating Badge */}
                                 {p.rating !== undefined && (
-                                    <div className="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-indigo-600 rounded-full border border-white flex items-center justify-center shadow-lg">
-                                        <span className="text-[8px] md:text-[10px] font-bold text-white leading-none">
+                                    <div className={cn(
+                                        "absolute -top-1 -right-1 bg-indigo-600 rounded-full border border-white flex items-center justify-center shadow-lg",
+                                        isSmall ? "w-4 h-4 md:w-5 md:h-5" : "w-5 h-5 md:w-7 md:h-7"
+                                    )}>
+                                        <span className={cn(
+                                            "font-bold text-white leading-none",
+                                            isSmall ? "text-[7px] md:text-[8px]" : "text-[8px] md:text-xs"
+                                        )}>
                                             {p.rating}
                                         </span>
                                     </div>
@@ -289,14 +390,17 @@ function PositionGrid({ teamPlayers, isTop, color, getOvr }: { teamPlayers: any[
                             </div>
                             {/* Role Label */}
                             <div className="flex items-center justify-center mt-1">
-                                <span className="text-[10px] md:text-[11px] font-bold text-slate-200 tracking-tighter uppercase leading-none z-10 shadow-black drop-shadow-md">
+                                <span className={cn(
+                                    "font-black text-slate-200 tracking-tighter uppercase leading-none z-10 drop-shadow-md",
+                                    isSmall ? "text-[8px] md:text-[9px]" : "text-[10px] md:text-xs"
+                                )}>
                                     {(() => {
                                         const r = getPos(p);
                                         if (r === 'arquero') return 'ARQ';
                                         if (r === 'defensor') return 'DEF';
                                         if (r === 'mediocampista') return 'MED';
                                         if (r === 'delantero') return 'DEL';
-                                        return r ? '??' : '';
+                                        return r ? r.substring(0, 3).toUpperCase() : '';
                                     })()}
                                 </span>
                             </div>
