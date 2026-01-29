@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { createMatchAction } from '@/actions/matches';
 import { Button } from '@/components/ui/Button';
 import { X, Plus, Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { Season } from '@/types';
 import { Trophy } from 'lucide-react';
+import { useAdmin } from '@/hooks/useAdmin';
 
 interface CreateMatchDialogProps {
     seasons: Season[];
@@ -16,6 +16,7 @@ interface CreateMatchDialogProps {
 export function CreateMatchDialog({ seasons, activeSeasonId }: CreateMatchDialogProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isPending, setIsPending] = useState(false);
+    const { isAdmin } = useAdmin();
     const router = useRouter();
 
     async function handleSubmit(formData: FormData) {
@@ -23,9 +24,9 @@ export function CreateMatchDialog({ seasons, activeSeasonId }: CreateMatchDialog
         await createMatchAction(formData);
         setIsPending(false);
         setIsOpen(false);
-        // Router refresh is handled by server action redirect/revalidate usually, but sometimes client refresh is nice
-        // router.refresh(); 
     }
+
+    if (!isAdmin) return null;
 
     if (!isOpen) {
         return (

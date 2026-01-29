@@ -18,6 +18,7 @@ import { RulesEditorModal, SKILLS } from './RulesEditorModal';
 import { getPlayerSpecialties, getPlayerTraits } from '@/lib/rules-engine';
 import { AffinityManager } from './AffinityManager';
 import { CustomRule } from '@/types';
+import { useAdmin } from '@/hooks/useAdmin';
 
 interface PlayerSkillsEditorProps {
     player: Player;
@@ -73,6 +74,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
     const [isEditing, setIsEditing] = useState(false);
     const [showGuide, setShowGuide] = useState(false);
     const [showRulesEditor, setShowRulesEditor] = useState<'specialty' | 'trait' | null>(null);
+    const { isAdmin } = useAdmin();
 
     const POSSIBLE_POSITIONS = ['Delantero', 'Mediocampista', 'Defensor', 'Arquero'];
 
@@ -184,39 +186,41 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                         </span>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    {isEditing && (
-                        <div className="flex items-center gap-2">
-                            <label className="flex items-center gap-2 cursor-pointer bg-slate-800/50 px-3 py-1 rounded-full border border-slate-700 hover:bg-slate-800 transition-colors">
-                                <input
-                                    type="checkbox"
-                                    checked={isInjured}
-                                    onChange={(e) => setIsInjured(e.target.checked)}
-                                    className="w-4 h-4 rounded border-slate-600 text-red-600 focus:ring-red-500 bg-slate-900"
-                                />
-                                <span className="text-xs text-slate-300 font-medium flex items-center gap-1">
-                                    <Plus size={12} className="text-red-500 stroke-[3px]" />
-                                    Lesionado
-                                </span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer bg-slate-800/50 px-3 py-1 rounded-full border border-slate-700 hover:bg-slate-800 transition-colors">
-                                <input
-                                    type="checkbox"
-                                    checked={isVacation}
-                                    onChange={(e) => setIsVacation(e.target.checked)}
-                                    className="w-4 h-4 rounded border-slate-600 text-amber-500 focus:ring-amber-500 bg-slate-900"
-                                />
-                                <span className="text-xs text-slate-300 font-medium flex items-center gap-1">
-                                    <Palmtree size={12} className="text-amber-500" />
-                                    Vacaciones
-                                </span>
-                            </label>
-                        </div>
-                    )}
-                    <Button variant="ghost" size="sm" onClick={() => isEditing ? handleSave() : setIsEditing(true)}>
-                        {isPending ? <Loader2 className="animate-spin" /> : (isEditing ? <Save size={18} /> : 'Editar')}
-                    </Button>
-                </div>
+                {isAdmin && (
+                    <div className="flex items-center gap-2">
+                        {isEditing && (
+                            <div className="flex items-center gap-2">
+                                <label className="flex items-center gap-2 cursor-pointer bg-slate-800/50 px-3 py-1 rounded-full border border-slate-700 hover:bg-slate-800 transition-colors">
+                                    <input
+                                        type="checkbox"
+                                        checked={isInjured}
+                                        onChange={(e) => setIsInjured(e.target.checked)}
+                                        className="w-4 h-4 rounded border-slate-600 text-red-600 focus:ring-red-500 bg-slate-900"
+                                    />
+                                    <span className="text-xs text-slate-300 font-medium flex items-center gap-1">
+                                        <Plus size={12} className="text-red-500 stroke-[3px]" />
+                                        Lesionado
+                                    </span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer bg-slate-800/50 px-3 py-1 rounded-full border border-slate-700 hover:bg-slate-800 transition-colors">
+                                    <input
+                                        type="checkbox"
+                                        checked={isVacation}
+                                        onChange={(e) => setIsVacation(e.target.checked)}
+                                        className="w-4 h-4 rounded border-slate-600 text-amber-500 focus:ring-amber-500 bg-slate-900"
+                                    />
+                                    <span className="text-xs text-slate-300 font-medium flex items-center gap-1">
+                                        <Palmtree size={12} className="text-amber-500" />
+                                        Vacaciones
+                                    </span>
+                                </label>
+                            </div>
+                        )}
+                        <Button variant="ghost" size="sm" onClick={() => isEditing ? handleSave() : setIsEditing(true)}>
+                            {isPending ? <Loader2 className="animate-spin" /> : (isEditing ? <Save size={18} /> : 'Editar')}
+                        </Button>
+                    </div>
+                )}
             </div>
 
             {isEditing && (
@@ -478,13 +482,15 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                                 >
                                     <Info size={14} />
                                 </button>
-                                <button
-                                    onClick={() => setShowRulesEditor('specialty')}
-                                    className="ml-1 p-1 text-slate-500 hover:text-amber-400 transition-colors"
-                                    title="Editar reglas de especialidades"
-                                >
-                                    <Pencil size={12} />
-                                </button>
+                                {isAdmin && (
+                                    <button
+                                        onClick={() => setShowRulesEditor('specialty')}
+                                        className="ml-1 p-1 text-slate-500 hover:text-amber-400 transition-colors"
+                                        title="Editar reglas de especialidades"
+                                    >
+                                        <Pencil size={12} />
+                                    </button>
+                                )}
                             </div>
                         </h4>
                         <div className="flex flex-wrap gap-2">
@@ -540,13 +546,15 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                         <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
                             <span className="bg-slate-700 p-1 rounded text-white"><Pencil size={12} /></span>
                             Rasgos
-                            <button
-                                onClick={() => setShowRulesEditor('trait')}
-                                className="ml-1 p-1 text-slate-500 hover:text-amber-400 transition-colors"
-                                title="Editar reglas de rasgos"
-                            >
-                                <Pencil size={12} />
-                            </button>
+                            {isAdmin && (
+                                <button
+                                    onClick={() => setShowRulesEditor('trait')}
+                                    className="ml-1 p-1 text-slate-500 hover:text-amber-400 transition-colors"
+                                    title="Editar reglas de rasgos"
+                                >
+                                    <Pencil size={12} />
+                                </button>
+                            )}
                         </h4>
                         <div className={cn("space-y-2", !isEditing && "flex flex-wrap gap-2 space-y-0")}>
                             {/* Combine manual traits with dynamic traits */}
