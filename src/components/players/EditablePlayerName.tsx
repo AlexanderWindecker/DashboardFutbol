@@ -6,9 +6,16 @@ import { Pencil, Check, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 
+import { useAdmin } from '@/hooks/useAdmin';
+
 export function EditablePlayerName({ id, name, isActive, className }: { id: string, name: string, isActive: boolean, className?: string }) {
+    const { isAdmin } = useAdmin();
     const [isEditing, setIsEditing] = useState(false);
     const [newName, setNewName] = useState(name);
+
+    if (!isAdmin) {
+        return <h3 className={cn("font-semibold", isActive ? "text-white" : "text-slate-500 line-through", className)}>{name}</h3>;
+    }
 
     async function handleSave() {
         if (newName && newName !== name) {

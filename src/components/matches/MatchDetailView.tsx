@@ -72,8 +72,8 @@ export function MatchDetailView({ match, players, participations, settings, seas
                 <div className="flex flex-col items-end gap-3">
                     {isAdmin && <MatchResultSelector matchId={match.id} currentResult={match.result} settings={settings} />}
 
-                    {/* Hide Notifications in Privacy Mode */}
-                    {!privacyMode && (
+                    {/* Hide Notifications if not admin or in Privacy Mode */}
+                    {isAdmin && !privacyMode && (
                         <div className="flex gap-2">
                             <NotifyWhatsApp match={match} settings={settings} />
                             <NotifyTelegram match={match} settings={settings} />
