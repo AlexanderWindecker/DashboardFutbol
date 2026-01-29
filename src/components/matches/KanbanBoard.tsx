@@ -114,7 +114,14 @@ function DroppableColumn({ id, title, players, participations, team1Name, team2N
     });
 
     return (
-        <div ref={setNodeRef} className={cn("bg-slate-900/50 rounded-xl p-4 min-h-[400px] flex-1 border-2 border-transparent transition-colors", isOver && "border-indigo-500/30 bg-indigo-500/5")}>
+        <div
+            ref={setNodeRef}
+            className={cn(
+                "bg-slate-900/50 rounded-xl p-4 min-h-[400px] border-2 border-transparent transition-colors snap-center",
+                "w-[85vw] sm:w-auto sm:flex-1 sm:min-w-[300px]",
+                isOver && "border-indigo-500/30 bg-indigo-500/5"
+            )}
+        >
             <h3 className="text-sm font-semibold text-slate-400 mb-4 flex items-center justify-between">
                 {title}
                 <span className="bg-slate-800 text-slate-500 px-2 py-0.5 rounded text-xs">{columnPlayers.length}</span>
@@ -194,7 +201,7 @@ export function KanbanBoard({ matchId, players, participations, settings }: {
 
     return (
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <div className="flex gap-4 overflow-x-auto pb-4">
+            <div className="flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory scrollbar-hide">
                 {COLUMNS.map(col => (
                     <DroppableColumn
                         key={col.id}
