@@ -25,7 +25,8 @@
         "3cd3fed4-7c34-4ed3-9e93-260450310ec9"
       ],
       "conflicts": [
-        "be8b0060-2a7e-4f5c-a934-a65a152a95e4"
+        "be8b0060-2a7e-4f5c-a934-a65a152a95e4",
+        "be04ea23-d55c-4a74-8552-1daff1184241"
       ]
     },
     {
@@ -222,7 +223,8 @@
       "traits": [],
       "isInjured": false,
       "affinities": [
-        "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd"
+        "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd",
+        "be04ea23-d55c-4a74-8552-1daff1184241"
       ],
       "conflicts": [
         "db4cff89-d8a8-4289-bd44-8dc377557d6b",
@@ -234,9 +236,32 @@
       "id": "be04ea23-d55c-4a74-8552-1daff1184241",
       "name": "Chula",
       "conflicts": [
-        "3cd3fed4-7c34-4ed3-9e93-260450310ec9"
+        "3cd3fed4-7c34-4ed3-9e93-260450310ec9",
+        "b71ac087-ccbf-4fb3-a699-7e3805773672"
       ],
-      "affinities": []
+      "affinities": [
+        "fdfa2360-2f45-4d04-bf10-20b1ed6b97fc",
+        "be8b0060-2a7e-4f5c-a934-a65a152a95e4"
+      ],
+      "positions": [
+        "Mediocampista"
+      ],
+      "preferredFoot": "Derecho",
+      "skills": {
+        "ritmo": 58,
+        "tiros": 50,
+        "regates": 55,
+        "velocidad": 53,
+        "pases": 58,
+        "reflejos": 50,
+        "posicionamiento": 50,
+        "estirada": 50,
+        "saque": 50,
+        "seguridad": 50
+      },
+      "traits": [],
+      "isInjured": false,
+      "isVacation": false
     },
     {
       "id": "e64ab5b9-f880-449a-90b8-64cc66a67eb0",
@@ -583,7 +608,8 @@
       "affinities": [
         "be8b0060-2a7e-4f5c-a934-a65a152a95e4",
         "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd",
-        "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd"
+        "e7dabe1f-250d-4a8b-b011-2dc6ee9fdfbd",
+        "be04ea23-d55c-4a74-8552-1daff1184241"
       ],
       "conflicts": [
         "b71ac087-ccbf-4fb3-a699-7e3805773672",

@@ -105,6 +105,7 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
                     >
                         <Users2 size={14} />
                         <span>{team1Name}</span>
+                        {celesteAvg > 0 && <span className="ml-1 px-1.5 py-0.5 rounded bg-black/20 text-[10px]">{celesteAvg}</span>}
                     </button>
                     <button
                         onClick={() => setViewMode('team2')}
@@ -115,6 +116,7 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
                     >
                         <Users2 size={14} />
                         <span>{team2Name}</span>
+                        {azulAvg > 0 && <span className="ml-1 px-1.5 py-0.5 rounded bg-black/20 text-[10px]">{azulAvg}</span>}
                     </button>
                 </div>
             </div>
@@ -149,7 +151,7 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
                             </div>
                         )}
 
-                        <div className="relative flex-1 aspect-[3/4] bg-emerald-900 rounded-2xl border-4 border-slate-800 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-visible group/pitch">
+                        <div className="relative flex-1 aspect-[2/3] bg-emerald-900 rounded-2xl border-4 border-slate-800 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-visible group/pitch">
                             {/* Grass Pattern */}
                             <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 10%, rgba(255,255,255,0.05) 10%, rgba(255,255,255,0.05) 20%)' }} />
 
@@ -170,21 +172,11 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
                                     <>
                                         {/* Top Team */}
                                         <div className="flex-1 relative animate-in fade-in zoom-in-95 duration-300">
-                                            <div className="absolute top-0 left-0 flex items-center gap-2 z-10 transition-transform group-hover/pitch:scale-105 pointer-events-none">
-                                                <div className="px-2 py-1 rounded-br-xl bg-sky-950/90 backdrop-blur-md border border-sky-500/30 text-sky-400 text-[10px] font-black uppercase tracking-widest shadow-2xl">
-                                                    {team1Name} <span className="ml-1 text-white opacity-50">·</span> <span className="text-white ml-1">{celesteAvg}</span>
-                                                </div>
-                                            </div>
                                             <PositionGrid teamPlayers={celestePlayers} isTop={true} color="bg-sky-500" getOvr={getOvr} isSmall={true} />
                                         </div>
 
                                         {/* Bottom Team */}
                                         <div className="flex-1 relative border-t border-emerald-400/20 animate-in fade-in zoom-in-95 duration-300">
-                                            <div className="absolute bottom-0 right-0 flex items-center gap-2 z-10 transition-transform group-hover/pitch:scale-105 pointer-events-none">
-                                                <div className="px-2 py-1 rounded-tl-xl bg-blue-950/90 backdrop-blur-md border border-blue-500/30 text-blue-400 text-[10px] font-black uppercase tracking-widest shadow-2xl">
-                                                    <span className="text-white mr-1">{azulAvg}</span> <span className="mr-1 text-white opacity-50">·</span> {team2Name}
-                                                </div>
-                                            </div>
                                             <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isSmall={true} />
                                         </div>
                                     </>
@@ -192,22 +184,12 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
 
                                 {viewMode === 'team1' && (
                                     <div className="flex-1 relative animate-in fade-in slide-in-from-top-4 duration-500">
-                                        <div className="absolute top-0 right-0 flex items-center gap-3 z-10 pointer-events-none">
-                                            <div className="px-2.5 py-1.5 rounded-bl-2xl bg-sky-950/90 backdrop-blur-md border border-sky-500/50 text-sky-400 text-[10px] font-black uppercase tracking-widest shadow-2xl">
-                                                {team1Name} <span className="mx-1 text-white opacity-50">·</span> <span className="text-white">{celesteAvg}</span>
-                                            </div>
-                                        </div>
                                         <PositionGrid teamPlayers={celestePlayers} isTop={false} color="bg-sky-500" getOvr={getOvr} isFullHeight={true} />
                                     </div>
                                 )}
 
                                 {viewMode === 'team2' && (
                                     <div className="flex-1 relative animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                        <div className="absolute top-0 right-0 flex items-center gap-3 z-10 pointer-events-none">
-                                            <div className="px-2.5 py-1.5 rounded-bl-2xl bg-blue-950/90 backdrop-blur-md border border-blue-500/50 text-blue-400 text-[10px] font-black uppercase tracking-widest shadow-2xl">
-                                                {team2Name} <span className="mx-1 text-white opacity-50">·</span> <span className="text-white">{azulAvg}</span>
-                                            </div>
-                                        </div>
                                         <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isFullHeight={true} />
                                     </div>
                                 )}
@@ -344,7 +326,7 @@ function PositionGrid({ teamPlayers, isTop, color, getOvr, isSmall, isFullHeight
 
     return (
         <div className={cn(
-            "w-full flex flex-col items-center py-2 px-1",
+            "w-full flex flex-col items-center py-4 px-1",
             isFullHeight ? "h-full justify-between" : "h-full justify-around space-y-auto"
         )}>
             {rows.map((row, idx) => (
