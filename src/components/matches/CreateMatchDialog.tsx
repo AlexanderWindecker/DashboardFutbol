@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { createMatchAction } from '@/actions/matches';
 import { Button } from '@/components/ui/Button';
 import { X, Plus, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { Season } from '@/types';
 import { Trophy } from 'lucide-react';
 import { useAdmin } from '@/hooks/useAdmin';
