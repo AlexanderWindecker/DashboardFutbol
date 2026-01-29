@@ -14,7 +14,7 @@ export async function createPlayerAction(formData: FormData) {
         name,
         phone: phone || undefined,
         isActive: true,
-        skills: { ritmo: 50, tiros: 50, regates: 50, velocidad: 50, pases: 50, defensa: 50, fisico: 50 } // defaults
+        skills: { ritmo: 50, tiros: 50, regates: 50, velocidad: 50, pases: 50 } // defaults
     };
 
     await addPlayer(newPlayer);
