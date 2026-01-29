@@ -3,13 +3,19 @@
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Sidebar } from './Sidebar';
+import { useAdmin } from '@/hooks/useAdmin';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const { isAdmin } = useAdmin();
 
     return (
         <div className="flex min-h-screen bg-slate-950">
-            <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+            <Sidebar
+                isOpen={isSidebarOpen}
+                onClose={() => setIsSidebarOpen(false)}
+                isAdmin={isAdmin}
+            />
 
             <div className="flex-1 flex flex-col min-h-screen w-full lg:ml-64 transition-all duration-300">
                 {/* Mobile Navbar */}
@@ -22,7 +28,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     </button>
                     <div className="flex flex-col items-end">
                         <span className="text-sm font-bold bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
-                            Futbol Amateur
+                            {isAdmin ? '🛡️ Admin' : 'Futbol Amateur'}
                         </span>
                     </div>
                 </header>
