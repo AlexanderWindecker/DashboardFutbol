@@ -15,8 +15,7 @@ export function ParticipationTable({
     players: Player[];
     participations: PlayerStats[];
     matchId: string;
-    settings?: AppSettings;
-}) {
+    const { isAdmin } = useAdmin();
     const team1Name = settings?.team1Name || 'Celeste';
     const team2Name = settings?.team2Name || 'Azul';
     // Show players who are Confirmed OR Attended
@@ -40,12 +39,13 @@ export function ParticipationTable({
     };
 
     return (
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden mt-8">
-            <div className="p-4 border-b border-slate-800 bg-slate-950/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h3 className="font-semibold text-white">Detalle de Participación</h3>
-                    <p className="text-sm text-slate-400">Resultados, equipos y estadísticas individuales.</p>
-                </div>
+    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden mt-8">
+        <div className="p-4 border-b border-slate-800 bg-slate-950/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h3 className="font-semibold text-white">Detalle de Participación</h3>
+                <p className="text-sm text-slate-400">Resultados, equipos y estadísticas individuales.</p>
+            </div>
+            {isAdmin && (
                 <button
                     onClick={async () => {
                         const { generateRandomTeamsAction } = await import('@/actions/teams');
@@ -57,41 +57,45 @@ export function ParticipationTable({
                     <Users size={16} className="group-hover:rotate-12 transition-transform" />
                     Generar Equipos Aleatorios
                 </button>
-            </div>
-            <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                    <thead className="bg-slate-950 text-slate-400">
-                        <tr>
-                            <th className="p-3 text-left">Jugador</th>
-                            <th className="p-3 text-left">Equipo</th>
-                            <th className="p-3 text-left">Puesto</th>
-                            <th className="p-3 text-center">Goles</th>
-                            <th className="p-3 text-center">Calif.</th>
-                            <th className="p-3 text-center">Asistió</th>
-                            <th className="p-3 text-center">MVP Equipo</th>
-                            <th className="p-3 text-left">Notas</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-800">
-                        {matchPlayers.map((p) => (
-                            <tr key={p.playerId} className="hover:bg-slate-800/30">
-                                <td className="p-3 font-medium text-slate-200">{p.playerName}</td>
-                                <td className="p-3">
-                                    <div className="flex gap-1.5">
-                                        <button
-                                            onClick={() => handleUpdate(p.playerId, { team: 'Celeste' })}
-                                            className={cn("w-6 h-6 rounded border flex items-center justify-center transition-colors text-[10px] font-bold", p.team === 'Celeste' ? "bg-sky-500 text-white border-sky-400" : "border-slate-700 text-slate-600 hover:border-sky-500/50")}
-                                            title={`Mover a ${team1Name}`}
-                                        >
-                                            {team1Name.charAt(0)}
-                                        </button>
-                                        <button
-                                            onClick={() => handleUpdate(p.playerId, { team: 'Azul' })}
-                                            className={cn("w-6 h-6 rounded border flex items-center justify-center transition-colors text-[10px] font-bold", p.team === 'Azul' ? "bg-blue-600 text-white border-blue-500" : "border-slate-700 text-slate-600 hover:border-blue-600/50")}
-                                            title={`Mover a ${team2Name}`}
-                                        >
-                                            {team2Name.charAt(0)}
-                                        </button>
+            )}
+        </div>
+        <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+                <thead className="bg-slate-950 text-slate-400">
+                    <tr>
+                        <th className="p-3 text-left">Jugador</th>
+                        <th className="p-3 text-left">Equipo</th>
+                        <th className="p-3 text-left">Puesto</th>
+                        <th className="p-3 text-center">Goles</th>
+                        <th className="p-3 text-center">Calif.</th>
+                        <th className="p-3 text-center">Asistió</th>
+                        <th className="p-3 text-center">MVP Equipo</th>
+                        <th className="p-3 text-left">Notas</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                    {matchPlayers.map((p) => (
+                        <tr key={p.playerId} className="hover:bg-slate-800/30">
+                            <td className="p-3 font-medium text-slate-200">{p.playerName}</td>
+                            <td className="p-3">
+                                <div className="flex gap-1.5">
+                                    <button
+                                        disabled={!isAdmin}
+                                        onClick={() => handleUpdate(p.playerId, { team: 'Celeste' })}
+                                        className={cn("w-6 h-6 rounded border flex items-center justify-center transition-colors text-[10px] font-bold", p.team === 'Celeste' ? "bg-sky-500 text-white border-sky-400" : "border-slate-700 text-slate-600 hover:border-sky-500/50", !isAdmin && "cursor-default")}
+                                        title={isAdmin ? `Mover a ${team1Name}` : undefined}
+                                    >
+                                        {team1Name.charAt(0)}
+                                    </button>
+                                    <button
+                                        disabled={!isAdmin}
+                                        onClick={() => handleUpdate(p.playerId, { team: 'Azul' })}
+                                        className={cn("w-6 h-6 rounded border flex items-center justify-center transition-colors text-[10px] font-bold", p.team === 'Azul' ? "bg-blue-600 text-white border-blue-500" : "border-slate-700 text-slate-600 hover:border-blue-600/50", !isAdmin && "cursor-default")}
+                                        title={isAdmin ? `Mover a ${team2Name}` : undefined}
+                                    >
+                                        {team2Name.charAt(0)}
+                                    </button>
+                                    {isAdmin && (
                                         <button
                                             onClick={() => handleUpdate(p.playerId, { team: null })}
                                             className={cn("w-6 h-6 rounded border flex items-center justify-center transition-colors text-slate-600 hover:text-red-400 border-slate-700 hover:border-red-400/50", !p.team && "bg-slate-700 text-slate-300")}
@@ -99,99 +103,131 @@ export function ParticipationTable({
                                         >
                                             <X size={12} />
                                         </button>
-                                    </div>
-                                </td>
-                                <td className="p-3">
-                                    <select
-                                        value={p.tacticalRole || ''}
-                                        onChange={(e) => handleUpdate(p.playerId, { tacticalRole: e.target.value as any || null })}
-                                        className="bg-slate-800 border-none text-slate-300 text-[10px] font-bold py-1 px-2 rounded cursor-pointer hover:bg-slate-750 transition-colors uppercase outline-none"
-                                    >
-                                        <option value="">Auto</option>
-                                        <option value="Arquero">ARQ</option>
-                                        <option value="Defensor">DEF</option>
-                                        <option value="Mediocampista">MED</option>
-                                        <option value="Delantero">DEL</option>
-                                        <option value="Suplente">SUP</option>
-                                    </select>
-                                </td>
-                                <td className="p-3 text-center">
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        value={p.goals || 0}
-                                        onChange={(e) => {
-                                            const goals = parseInt(e.target.value) || 0;
-                                            const updates: Partial<PlayerStats> = { goals };
-                                            if (goals > 0 && p.status === 'Confirmed') {
-                                                updates.status = 'Attended';
-                                            }
-                                            handleUpdate(p.playerId, updates);
-                                        }}
-                                        className="w-12 bg-slate-800 border-none text-slate-300 text-center text-xs font-bold py-1 rounded outline-none focus:ring-1 focus:ring-indigo-500"
-                                    />
-                                </td>
-                                <td className="p-3 text-center">
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="10"
-                                        step="0.1"
-                                        value={p.rating ?? ''}
-                                        onChange={(e) => handleUpdate(p.playerId, { rating: e.target.value === '' ? undefined : parseFloat(e.target.value) })}
-                                        className="w-12 bg-slate-800 border-none text-indigo-400 text-center text-xs font-bold py-1 rounded outline-none focus:ring-1 focus:ring-indigo-500"
-                                        placeholder="-"
-                                    />
-                                </td>
-                                <td className="p-3 text-center">
-                                    <div className="flex justify-center gap-1">
-                                        <button
-                                            onClick={() => handleUpdate(p.playerId, { status: 'Confirmed' })}
-                                            className={cn(
-                                                "px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-colors border",
-                                                p.status === 'Confirmed'
-                                                    ? "bg-amber-500/20 text-amber-500 border-amber-500/50"
-                                                    : "bg-slate-800 text-slate-500 border-slate-700 hover:border-amber-500/30"
-                                            )}
-                                        >
-                                            Confirmó
-                                        </button>
-                                        <button
-                                            onClick={() => handleUpdate(p.playerId, { status: 'Attended' })}
-                                            className={cn(
-                                                "px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-colors border",
-                                                p.status === 'Attended'
-                                                    ? "bg-emerald-500/20 text-emerald-500 border-emerald-500/50"
-                                                    : "bg-slate-800 text-slate-500 border-slate-700 hover:border-emerald-500/30"
-                                            )}
-                                        >
-                                            Asistió
-                                        </button>
-                                    </div>
-                                </td>
-                                <td className="p-3 text-center">
+                                    )}
+                                </div>
+                            </td>
+                            <td className="p-3">
+                                <select
+                                    disabled={!isAdmin}
+                                    value={p.tacticalRole || ''}
+                                    onChange={(e) => handleUpdate(p.playerId, { tacticalRole: e.target.value as any || null })}
+                                    className={cn(
+                                        "bg-slate-800 border-none text-slate-300 text-[10px] font-bold py-1 px-2 rounded hover:bg-slate-750 transition-colors uppercase outline-none",
+                                        isAdmin ? "cursor-pointer" : "cursor-default opacity-80"
+                                    )}
+                                >
+                                    <option value="">Auto</option>
+                                    <option value="Arquero">ARQ</option>
+                                    <option value="Defensor">DEF</option>
+                                    <option value="Mediocampista">MED</option>
+                                    <option value="Delantero">DEL</option>
+                                    <option value="Suplente">SUP</option>
+                                </select>
+                            </td>
+                            <td className="p-3 text-center">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    readOnly={!isAdmin}
+                                    value={p.goals || 0}
+                                    onChange={(e) => {
+                                        if (!isAdmin) return;
+                                        const goals = parseInt(e.target.value) || 0;
+                                        const updates: Partial<PlayerStats> = { goals };
+                                        if (goals > 0 && p.status === 'Confirmed') {
+                                            updates.status = 'Attended';
+                                        }
+                                        handleUpdate(p.playerId, updates);
+                                    }}
+                                    className={cn(
+                                        "w-12 bg-slate-800 border-none text-slate-300 text-center text-xs font-bold py-1 rounded outline-none",
+                                        isAdmin ? "focus:ring-1 focus:ring-indigo-500" : "opacity-80"
+                                    )}
+                                />
+                            </td>
+                            <td className="p-3 text-center">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max="10"
+                                    step="0.1"
+                                    readOnly={!isAdmin}
+                                    value={p.rating ?? ''}
+                                    onChange={(e) => {
+                                        if (!isAdmin) return;
+                                        handleUpdate(p.playerId, { rating: e.target.value === '' ? undefined : parseFloat(e.target.value) });
+                                    }}
+                                    className={cn(
+                                        "w-12 bg-slate-800 border-none text-indigo-400 text-center text-xs font-bold py-1 rounded outline-none",
+                                        isAdmin ? "focus:ring-1 focus:ring-indigo-500" : "opacity-80"
+                                    )}
+                                    placeholder="-"
+                                />
+                            </td>
+                            <td className="p-3 text-center">
+                                <div className="flex justify-center gap-1">
                                     <button
-                                        onClick={() => {
-                                            const isMvp = !p.isMvp;
-                                            const updates: Partial<PlayerStats> = { isMvp };
-                                            if (isMvp && p.status === 'Confirmed') {
-                                                updates.status = 'Attended';
-                                            }
-                                            handleUpdate(p.playerId, updates);
-                                        }}
-                                        className={cn("transition-colors", p.isMvp ? "text-amber-400" : "text-slate-700 hover:text-amber-400/50")}
+                                        disabled={!isAdmin}
+                                        onClick={() => handleUpdate(p.playerId, { status: 'Confirmed' })}
+                                        className={cn(
+                                            "px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-colors border",
+                                            p.status === 'Confirmed'
+                                                ? "bg-amber-500/20 text-amber-500 border-amber-500/50"
+                                                : "bg-slate-800 text-slate-500 border-slate-700",
+                                            isAdmin && "hover:border-amber-500/30",
+                                            !isAdmin && "cursor-default"
+                                        )}
                                     >
-                                        <Star size={18} fill={p.isMvp ? "currentColor" : "none"} />
+                                        Confirmó
                                     </button>
-                                </td>
-                                <td className="p-3">
-                                    <div className="flex items-center gap-4">
-                                        <input
-                                            className="bg-transparent border-b border-transparent hover:border-slate-700 focus:border-indigo-500 outline-none text-slate-300 flex-1"
-                                            value={p.notes ?? ''}
-                                            onChange={(e) => handleUpdate(p.playerId, { notes: e.target.value })}
-                                            placeholder="..."
-                                        />
+                                    <button
+                                        disabled={!isAdmin}
+                                        onClick={() => handleUpdate(p.playerId, { status: 'Attended' })}
+                                        className={cn(
+                                            "px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-colors border",
+                                            p.status === 'Attended'
+                                                ? "bg-emerald-500/20 text-emerald-500 border-emerald-500/50"
+                                                : "bg-slate-800 text-slate-500 border-slate-700",
+                                            isAdmin && "hover:border-emerald-500/30",
+                                            !isAdmin && "cursor-default"
+                                        )}
+                                    >
+                                        Asistió
+                                    </button>
+                                </div>
+                            </td>
+                            <td className="p-3 text-center">
+                                <button
+                                    disabled={!isAdmin}
+                                    onClick={() => {
+                                        const isMvp = !p.isMvp;
+                                        const updates: Partial<PlayerStats> = { isMvp };
+                                        if (isMvp && p.status === 'Confirmed') {
+                                            updates.status = 'Attended';
+                                        }
+                                        handleUpdate(p.playerId, updates);
+                                    }}
+                                    className={cn("transition-colors", p.isMvp ? "text-amber-400" : "text-slate-700", isAdmin && "hover:text-amber-400/50", !isAdmin && "cursor-default")}
+                                >
+                                    <Star size={18} fill={p.isMvp ? "currentColor" : "none"} />
+                                </button>
+                            </td>
+                            <td className="p-3">
+                                <div className="flex items-center gap-4">
+                                    <input
+                                        readOnly={!isAdmin}
+                                        className={cn(
+                                            "bg-transparent border-b border-transparent outline-none text-slate-300 flex-1",
+                                            isAdmin ? "hover:border-slate-700 focus:border-indigo-500" : "opacity-80"
+                                        )}
+                                        value={p.notes ?? ''}
+                                        onChange={(e) => {
+                                            if (!isAdmin) return;
+                                            handleUpdate(p.playerId, { notes: e.target.value });
+                                        }}
+                                        placeholder={isAdmin ? "..." : ""}
+                                    />
+                                    {isAdmin && (
                                         <button
                                             onClick={async () => {
                                                 if (confirm(`¿Eliminar participación de ${p.playerName}?`)) {
@@ -204,16 +240,17 @@ export function ParticipationTable({
                                         >
                                             <Trash2 size={16} />
                                         </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                        {matchPlayers.length === 0 && (
-                            <tr><td colSpan={8} className="p-4 text-center text-slate-500">Sin jugadores presentes asignados.</td></tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                                    )}
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                    {matchPlayers.length === 0 && (
+                        <tr><td colSpan={8} className="p-4 text-center text-slate-500">Sin jugadores presentes asignados.</td></tr>
+                    )}
+                </tbody>
+            </table>
         </div>
-    );
+    </div>
+);
 }
