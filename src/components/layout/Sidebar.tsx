@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, Users, Trophy, MoreHorizontal, FileText, Settings as SettingsIcon, X, Menu } from 'lucide-react';
+import { Home, Calendar, Users, Trophy, MoreHorizontal, FileText, Settings as SettingsIcon, X, Menu, LogOut } from 'lucide-react';
 import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 import { SettingsModal } from '../SettingsModal';
@@ -119,7 +119,7 @@ export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClos
                             </button>
                         </div>
 
-                        <div className="p-4 border-t border-slate-800">
+                        <div className="p-4 border-t border-slate-800 space-y-1">
                             <div className="flex items-center gap-3 px-4 py-3 text-slate-400">
                                 <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
                                     <span className="text-xs font-bold text-white uppercase">AD</span>
@@ -129,6 +129,16 @@ export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClos
                                     <p className="text-[10px] text-slate-500 uppercase tracking-wider">Dashboard Admin</p>
                                 </div>
                             </div>
+                            <button
+                                onClick={() => {
+                                    localStorage.removeItem('fb_admin_key');
+                                    window.location.reload();
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-medium text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors"
+                            >
+                                <LogOut size={16} />
+                                Cerrar Sesión Admin
+                            </button>
                         </div>
                     </>
                 )}
