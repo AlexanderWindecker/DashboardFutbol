@@ -151,7 +151,10 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
                             </div>
                         )}
 
-                        <div className="relative flex-1 aspect-[2/3] bg-emerald-900 rounded-2xl border-4 border-slate-800 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-visible group/pitch">
+                        <div className={cn(
+                            "relative flex-1 bg-emerald-900 rounded-2xl border-4 border-slate-800 shadow-[0_0_50px_rgba(0,0,0,0.5)] overflow-visible group/pitch",
+                            viewMode === 'versus' ? "aspect-[1/2] sm:aspect-[2/3]" : "aspect-[3/4]"
+                        )}>
                             {/* Grass Pattern */}
                             <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 10%, rgba(255,255,255,0.05) 10%, rgba(255,255,255,0.05) 20%)' }} />
 
@@ -326,8 +329,8 @@ function PositionGrid({ teamPlayers, isTop, color, getOvr, isSmall, isFullHeight
 
     return (
         <div className={cn(
-            "w-full flex flex-col items-center py-4 px-1",
-            isFullHeight ? "h-full justify-between" : "h-full justify-around space-y-auto"
+            "w-full flex flex-col items-center px-1",
+            isFullHeight ? "h-full justify-between py-6" : "h-full justify-around py-6"
         )}>
             {rows.map((row, idx) => (
                 <div key={idx} className={cn(
@@ -339,7 +342,7 @@ function PositionGrid({ teamPlayers, isTop, color, getOvr, isSmall, isFullHeight
                             <div className={cn(
                                 "rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg transition-all duration-300 group-hover:scale-110",
                                 color,
-                                isSmall ? "w-8 h-8 md:w-10 md:h-10" : "w-11 h-11 md:w-14 md:h-14 bg-gradient-to-br from-white/10 to-transparent"
+                                isSmall ? "w-7 h-7 md:w-9 md:h-9" : "w-11 h-11 md:w-14 md:h-14 bg-gradient-to-br from-white/10 to-transparent"
                             )}>
                                 <span className={cn(
                                     "font-black text-white drop-shadow-sm",
