@@ -4,7 +4,8 @@ import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useDraggable, us
 import { Player, PlayerStats, ParticipationStatus, AppSettings } from '@/types';
 import { updateParticipationAction, deleteParticipationAction } from '@/actions/matches';
 import { cn } from '@/lib/utils';
-import { Trash2, X } from 'lucide-react';
+import { Trash2, X, MoreVertical, Check, UserMinus, ShieldAlert, History } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 
 // Types helpers
 type KanbanColumn = {
@@ -46,7 +47,7 @@ function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin }: {
                 isDragging && "opacity-50 ring-2 ring-indigo-500 z-50 pointer-events-none"
             )}
         >
-            <div className="flex justify-between items-start">
+            <div className="flex justify-between items-center gap-2">
                 <div {...listeners} {...attributes} className="flex-1 cursor-grab active:cursor-grabbing">
                     <p className="text-sm font-medium text-slate-200">{player.name}</p>
                     {stats?.team && (stats.status === 'Confirmed' || stats.status === 'Attended') && (
@@ -59,27 +60,66 @@ function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin }: {
                     )}
                 </div>
 
-                {isAdmin && (
-                    <button
-                        onClick={async (e) => {
-                            e.stopPropagation();
-                            if (confirm(`¿Quitar a ${player.name} de este partido?`)) {
-                                const matchId = stats?.matchId;
-                                if (matchId) await deleteParticipationAction(matchId, player.id);
-                            }
-                        }}
-                        className="p-1 text-slate-500 hover:text-red-400 opacity-0 group-hover/card:opacity-100 transition-opacity"
-                        title="Quitar jugador"
-                    >
-                        <X size={14} />
-                    </button>
-                )}
+                <div className="flex items-center gap-1">
+                    {isAdmin && (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="p-1.5 text-slate-500 hover:text-white hover:bg-slate-700 rounded-md transition-colors" title="Acciones rápidas">
+                                    <MoreVertical size={16} />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56 bg-slate-900 border-slate-700">
+                                <DropdownMenuItem
+                                    className="text-emerald-400 focus:text-emerald-300 focus:bg-emerald-500/10 cursor-pointer"
+                                    onClick={() => stats && updateParticipationAction(stats.matchId, player.id, { status: 'Attended' })}
+                                >
+                                    <Check className="mr-2 h-4 w-4" />
+                                    <span>Marcar como Asistió</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="text-amber-400 focus:text-amber-300 focus:bg-amber-500/10 cursor-pointer"
+                                    onClick={() => stats && updateParticipationAction(stats.matchId, player.id, { status: 'Confirmed' })}
+                                >
+                                    <History className="mr-2 h-4 w-4" />
+                                    <span>Mover a Pendiente</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="text-rose-400 focus:text-rose-300 focus:bg-rose-500/10 cursor-pointer"
+                                    onClick={() => stats && updateParticipationAction(stats.matchId, player.id, { status: 'Declined' })}
+                                >
+                                    <X className="mr-2 h-4 w-4" />
+                                    <span>Mover a No Viene</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="text-orange-400 focus:text-orange-300 focus:bg-orange-500/10 cursor-pointer"
+                                    onClick={() => stats && updateParticipationAction(stats.matchId, player.id, { status: 'LateCancel' })}
+                                >
+                                    <ShieldAlert className="mr-2 h-4 w-4" />
+                                    <span>Baja Tardía</span>
+                                </DropdownMenuItem>
+                                <div className="h-px bg-slate-700 my-1" />
+                                <DropdownMenuItem
+                                    className="text-slate-400 focus:text-red-400 focus:bg-red-500/10 cursor-pointer"
+                                    onClick={async () => {
+                                        if (confirm(`¿Quitar a ${player.name} de este partido?`)) {
+                                            const matchId = stats?.matchId;
+                                            if (matchId) await deleteParticipationAction(matchId, player.id);
+                                        }
+                                    }}
+                                >
+                                    <UserMinus className="mr-2 h-4 w-4" />
+                                    <span>Quitar del Partido</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
+                </div>
             </div>
         </div>
     );
 }
 
-function DroppableColumn({ id, title, players, participations, team1Name, team2Name, isAdmin }: {
+function DroppableColumn({ id, title, players, participations, team1Name, team2Name, isAdmin, isActiveMobile }: {
     id: ParticipationStatus;
     title: string;
     players: Player[];
@@ -87,29 +127,13 @@ function DroppableColumn({ id, title, players, participations, team1Name, team2N
     team1Name: string;
     team2Name: string;
     isAdmin: boolean;
+    isActiveMobile: boolean;
 }) {
     const { setNodeRef, isOver } = useDroppable({ id });
 
-    // Filter players that are in this column
-    // Players in this column are those who have a participation record with this status
-    // OR if this is the DEFAULT column (maybe 'Absent' or a 'Pool'?)
-    // For simplicity, let's assume all players start in a 'Pool' or 'Absent' unless they have a record.
-    // Actually, let's define that players without record are NOT in the kanban? 
-    // No, user wants to manage participation. So we need a pool of "Available Players" vs "In Match".
-    // But the request says: "mover la participación... (confirmado, asistió, baja tardía)".
-    // So maybe a list of ALL players is needed to drag them IN?
-    // Let's assume we show players who have *some* participation record in this match.
-    // Wait, how do we add a player to the match initially? "Pool" column?
-    // Let's add a "Pool" or assume "Absent" is the default for everyone not confirmed?
-
-    // Let's simplify: Show only players that have a participation entry for this match.
-    // If we want to add players, we might need an 'Add Player' button that creates a 'Confirmed' entry.
-
-    // However, dragging from Confirmed -> Attended is the main goal.
-
     const columnPlayers = players.filter(player => {
         const p = participations.find(stats => stats.playerId === player.id);
-        if (!p) return false; // Not in this match yet
+        if (!p) return false;
         return p.status === id;
     });
 
@@ -117,16 +141,22 @@ function DroppableColumn({ id, title, players, participations, team1Name, team2N
         <div
             ref={setNodeRef}
             className={cn(
-                "bg-slate-900/50 rounded-xl p-4 min-h-[400px] border-2 border-transparent transition-colors snap-center",
-                "w-[85vw] sm:w-auto sm:flex-1 sm:min-w-[300px]",
+                "bg-slate-900/50 rounded-xl p-4 min-h-[400px] border-2 border-transparent transition-all duration-300",
+                "w-full sm:flex-1 sm:min-w-[280px]",
+                isActiveMobile ? "block" : "hidden sm:block",
                 isOver && "border-indigo-500/30 bg-indigo-500/5"
             )}
         >
             <h3 className="text-sm font-semibold text-slate-400 mb-4 flex items-center justify-between">
-                {title}
-                <span className="bg-slate-800 text-slate-500 px-2 py-0.5 rounded text-xs">{columnPlayers.length}</span>
+                <span className="flex items-center gap-2">
+                    {title}
+                    {id === 'Attended' && <Check size={14} className="text-emerald-500" />}
+                </span>
+                <span className="bg-slate-800 text-slate-500 px-2 py-0.5 rounded text-xs leading-none flex items-center justify-center min-w-[20px]">
+                    {columnPlayers.length}
+                </span>
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
                 {columnPlayers.map(player => (
                     <DraggablePlayer
                         key={player.id}
@@ -138,8 +168,8 @@ function DroppableColumn({ id, title, players, participations, team1Name, team2N
                     />
                 ))}
                 {columnPlayers.length === 0 && (
-                    <div className="h-20 border-dashed border-2 border-slate-800 rounded-lg flex items-center justify-center text-slate-600 text-xs text-center p-2">
-                        {isAdmin ? 'Arrastra jugadores aquí' : 'Sin jugadores'}
+                    <div className="h-32 border-dashed border-2 border-slate-800/50 rounded-lg flex items-center justify-center text-slate-600 text-xs text-center p-4">
+                        {isAdmin ? 'Arrastra jugadores aquí para cambiar su estado' : 'Sin jugadores en esta categoría'}
                     </div>
                 )}
             </div>
@@ -159,6 +189,7 @@ export function KanbanBoard({ matchId, players, participations, settings }: {
 }) {
     const [activeId, setActiveId] = useState<string | null>(null);
     const [isMounted, setIsMounted] = useState(false);
+    const [activeTab, setActiveTab] = useState<ParticipationStatus>('Confirmed');
     const { isAdmin } = useAdmin();
     const router = useRouter();
 
@@ -201,24 +232,61 @@ export function KanbanBoard({ matchId, players, participations, settings }: {
 
     return (
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <div className="flex gap-4 overflow-x-auto pb-6 snap-x snap-mandatory scrollbar-hide">
-                {COLUMNS.map(col => (
-                    <DroppableColumn
-                        key={col.id}
-                        id={col.id}
-                        title={col.title}
-                        players={players}
-                        participations={participations}
-                        team1Name={team1Name}
-                        team2Name={team2Name}
-                        isAdmin={isAdmin}
-                    />
-                ))}
+            <div className="space-y-4">
+                {/* Mobile Tabs */}
+                <div className="sm:hidden flex bg-slate-900/80 backdrop-blur-md p-1 rounded-xl border border-slate-800 overflow-x-auto scrollbar-hide sticky top-0 z-20">
+                    {COLUMNS.map(col => {
+                        const count = players.filter(player => {
+                            const p = participations.find(stats => stats.playerId === player.id);
+                            return p?.status === col.id;
+                        }).length;
+
+                        return (
+                            <button
+                                key={col.id}
+                                onClick={() => setActiveTab(col.id)}
+                                className={cn(
+                                    "flex-1 px-4 py-2.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex items-center justify-center gap-2",
+                                    activeTab === col.id
+                                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 scale-95"
+                                        : "text-slate-500 hover:text-slate-300"
+                                )}
+                            >
+                                {col.title}
+                                <span className={cn(
+                                    "px-1.5 py-0.5 rounded-md text-[10px]",
+                                    activeTab === col.id ? "bg-white/20 text-white" : "bg-slate-800 text-slate-600"
+                                )}>
+                                    {count}
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* Columns Grid */}
+                <div className="flex gap-4 overflow-x-auto pb-6 sm:overflow-visible scrollbar-hide">
+                    {COLUMNS.map(col => (
+                        <DroppableColumn
+                            key={col.id}
+                            id={col.id}
+                            title={col.title}
+                            players={players}
+                            participations={participations}
+                            team1Name={team1Name}
+                            team2Name={team2Name}
+                            isAdmin={isAdmin}
+                            isActiveMobile={activeTab === col.id}
+                        />
+                    ))}
+                </div>
             </div>
             <DragOverlay>
                 {activeId ? (
-                    <div className="bg-slate-700 p-3 rounded-lg shadow-xl opacity-90 border border-indigo-500 transform rotate-3">
-                        {players.find(p => p.id === activeId)?.name}
+                    <div className="bg-slate-700 p-3 rounded-lg shadow-2xl opacity-90 border border-indigo-500 transform rotate-3 min-w-[200px]">
+                        <p className="text-sm font-bold text-white">
+                            {players.find(p => p.id === activeId)?.name}
+                        </p>
                     </div>
                 ) : null}
             </DragOverlay>
