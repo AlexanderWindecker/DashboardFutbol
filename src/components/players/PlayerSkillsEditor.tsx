@@ -53,8 +53,6 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
         regates: 50,
         velocidad: 50,
         pases: 50,
-        defensa: 50,
-        fisico: 50,
         // GK defaults
         reflejos: 50,
         posicionamiento: 50,
@@ -96,10 +94,10 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
         { subject: 'Seguridad', A: skills.seguridad || 50, fullMark: 100 },
     ] : [
         { subject: 'Ritmo', A: skills.ritmo, fullMark: 100 },
+        { subject: 'Veloc.', A: skills.velocidad, fullMark: 100 },
         { subject: 'Tiros', A: skills.tiros, fullMark: 100 },
-        { subject: 'Regates', A: skills.regates, fullMark: 100 },
-        { subject: 'Velocidad', A: skills.velocidad, fullMark: 100 },
         { subject: 'Pases', A: skills.pases, fullMark: 100 },
+        { subject: 'Regates', A: skills.regates, fullMark: 100 },
     ];
 
     async function handleSave() {
@@ -133,7 +131,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
 
     const average = isPureGoalkeeper
         ? Math.round(((skills.reflejos || 50) + (skills.posicionamiento || 50) + (skills.estirada || 50) + (skills.saque || 50) + (skills.seguridad || 50)) / 5)
-        : Math.round((skills.ritmo + skills.tiros + skills.regates + skills.velocidad + skills.pases + (skills.defensa || 50) + (skills.fisico || 50)) / 7);
+        : Math.round((skills.ritmo + skills.tiros + skills.regates + skills.velocidad + skills.pases) / 5);
 
     const getRatingColor = (score: number) => {
         if (score >= 90) return "bg-violet-600 border-violet-400 shadow-violet-500/50 shadow-lg"; // Elite
@@ -373,12 +371,12 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                         ) : (
                             <>
                                 <div className="text-xs font-bold text-slate-500 uppercase mb-2">Atributos de Campo</div>
-                                {['ritmo', 'tiros', 'pases', 'regates', 'defensa', 'fisico', 'velocidad'].map((key) => {
+                                {['ritmo', 'velocidad', 'tiros', 'pases', 'regates'].map((key) => {
                                     const k = key as keyof typeof skills;
                                     return (
                                         <div key={key}>
                                             <div className="flex justify-between text-xs mb-1">
-                                                <span className="capitalize text-slate-400">{key}</span>
+                                                <span className="capitalize text-slate-400">{key === 'ritmo' ? 'Ritmo (Estado Fisico)' : (key === 'velocidad' ? 'Velocidad Pura' : key)}</span>
                                                 <span className="text-sky-400 font-mono">{skills[k]}</span>
                                             </div>
                                             <input

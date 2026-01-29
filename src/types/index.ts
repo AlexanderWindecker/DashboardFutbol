@@ -41,8 +41,6 @@ export interface Player {
         tiros: number;
         pases: number;
         regates: number;
-        defensa: number;
-        fisico: number;
         velocidad: number;
         // GK Specific
         reflejos?: number;
