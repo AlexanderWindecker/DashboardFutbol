@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { EditablePlayerName } from '@/components/players/EditablePlayerName';
 import { togglePlayerStatusAction, createPlayerAction } from '@/actions/players';
 import Link from 'next/link';
+import { useAdmin } from '@/hooks/useAdmin';
 
 interface PlayersListViewProps {
     players: Player[];
@@ -16,6 +17,7 @@ interface PlayersListViewProps {
 
 export function PlayersListView({ players }: PlayersListViewProps) {
     const [privacyMode, setPrivacyMode] = useState(false);
+    const { isAdmin } = useAdmin();
 
     // Sort logic
     const sortedPlayers = [...players].sort((a, b) => {
@@ -62,24 +64,25 @@ export function PlayersListView({ players }: PlayersListViewProps) {
                             Comparar
                         </Button>
                     </Link>
-                    {/* Form to add player */}
-                    <form action={createPlayerAction} className="flex gap-2">
-                        <input
-                            name="name"
-                            placeholder="Nombre"
-                            required
-                            className="h-10 px-3 rounded-lg bg-slate-950 border border-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 w-32 md:w-48"
-                        />
-                        <input
-                            name="phone"
-                            placeholder="Teléfono"
-                            className="h-10 px-3 rounded-lg bg-slate-950 border border-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 w-32 md:w-32"
-                        />
-                        <Button type="submit">
-                            <UserPlus size={18} className="mr-2" />
-                            Agregar
-                        </Button>
-                    </form>
+                    {isAdmin && (
+                        <form action={createPlayerAction} className="flex gap-2">
+                            <input
+                                name="name"
+                                placeholder="Nombre"
+                                required
+                                className="h-10 px-3 rounded-lg bg-slate-950 border border-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 w-32 md:w-48"
+                            />
+                            <input
+                                name="phone"
+                                placeholder="Teléfono"
+                                className="h-10 px-3 rounded-lg bg-slate-950 border border-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 w-32 md:w-32"
+                            />
+                            <Button type="submit">
+                                <UserPlus size={18} className="mr-2" />
+                                Agregar
+                            </Button>
+                        </form>
+                    )}
                 </div>
             </div>
 
@@ -106,8 +109,8 @@ export function PlayersListView({ players }: PlayersListViewProps) {
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        {/* If privacy mode is on, just show text, else show editable */}
-                                        {privacyMode ? (
+                                        {/* If privacy mode is on, just show text, else show editable if admin */}
+                                        {privacyMode || !isAdmin ? (
                                             <span className="text-white font-medium">{displayName}</span>
                                         ) : (
                                             <EditablePlayerName id={player.id} name={player.name} isActive={isActive} />
@@ -132,14 +135,16 @@ export function PlayersListView({ players }: PlayersListViewProps) {
                                 </div>
                             </div>
 
-                            <form action={togglePlayerStatusAction.bind(null, player.id)}>
-                                <button
-                                    className="p-2 rounded-full text-slate-600 hover:bg-slate-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
-                                    title={isActive ? "Desactivar" : "Reactivar"}
-                                >
-                                    {isActive ? <UserX size={18} /> : <UserCheck size={18} className="text-emerald-400" />}
-                                </button>
-                            </form>
+                            {isAdmin && (
+                                <form action={togglePlayerStatusAction.bind(null, player.id)}>
+                                    <button
+                                        className="p-2 rounded-full text-slate-600 hover:bg-slate-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                                        title={isActive ? "Desactivar" : "Reactivar"}
+                                    >
+                                        {isActive ? <UserX size={18} /> : <UserCheck size={18} className="text-emerald-400" />}
+                                    </button>
+                                </form>
+                            )}
                         </div>
                     )
                 })}

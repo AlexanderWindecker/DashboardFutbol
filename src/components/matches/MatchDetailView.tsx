@@ -14,6 +14,7 @@ import { NotifyTelegram } from '@/components/matches/NotifyTelegram';
 import { MatchPitch } from '@/components/matches/MatchPitch';
 import { KanbanBoard } from '@/components/matches/KanbanBoard';
 import { Eye, EyeOff } from 'lucide-react';
+import { useAdmin } from '@/hooks/useAdmin';
 
 interface MatchDetailViewProps {
     match: Match;
@@ -25,6 +26,7 @@ interface MatchDetailViewProps {
 
 export function MatchDetailView({ match, players, participations, settings, seasons }: MatchDetailViewProps) {
     const [privacyMode, setPrivacyMode] = useState(false);
+    const { isAdmin } = useAdmin();
 
     // Mask players if in Privacy Mode
     const displayedPlayers = privacyMode
@@ -51,7 +53,7 @@ export function MatchDetailView({ match, players, participations, settings, seas
                             })()}
                         </h1>
                         <Badge variant="outline" className="text-lg px-3 py-1">{match.mode}</Badge>
-                        <EditMatchDialog match={match} seasons={seasons} />
+                        {isAdmin && <EditMatchDialog match={match} seasons={seasons} />}
 
                         {/* Privacy Toggle */}
                         <button
@@ -68,7 +70,7 @@ export function MatchDetailView({ match, players, participations, settings, seas
                 </div>
 
                 <div className="flex flex-col items-end gap-3">
-                    <MatchResultSelector matchId={match.id} currentResult={match.result} settings={settings} />
+                    {isAdmin && <MatchResultSelector matchId={match.id} currentResult={match.result} settings={settings} />}
 
                     {/* Hide Notifications in Privacy Mode */}
                     {!privacyMode && (
@@ -87,7 +89,7 @@ export function MatchDetailView({ match, players, participations, settings, seas
                         <h2 className="text-xl font-semibold text-white">Gestión de Asistencia</h2>
                         <p className="text-sm text-slate-400">Arrastra a los jugadores para actualizar su estado.</p>
                     </div>
-                    <AddPlayerToMatch matchId={match.id} availablePlayers={displayedPlayers} currentParticipations={participations} />
+                    {isAdmin && <AddPlayerToMatch matchId={match.id} availablePlayers={displayedPlayers} currentParticipations={participations} />}
                 </div>
 
                 <KanbanBoard matchId={match.id} players={displayedPlayers} participations={participations} settings={settings} />

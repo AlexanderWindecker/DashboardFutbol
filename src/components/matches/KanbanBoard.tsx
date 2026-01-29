@@ -20,15 +20,17 @@ const COLUMNS: KanbanColumn[] = [
     { id: 'Absent', title: 'Ausentes / Sin Aviso' },
 ];
 
-function DraggablePlayer({ player, stats, team1Name, team2Name }: {
+function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin }: {
     player: Player;
     stats?: PlayerStats;
     team1Name: string;
     team2Name: string;
+    isAdmin: boolean;
 }) {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: player.id,
         data: { player, stats },
+        disabled: !isAdmin,
     });
 
     const style = transform ? {
@@ -57,33 +59,34 @@ function DraggablePlayer({ player, stats, team1Name, team2Name }: {
                     )}
                 </div>
 
-                <button
-                    onClick={async (e) => {
-                        e.stopPropagation();
-                        if (confirm(`¿Quitar a ${player.name} de este partido?`)) {
-                            // We need matchId here, let's pass it or get it from context if we had one.
-                            // Since it's a small app, let's just pass it to the component.
-                            const matchId = stats?.matchId;
-                            if (matchId) await deleteParticipationAction(matchId, player.id);
-                        }
-                    }}
-                    className="p-1 text-slate-500 hover:text-red-400 opacity-0 group-hover/card:opacity-100 transition-opacity"
-                    title="Quitar jugador"
-                >
-                    <X size={14} />
-                </button>
+                {isAdmin && (
+                    <button
+                        onClick={async (e) => {
+                            e.stopPropagation();
+                            if (confirm(`¿Quitar a ${player.name} de este partido?`)) {
+                                const matchId = stats?.matchId;
+                                if (matchId) await deleteParticipationAction(matchId, player.id);
+                            }
+                        }}
+                        className="p-1 text-slate-500 hover:text-red-400 opacity-0 group-hover/card:opacity-100 transition-opacity"
+                        title="Quitar jugador"
+                    >
+                        <X size={14} />
+                    </button>
+                )}
             </div>
         </div>
     );
 }
 
-function DroppableColumn({ id, title, players, participations, team1Name, team2Name }: {
+function DroppableColumn({ id, title, players, participations, team1Name, team2Name, isAdmin }: {
     id: ParticipationStatus;
     title: string;
     players: Player[];
     participations: PlayerStats[];
     team1Name: string;
     team2Name: string;
+    isAdmin: boolean;
 }) {
     const { setNodeRef, isOver } = useDroppable({ id });
 
@@ -124,11 +127,12 @@ function DroppableColumn({ id, title, players, participations, team1Name, team2N
                         stats={participations.find(p => p.playerId === player.id)}
                         team1Name={team1Name}
                         team2Name={team2Name}
+                        isAdmin={isAdmin}
                     />
                 ))}
                 {columnPlayers.length === 0 && (
                     <div className="h-20 border-dashed border-2 border-slate-800 rounded-lg flex items-center justify-center text-slate-600 text-xs text-center p-2">
-                        Arrastra jugadores aquí
+                        {isAdmin ? 'Arrastra jugadores aquí' : 'Sin jugadores'}
                     </div>
                 )}
             </div>
@@ -138,6 +142,7 @@ function DroppableColumn({ id, title, players, participations, team1Name, team2N
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useAdmin } from '@/hooks/useAdmin';
 
 export function KanbanBoard({ matchId, players, participations, settings }: {
     matchId: string;
@@ -147,6 +152,7 @@ export function KanbanBoard({ matchId, players, participations, settings }: {
 }) {
     const [activeId, setActiveId] = useState<string | null>(null);
     const [isMounted, setIsMounted] = useState(false);
+    const { isAdmin } = useAdmin();
     const router = useRouter();
 
     const team1Name = settings?.team1Name || 'Celeste';
@@ -198,6 +204,7 @@ export function KanbanBoard({ matchId, players, participations, settings }: {
                         participations={participations}
                         team1Name={team1Name}
                         team2Name={team2Name}
+                        isAdmin={isAdmin}
                     />
                 ))}
             </div>

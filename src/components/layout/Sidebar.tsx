@@ -16,18 +16,34 @@ const API_NAV_ITEMS = [
     { name: 'Estadísticas', href: '/stats', icon: Trophy },
 ];
 
-export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
+export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClose?: () => void; isAdmin?: boolean }) {
     const pathname = usePathname();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [settings, setSettings] = useState<AppSettings>({ n8nWebhookUrl: '', whatsappGroupName: '' });
     const [seasons, setSeasons] = useState<Season[]>([]);
     const [activeSeasonId, setActiveSeasonId] = useState<string | undefined>();
+    const [pressTimer, setPressTimer] = useState<any>(null);
+
+    // Mismo truco para el escritorio
+    const triggerAdmin = () => {
+        if (!isAdmin) {
+            const pin = prompt('Ingrese PIN de Administrador:');
+            if (pin === '1986') { // Debería usar el hook pero aquí es más directo para el ejemplo
+                localStorage.setItem('fb_admin_key', '1986');
+                window.location.reload();
+            }
+        }
+    };
+    const startT = () => setPressTimer(setTimeout(triggerAdmin, 3000));
+    const clearT = () => pressTimer && clearTimeout(pressTimer);
 
     useEffect(() => {
-        getSettings().then(setSettings);
-        getSeasons().then(setSeasons);
-        getActiveSeasonId().then(setActiveSeasonId);
-    }, [isSettingsOpen]);
+        if (isAdmin) {
+            getSettings().then(setSettings);
+            getSeasons().then(setSeasons);
+            getActiveSeasonId().then(setActiveSeasonId);
+        }
+    }, [isSettingsOpen, isAdmin]);
 
     const navItems = API_NAV_ITEMS;
 
@@ -45,10 +61,16 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
                 "w-64 bg-slate-900 border-r border-slate-800 h-screen flex flex-col fixed left-0 top-0 z-50 transition-transform duration-300 lg:translate-x-0",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
-                <div className="p-6 flex items-center justify-between">
+                <div
+                    className="p-6 flex items-center justify-between select-none"
+                    onMouseDown={startT}
+                    onMouseUp={clearT}
+                    onTouchStart={startT}
+                    onTouchEnd={clearT}
+                >
                     <div>
                         <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
-                            Futbol Amateur
+                            {isAdmin ? '🛡️ Admin' : 'Futbol Amateur'}
                         </h1>
                         <p className="text-xs text-slate-500 mt-1">Dashboard Manager</p>
                     </div>
@@ -82,30 +104,34 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
                     })}
                 </nav>
 
-                <div className="px-4 py-2">
-                    <button
-                        onClick={() => {
-                            setIsSettingsOpen(true);
-                            onClose?.();
-                        }}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
-                    >
-                        <SettingsIcon size={20} />
-                        Configuración
-                    </button>
-                </div>
+                {isAdmin && (
+                    <>
+                        <div className="px-4 py-2">
+                            <button
+                                onClick={() => {
+                                    setIsSettingsOpen(true);
+                                    onClose?.();
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
+                            >
+                                <SettingsIcon size={20} />
+                                Configuración
+                            </button>
+                        </div>
 
-                <div className="p-4 border-t border-slate-800">
-                    <div className="flex items-center gap-3 px-4 py-3 text-slate-400">
-                        <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
-                            <span className="text-xs font-bold text-white uppercase">AD</span>
+                        <div className="p-4 border-t border-slate-800">
+                            <div className="flex items-center gap-3 px-4 py-3 text-slate-400">
+                                <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+                                    <span className="text-xs font-bold text-white uppercase">AD</span>
+                                </div>
+                                <div className="flex-1 overflow-hidden">
+                                    <p className="text-sm font-semibold text-white truncate">Alexander</p>
+                                    <p className="text-[10px] text-slate-500 uppercase tracking-wider">Dashboard Admin</p>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex-1 overflow-hidden">
-                            <p className="text-sm font-semibold text-white truncate">Alexander</p>
-                            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Dashboard Admin</p>
-                        </div>
-                    </div>
-                </div>
+                    </>
+                )}
             </aside>
 
             <SettingsModal
