@@ -12,7 +12,12 @@ interface SocialViewManagerProps {
 }
 
 export function SocialViewManager({ players }: SocialViewManagerProps) {
-    const [viewMode, setViewMode] = useState<'panels' | 'bloodweb'>('panels'); // Default to panels/list for stability
+    const [viewMode, setViewMode] = useState<'panels' | 'bloodweb'>(() => {
+        if (typeof window !== 'undefined') {
+            return (localStorage.getItem('social_view_mode') as 'panels' | 'bloodweb') || 'panels';
+        }
+        return 'panels';
+    });
     const [privacyMode, setPrivacyMode] = useState(false);
 
     return (
@@ -41,7 +46,10 @@ export function SocialViewManager({ players }: SocialViewManagerProps) {
                 {/* View Toggle */}
                 <div className="bg-slate-900 p-1 rounded-lg border border-slate-800 flex gap-1">
                     <button
-                        onClick={() => setViewMode('panels')}
+                        onClick={() => {
+                            setViewMode('panels');
+                            localStorage.setItem('social_view_mode', 'panels');
+                        }}
                         className={cn(
                             "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all",
                             viewMode === 'panels'
@@ -53,7 +61,10 @@ export function SocialViewManager({ players }: SocialViewManagerProps) {
                         Paneles
                     </button>
                     <button
-                        onClick={() => setViewMode('bloodweb')}
+                        onClick={() => {
+                            setViewMode('bloodweb');
+                            localStorage.setItem('social_view_mode', 'bloodweb');
+                        }}
                         className={cn(
                             "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all",
                             viewMode === 'bloodweb'

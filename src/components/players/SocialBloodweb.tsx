@@ -21,7 +21,20 @@ interface Node {
 }
 
 export function SocialBloodweb({ players, privacyMode = false }: SocialBloodwebProps) {
-    const [centerId, setCenterId] = useState<string>(players[0]?.id || '');
+    const [centerId, setCenterId] = useState<string>(() => {
+        // Try to load from localStorage first
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('social_center_id');
+            if (saved && players.some(p => p.id === saved)) return saved;
+        }
+
+        // Search for Alexander as primary default
+        const alex = players.find(p => p.name.toLowerCase().includes('alexander'));
+        if (alex) return alex.id;
+
+        // Fallback to first player
+        return players[0]?.id || '';
+    });
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 1000, height: 700 });
 
@@ -263,7 +276,10 @@ export function SocialBloodweb({ players, privacyMode = false }: SocialBloodwebP
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.5, delay: node.type === 'center' ? 0 : 0.5 + (i * 0.1) }}
-                        onClick={() => setCenterId(node.player.id)}
+                        onClick={() => {
+                            setCenterId(node.player.id);
+                            localStorage.setItem('social_center_id', node.player.id);
+                        }}
                     >
                         {/* Outer Glow Ring */}
                         <div className={cn(
@@ -343,7 +359,10 @@ export function SocialBloodweb({ players, privacyMode = false }: SocialBloodwebP
             <div className="absolute top-4 left-4 z-30 pointer-events-auto">
                 <select
                     value={centerId}
-                    onChange={(e) => setCenterId(e.target.value)}
+                    onChange={(e) => {
+                        setCenterId(e.target.value);
+                        localStorage.setItem('social_center_id', e.target.value);
+                    }}
                     className="bg-black/50 backdrop-blur border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
                 >
                     {players.map(p => (
