@@ -16,13 +16,7 @@ function calculateStats(players: Player[], matches: Match[], participations: Pla
     const playerStats = players.map(player => {
         const playerParticipations = relevantParticipations.filter(p => p.playerId === player.id);
 
-        // Attendance
-        const attendedStats = playerParticipations.filter(p =>
-            p.status === 'Attended' ||
-            (p.goals || 0) > 0 ||
-            p.isMvp ||
-            !!p.tacticalRole
-        );
+        const attendedStats = playerParticipations.filter(p => p.status === 'Attended');
         const matchesAttended = attendedStats.length;
 
         // Absences

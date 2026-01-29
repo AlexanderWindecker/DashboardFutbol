@@ -7,12 +7,7 @@ import { ArrowLeft } from 'lucide-react';
 function calculateStats(players: Player[], matches: Match[], participations: PlayerStats[]) {
     const playerStats = players.map(player => {
         const playerParticipations = participations.filter(p => p.playerId === player.id);
-        const attendedStats = playerParticipations.filter(p =>
-            p.status === 'Attended' ||
-            (p.goals || 0) > 0 ||
-            p.isMvp ||
-            !!p.tacticalRole
-        );
+        const attendedStats = playerParticipations.filter(p => p.status === 'Attended');
         const matchesAttended = attendedStats.length;
         const absences = playerParticipations.filter(p => p.status === 'Absent' || p.status === 'LateCancel').length;
         const mvpCount = attendedStats.filter(p => p.isMvp).length;
