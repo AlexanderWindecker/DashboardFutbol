@@ -51,6 +51,7 @@ export function PWAHandler() {
 
 export function InstallButton() {
     const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+    const [isInstalled, setIsInstalled] = useState(false);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -58,61 +59,49 @@ export function InstallButton() {
         const handleBeforeInstallPrompt = (e: any) => {
             e.preventDefault();
             setDeferredPrompt(e);
-            console.log('✅ PWA Install Prompt detected');
         };
+
         window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+        if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) {
+            setIsInstalled(true);
+        }
+
         return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     }, []);
 
     const handleInstall = async () => {
-        if (!deferredPrompt) {
-            alert('📱 Instalación Manual:\n\n1. Pulsá en los 3 puntitos (Menú) de tu navegador.\n2. Buscá "Instalar aplicación" o "Añadir a pantalla de inicio".\n\n(La instalación automática no está disponible en este navegador/IP)');
-            return;
-        }
+        if (!deferredPrompt) return;
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         if (outcome === 'accepted') setDeferredPrompt(null);
     };
 
-    if (!mounted) return <div style={{ color: '#4f46e5', padding: '10px' }}>Cargando instalador...</div>;
+    if (!mounted || isInstalled || !deferredPrompt) return null;
 
     return (
-        <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-            padding: '20px',
-            backgroundColor: 'rgba(79, 70, 229, 0.1)',
-            borderRadius: '16px',
-            border: '1px solid rgba(79, 70, 229, 0.2)',
-            marginBottom: '24px'
-        }}>
-            <button
-                onClick={handleInstall}
-                style={{
-                    backgroundColor: '#4f46e5',
-                    color: 'white',
-                    padding: '16px 24px',
-                    borderRadius: '12px',
-                    border: 'none',
-                    fontWeight: 'bold',
-                    fontSize: '18px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    boxShadow: '0 10px 15px -3px rgba(79, 70, 229, 0.3)'
-                }}
-            >
-                <span style={{ fontSize: '24px' }}>📲</span>
-                <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontSize: '10px', opacity: 0.8, textTransform: 'uppercase' }}>App Móvil</div>
-                    <div>INSTALAR DASHBOARD</div>
+        <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-6 rounded-2xl border border-indigo-400/30 shadow-2xl shadow-indigo-500/20 mb-8 relative overflow-hidden group">
+            {/* Decoration */}
+            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors" />
+
+            <div className="relative flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/30 shrink-0">
+                        <Smartphone size={28} className="text-white" />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-bold text-white leading-tight">Llevá el Dashboard en tu bolsillo</h3>
+                        <p className="text-indigo-100 text-sm opacity-90">Instalá la App para acceder rápido y recibir actualizaciones del equipo.</p>
+                    </div>
                 </div>
-            </button>
-            <p style={{ fontSize: '11px', color: '#94a3b8', margin: 0, padding: '0 8px' }}>
-                Si no funciona el botón, buscá "Instalar aplicación" en el menú de tu navegador.
-            </p>
+
+                <Button
+                    onClick={handleInstall}
+                    className="bg-white text-indigo-600 hover:bg-slate-100 px-8 py-6 rounded-xl font-bold text-base shadow-lg hover:scale-105 transition-all whitespace-nowrap"
+                >
+                    Instalar Ahora
+                </Button>
+            </div>
         </div>
     );
 }

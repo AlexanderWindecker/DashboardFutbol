@@ -20,13 +20,13 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
+        <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
           Bienvenido al Dashboard
         </h1>
-        <p className="text-slate-400">Resumen de actividad del equipo.</p>
+        <p className="text-xs md:text-sm text-slate-400">Resumen de actividad del equipo.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
 
         {/* Main Column: Stats & Recent */}
         <div className="lg:col-span-2 space-y-8">

@@ -2,17 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, Users, Trophy, MoreHorizontal, FileText, Settings as SettingsIcon } from 'lucide-react';
+import { Home, Calendar, Users, Trophy, MoreHorizontal, FileText, Settings as SettingsIcon, X, Menu } from 'lucide-react';
 import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 import { SettingsModal } from '../SettingsModal';
 import { getSettings, getSeasons, getActiveSeasonId } from '@/lib/data';
 import { AppSettings, Season } from '@/types';
-
-async function fetchSettings(): Promise<AppSettings> {
-    const res = await getSettings();
-    return res;
-}
 
 const API_NAV_ITEMS = [
     { name: 'Dashboard', href: '/', icon: Home },
@@ -21,7 +16,7 @@ const API_NAV_ITEMS = [
     { name: 'Estadísticas', href: '/stats', icon: Trophy },
 ];
 
-export function Sidebar() {
+export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
     const pathname = usePathname();
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [settings, setSettings] = useState<AppSettings>({ n8nWebhookUrl: '', whatsappGroupName: '' });
@@ -34,31 +29,53 @@ export function Sidebar() {
         getActiveSeasonId().then(setActiveSeasonId);
     }, [isSettingsOpen]);
 
+    const navItems = API_NAV_ITEMS;
+
     return (
         <>
-            <aside className="w-64 bg-slate-900 border-r border-slate-800 h-screen flex flex-col fixed left-0 top-0 z-40">
-                <div className="p-6">
-                    <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
-                        Futbol Amateur
-                    </h1>
-                    <p className="text-xs text-slate-500 mt-1">Dashboard Manager</p>
+            {/* Mobile Overlay */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 lg:hidden"
+                    onClick={onClose}
+                />
+            )}
+
+            <aside className={clsx(
+                "w-64 bg-slate-900 border-r border-slate-800 h-screen flex flex-col fixed left-0 top-0 z-50 transition-transform duration-300 lg:translate-x-0",
+                isOpen ? "translate-x-0" : "-translate-x-full"
+            )}>
+                <div className="p-6 flex items-center justify-between">
+                    <div>
+                        <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
+                            Futbol Amateur
+                        </h1>
+                        <p className="text-xs text-slate-500 mt-1">Dashboard Manager</p>
+                    </div>
+                    <button
+                        onClick={onClose}
+                        className="p-2 text-slate-400 hover:text-white lg:hidden"
+                    >
+                        <X size={20} />
+                    </button>
                 </div>
 
                 <nav className="flex-1 px-4 space-y-2">
-                    {API_NAV_ITEMS.map((item) => {
+                    {navItems.map((item) => {
                         const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
                         return (
                             <Link
                                 key={item.href}
                                 href={item.href}
+                                onClick={onClose}
                                 className={clsx(
-                                    'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
+                                    'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all',
                                     isActive
-                                        ? 'bg-indigo-500/10 text-indigo-400'
+                                        ? 'bg-indigo-500/10 text-indigo-400 shadow-inner'
                                         : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
                                 )}
                             >
-                                <item.icon size={20} />
+                                <item.icon size={20} className={isActive ? "text-indigo-400" : "text-slate-500"} />
                                 {item.name}
                             </Link>
                         );
@@ -67,8 +84,11 @@ export function Sidebar() {
 
                 <div className="px-4 py-2">
                     <button
-                        onClick={() => setIsSettingsOpen(true)}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
+                        onClick={() => {
+                            setIsSettingsOpen(true);
+                            onClose?.();
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
                     >
                         <SettingsIcon size={20} />
                         Configuración
@@ -77,12 +97,12 @@ export function Sidebar() {
 
                 <div className="p-4 border-t border-slate-800">
                     <div className="flex items-center gap-3 px-4 py-3 text-slate-400">
-                        <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
-                            <span className="text-xs font-bold text-white">AD</span>
+                        <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+                            <span className="text-xs font-bold text-white uppercase">AD</span>
                         </div>
-                        <div className="flex-1">
-                            <p className="text-sm font-medium text-white">Admin</p>
-                            <p className="text-xs text-slate-500">View Only</p>
+                        <div className="flex-1 overflow-hidden">
+                            <p className="text-sm font-semibold text-white truncate">Alexander</p>
+                            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Dashboard Admin</p>
                         </div>
                     </div>
                 </div>
