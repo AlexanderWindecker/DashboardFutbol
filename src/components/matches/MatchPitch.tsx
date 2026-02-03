@@ -18,8 +18,10 @@ type ViewMode = 'versus' | 'team1' | 'team2';
 export function MatchPitch({ players, participations, team1Name = 'Celeste', team2Name = 'Azul', mode }: MatchPitchProps) {
     const [viewMode, setViewMode] = useState<ViewMode>('versus');
 
-    // Parse mode to get max players per team (e.g., "6v6" -> 6)
-    const maxPlayersPerTeam = mode ? parseInt(mode.split('v')[0]) : 6;
+    // Parse mode to get max players per team (e.g., "6v6" -> 6, "Fútbol 7" -> 7)
+    const modeStr = mode || '';
+    const modeMatch = modeStr.match(/\d+/);
+    const maxPlayersPerTeam = modeMatch ? parseInt(modeMatch[0]) : 6;
 
     const allCeleste = participations
         .filter(p => p.team === 'Celeste' && (p.status === 'Attended' || p.status === 'Confirmed'))
@@ -28,8 +30,6 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
     const allAzul = participations
         .filter(p => p.team === 'Azul' && (p.status === 'Attended' || p.status === 'Confirmed'))
         .map(p => ({ ...p, info: players.find(pl => pl.id === p.playerId) }));
-
-    if (allCeleste.length === 0 && allAzul.length === 0) return null;
 
     // Logic: Explicitly marked 'Suplente' are ALWAYS subs. 
     // Others are starters until we reach maxPlayersPerTeam.
@@ -55,16 +55,18 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
     const azulPlayers = azul.starters;
     const azulSubs = azul.subs;
 
-    // Helper to calculate OVR
+    const hasNoPlayers = allCeleste.length === 0 && allAzul.length === 0;
+
     const getOvr = (p: Player | undefined) => {
         if (!p || !p.skills) return 50;
         const s = p.skills;
         // Check if GK
         const isGk = p.positions?.includes('Arquero') && p.positions?.length === 1;
-        if (isGk && s.reflejos !== undefined) {
-            return Math.round(((s.reflejos || 50) + (s.posicionamiento || 50) + (s.estirada || 50) + (s.saque || 50) + (s.seguridad || 50)) / 5);
+        if (isGk && (s as any).reflejos !== undefined) {
+            const gk = s as any;
+            return Math.round(((gk.reflejos || 50) + (gk.posicionamiento || 50) + (gk.estirada || 50) + (gk.saque || 50) + (gk.seguridad || 50)) / 5);
         }
-        return Math.round((s.ritmo + s.tiros + s.pases + s.regates + s.velocidad) / 5);
+        return Math.round(((s.ritmo || 50) + (s.tiros || 50) + (s.pases || 50) + (s.regates || 50) + (s.velocidad || 50)) / 5);
     };
 
     const getTeamAvg = (teamPlayers: any[]) => {
@@ -121,14 +123,14 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
                 </div>
             </div>
 
-            <div className="flex flex-col xl:flex-row gap-4 justify-center items-stretch">
+            <div className="flex flex-col lg:flex-row gap-4 justify-center items-stretch">
 
-                {/* Left Panel (Celeste List) - Top aligned */}
+                {/* Left Panel (Celeste List) */}
                 <div className={cn(
-                    "hidden xl:block w-48 bg-slate-950 border border-slate-800 rounded-xl p-4 shadow-lg shrink-0 border-r-4 border-r-sky-500/50 self-start transition-opacity",
+                    "hidden lg:block w-40 xl:w-48 bg-slate-950 border border-slate-800 rounded-xl p-3 xl:p-4 shadow-lg shrink-0 border-r-4 border-r-sky-500/50 self-start transition-opacity",
                     viewMode === 'team2' ? "opacity-30" : "opacity-100"
                 )}>
-                    <h4 className="text-sky-400 font-bold uppercase tracking-wider text-xs mb-3 border-b border-slate-800 pb-2">{team1Name.toUpperCase()} {celesteAvg > 0 && `(${celesteAvg})`}</h4>
+                    <h4 className="text-sky-400 font-bold uppercase tracking-wider text-[10px] xl:text-xs mb-3 border-b border-slate-800 pb-2">{team1Name.toUpperCase()} {celesteAvg > 0 && `(${celesteAvg})`}</h4>
                     <PlayerList players={allCeleste} />
                 </div>
 
@@ -171,30 +173,44 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
 
                             {/* Teams Layout */}
                             <div className="absolute inset-0 flex flex-col p-4">
-                                {viewMode === 'versus' && (
+                                {hasNoPlayers ? (
+                                    <div className="flex-1 flex flex-col items-center justify-center text-center p-6 space-y-4 animate-in fade-in duration-700">
+                                        <div className="w-16 h-16 rounded-full bg-emerald-800/50 flex items-center justify-center border border-emerald-400/20 shadow-inner">
+                                            <LayoutGrid className="text-emerald-400 opacity-40" size={32} />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-emerald-400 font-bold text-sm">Cancha Vacía</p>
+                                            <p className="text-emerald-500/60 text-[11px] max-w-[180px]">Asigna jugadores a un equipo en la tabla de arriba para ver la formación táctica.</p>
+                                        </div>
+                                    </div>
+                                ) : (
                                     <>
-                                        {/* Top Team */}
-                                        <div className="flex-1 relative animate-in fade-in zoom-in-95 duration-300">
-                                            <PositionGrid teamPlayers={celestePlayers} isTop={true} color="bg-sky-500" getOvr={getOvr} isSmall={true} />
-                                        </div>
+                                        {viewMode === 'versus' && (
+                                            <>
+                                                {/* Top Team */}
+                                                <div className="flex-1 relative animate-in fade-in zoom-in-95 duration-300">
+                                                    <PositionGrid teamPlayers={celestePlayers} isTop={true} color="bg-sky-500" getOvr={getOvr} isSmall={true} />
+                                                </div>
 
-                                        {/* Bottom Team */}
-                                        <div className="flex-1 relative border-t border-emerald-400/20 animate-in fade-in zoom-in-95 duration-300">
-                                            <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isSmall={true} />
-                                        </div>
+                                                {/* Bottom Team */}
+                                                <div className="flex-1 relative border-t border-emerald-400/20 animate-in fade-in zoom-in-95 duration-300">
+                                                    <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isSmall={true} />
+                                                </div>
+                                            </>
+                                        )}
+
+                                        {viewMode === 'team1' && (
+                                            <div className="flex-1 relative animate-in fade-in slide-in-from-top-4 duration-500">
+                                                <PositionGrid teamPlayers={celestePlayers} isTop={false} color="bg-sky-500" getOvr={getOvr} isFullHeight={true} />
+                                            </div>
+                                        )}
+
+                                        {viewMode === 'team2' && (
+                                            <div className="flex-1 relative animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                                <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isFullHeight={true} />
+                                            </div>
+                                        )}
                                     </>
-                                )}
-
-                                {viewMode === 'team1' && (
-                                    <div className="flex-1 relative animate-in fade-in slide-in-from-top-4 duration-500">
-                                        <PositionGrid teamPlayers={celestePlayers} isTop={false} color="bg-sky-500" getOvr={getOvr} isFullHeight={true} />
-                                    </div>
-                                )}
-
-                                {viewMode === 'team2' && (
-                                    <div className="flex-1 relative animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                        <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isFullHeight={true} />
-                                    </div>
                                 )}
                             </div>
                         </div>
@@ -218,19 +234,19 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
                     </div>
                 </div>
 
-                {/* Right Panel (Azul List) - Bottom aligned */}
+                {/* Right Panel (Azul List) */}
                 <div className={cn(
-                    "hidden xl:block w-48 bg-slate-950 border border-slate-800 rounded-xl p-4 shadow-lg shrink-0 border-l-4 border-l-blue-600/50 self-end transition-opacity",
+                    "hidden lg:block w-40 xl:w-48 bg-slate-950 border border-slate-800 rounded-xl p-3 xl:p-4 shadow-lg shrink-0 border-l-4 border-l-blue-600/50 self-end transition-opacity",
                     viewMode === 'team1' ? "opacity-30" : "opacity-100"
                 )}>
-                    <h4 className="text-blue-400 font-bold uppercase tracking-wider text-xs mb-3 border-b border-slate-800 pb-2 text-right">{team2Name.toUpperCase()} {azulAvg > 0 && `(${azulAvg})`}</h4>
+                    <h4 className="text-blue-400 font-bold uppercase tracking-wider text-[10px] xl:text-xs mb-3 border-b border-slate-800 pb-2 text-right">{team2Name.toUpperCase()} {azulAvg > 0 && `(${azulAvg})`}</h4>
                     <PlayerList players={allAzul} alignRight />
                 </div>
 
             </div>
 
             {/* Mobile Lists (Visible only on small screens) */}
-            <div className="grid grid-cols-2 gap-4 xl:hidden">
+            <div className="grid grid-cols-2 gap-4 lg:hidden">
                 <div className={cn("bg-slate-950 border border-slate-800 rounded-xl p-4 transition-opacity", viewMode === 'team2' ? "opacity-30" : "opacity-100")}>
                     <h4 className="text-sky-400 font-bold uppercase tracking-wider text-xs mb-2">{team1Name} ({celesteAvg})</h4>
                     <PlayerList players={allCeleste} />
@@ -292,10 +308,12 @@ function PlayerList({ players, alignRight = false }: { players: any[], alignRigh
     return (
         <div className="space-y-1">
             {sortedByPos.map(p => (
-                <div key={p.playerId} className={cn("flex items-center justify-between text-xs py-1 border-b border-slate-800/50 last:border-0", alignRight && "flex-row-reverse")}>
+                <div key={p.playerId} className={cn("flex items-center justify-between text-[10px] xl:text-xs py-1 border-b border-slate-800/50 last:border-0", alignRight && "flex-row-reverse")}>
                     <div className={cn("flex items-center gap-2", alignRight && "flex-row-reverse")}>
-                        <span className="font-bold text-slate-500 w-6 text-[10px]">{getPos(p)}</span>
-                        <span className="text-slate-300 truncate max-w-[80px]">{p.info?.name.split(' ')[0]}</span>
+                        <span className="font-bold text-slate-500 w-6 text-[9px] xl:text-[10px]">{getPos(p)}</span>
+                        <span className="text-slate-300 truncate max-w-[60px] xl:max-w-[80px]">
+                            {p.info?.name ? p.info.name.split(' ')[0] : 'Invitado'}
+                        </span>
                     </div>
                 </div>
             ))}

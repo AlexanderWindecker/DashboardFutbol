@@ -227,7 +227,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                         <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Nombre del Jugador</label>
                         <input
                             type="text"
-                            value={playerName}
+                            value={playerName || ''}
                             onChange={(e) => setPlayerName(e.target.value)}
                             className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-sky-500"
                             placeholder="Nombre"
@@ -237,7 +237,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                         <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">Teléfono (para matching)</label>
                         <input
                             type="text"
-                            value={phone}
+                            value={phone || ''}
                             onChange={(e) => setPhone(e.target.value)}
                             className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-sky-500"
                             placeholder="Ej: +54911..."
@@ -247,7 +247,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                         <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider">ID de Telegram (Automático o Manual)</label>
                         <input
                             type="text"
-                            value={telegramId}
+                            value={telegramId || ''}
                             onChange={(e) => setTelegramId(e.target.value)}
                             className="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-sky-500"
                             placeholder="Ej: 123456789"
@@ -360,7 +360,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                                                 min="0"
                                                 max="100"
                                                 disabled={!isEditing}
-                                                value={skills[k] || 50}
+                                                value={skills[k] ?? 50}
                                                 onChange={(e) => handleChange(k, parseInt(e.target.value))}
                                                 className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer disabled:cursor-default disabled:opacity-50 accent-sky-500"
                                             />
@@ -384,7 +384,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                                                 min="0"
                                                 max="100"
                                                 disabled={!isEditing}
-                                                value={skills[k]}
+                                                value={skills[k] ?? 50}
                                                 onChange={(e) => handleChange(k, parseInt(e.target.value))}
                                                 className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer disabled:cursor-default disabled:opacity-50 accent-sky-500"
                                             />

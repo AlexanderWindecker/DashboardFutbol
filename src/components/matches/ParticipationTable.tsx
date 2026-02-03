@@ -1,15 +1,14 @@
-'use client';
-
+import { useState, useEffect } from 'react';
 import { Player, PlayerStats, AppSettings } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import { updateParticipationAction } from '@/actions/matches';
-import { Check, Star, Shield, AlertCircle, Trash2, Users, X } from 'lucide-react';
+import { Check, Star, Shield, AlertCircle, Trash2, Users, X, Save, RefreshCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdmin } from '@/hooks/useAdmin';
 
 export function ParticipationTable({
     players,
-    participations,
+    participations: initialParticipations,
     matchId,
     settings
 }: {
@@ -19,10 +18,22 @@ export function ParticipationTable({
     settings?: AppSettings;
 }) {
     const { isAdmin } = useAdmin();
+    const [localParticipations, setLocalParticipations] = useState<PlayerStats[]>(initialParticipations);
+    const [hasChanges, setHasChanges] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
+    // Sync from props if no local changes
+    useEffect(() => {
+        if (!hasChanges) {
+            setLocalParticipations(initialParticipations);
+        }
+    }, [initialParticipations, hasChanges]);
+
     const team1Name = settings?.team1Name || 'Celeste';
     const team2Name = settings?.team2Name || 'Azul';
+
     // Show players who are Confirmed OR Attended
-    const matchPlayers = participations
+    const matchPlayers = localParticipations
         .filter(p => p.status === 'Attended' || p.status === 'Confirmed')
         .map(p => {
             const player = players.find(pl => pl.id === p.playerId);
@@ -37,8 +48,40 @@ export function ParticipationTable({
             return a.playerName.localeCompare(b.playerName);
         });
 
-    const handleUpdate = async (playerId: string, updates: Partial<PlayerStats>) => {
-        await updateParticipationAction(matchId, playerId, updates);
+    const handleLocalUpdate = (playerId: string, updates: Partial<PlayerStats>) => {
+        setLocalParticipations(curr => curr.map(p =>
+            p.playerId === playerId ? { ...p, ...updates } : p
+        ));
+        setHasChanges(true);
+    };
+
+    const handleSave = async () => {
+        if (!isAdmin || isSaving) return;
+        setIsSaving(true);
+        try {
+            // Find what changed
+            const changes = localParticipations.filter(lp => {
+                const initial = initialParticipations.find(ip => ip.playerId === lp.playerId);
+                if (!initial) return true; // New?
+                return JSON.stringify(lp) !== JSON.stringify(initial);
+            });
+
+            // Save each change (ideally this would be a bulk action, but let's use existing one for now)
+            for (const p of changes) {
+                await updateParticipationAction(matchId, p.playerId, p);
+            }
+            setHasChanges(false);
+        } catch (error) {
+            console.error("Error saving changes:", error);
+            alert("Error al guardar los cambios.");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleReset = () => {
+        setLocalParticipations(initialParticipations);
+        setHasChanges(false);
     };
 
     return (
@@ -48,19 +91,41 @@ export function ParticipationTable({
                     <h3 className="font-semibold text-white">Detalle de Participación</h3>
                     <p className="text-sm text-slate-400">Resultados, equipos y estadísticas individuales.</p>
                 </div>
-                {isAdmin && (
-                    <button
-                        onClick={async () => {
-                            const { generateRandomTeamsAction } = await import('@/actions/teams');
-                            const res = await generateRandomTeamsAction(matchId);
-                            if (res.error) alert(res.error);
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-indigo-500/20 group"
-                    >
-                        <Users size={16} className="group-hover:rotate-12 transition-transform" />
-                        Generar Equipos Aleatorios
-                    </button>
-                )}
+                <div className="flex flex-wrap items-center gap-2">
+                    {hasChanges && isAdmin && (
+                        <div className="flex gap-2 animate-in fade-in slide-in-from-right-4 duration-300">
+                            <button
+                                onClick={handleReset}
+                                disabled={isSaving}
+                                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-bold transition-all border border-slate-700 disabled:opacity-50"
+                            >
+                                <RefreshCcw size={16} className={cn(isSaving && "animate-spin")} />
+                                Descartar
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={isSaving}
+                                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                            >
+                                {isSaving ? <RefreshCcw size={16} className="animate-spin" /> : <Save size={16} />}
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    )}
+                    {isAdmin && (
+                        <button
+                            onClick={async () => {
+                                const { generateRandomTeamsAction } = await import('@/actions/teams');
+                                const res = await generateRandomTeamsAction(matchId);
+                                if (res.error) alert(res.error);
+                            }}
+                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold transition-all shadow-lg shadow-indigo-500/20 group"
+                        >
+                            <Users size={16} className="group-hover:rotate-12 transition-transform" />
+                            Generar Equipos Aleatorios
+                        </button>
+                    )}
+                </div>
             </div>
             <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -84,7 +149,7 @@ export function ParticipationTable({
                                     <div className="flex gap-1.5">
                                         <button
                                             disabled={!isAdmin}
-                                            onClick={() => handleUpdate(p.playerId, { team: 'Celeste' })}
+                                            onClick={() => handleLocalUpdate(p.playerId, { team: 'Celeste' })}
                                             className={cn("w-6 h-6 rounded border flex items-center justify-center transition-colors text-[10px] font-bold", p.team === 'Celeste' ? "bg-sky-500 text-white border-sky-400" : "border-slate-700 text-slate-600 hover:border-sky-500/50", !isAdmin && "cursor-default")}
                                             title={isAdmin ? `Mover a ${team1Name}` : undefined}
                                         >
@@ -92,7 +157,7 @@ export function ParticipationTable({
                                         </button>
                                         <button
                                             disabled={!isAdmin}
-                                            onClick={() => handleUpdate(p.playerId, { team: 'Azul' })}
+                                            onClick={() => handleLocalUpdate(p.playerId, { team: 'Azul' })}
                                             className={cn("w-6 h-6 rounded border flex items-center justify-center transition-colors text-[10px] font-bold", p.team === 'Azul' ? "bg-blue-600 text-white border-blue-500" : "border-slate-700 text-slate-600 hover:border-blue-600/50", !isAdmin && "cursor-default")}
                                             title={isAdmin ? `Mover a ${team2Name}` : undefined}
                                         >
@@ -100,7 +165,7 @@ export function ParticipationTable({
                                         </button>
                                         {isAdmin && (
                                             <button
-                                                onClick={() => handleUpdate(p.playerId, { team: null })}
+                                                onClick={() => handleLocalUpdate(p.playerId, { team: null })}
                                                 className={cn("w-6 h-6 rounded border flex items-center justify-center transition-colors text-slate-600 hover:text-red-400 border-slate-700 hover:border-red-400/50", !p.team && "bg-slate-700 text-slate-300")}
                                                 title="Quitar de equipo (Pendiente)"
                                             >
@@ -113,7 +178,7 @@ export function ParticipationTable({
                                     <select
                                         disabled={!isAdmin}
                                         value={p.tacticalRole || ''}
-                                        onChange={(e) => handleUpdate(p.playerId, { tacticalRole: e.target.value as any || null })}
+                                        onChange={(e) => handleLocalUpdate(p.playerId, { tacticalRole: e.target.value as any || null })}
                                         className={cn(
                                             "bg-slate-800 border-none text-slate-300 text-[10px] font-bold py-1 px-2 rounded hover:bg-slate-750 transition-colors uppercase outline-none",
                                             isAdmin ? "cursor-pointer" : "cursor-default opacity-80"
@@ -140,7 +205,7 @@ export function ParticipationTable({
                                             if (goals > 0 && p.status === 'Confirmed') {
                                                 updates.status = 'Attended';
                                             }
-                                            handleUpdate(p.playerId, updates);
+                                            handleLocalUpdate(p.playerId, updates);
                                         }}
                                         className={cn(
                                             "w-12 bg-slate-800 border-none text-slate-300 text-center text-xs font-bold py-1 rounded outline-none",
@@ -158,7 +223,7 @@ export function ParticipationTable({
                                         value={p.rating ?? ''}
                                         onChange={(e) => {
                                             if (!isAdmin) return;
-                                            handleUpdate(p.playerId, { rating: e.target.value === '' ? undefined : parseFloat(e.target.value) });
+                                            handleLocalUpdate(p.playerId, { rating: e.target.value === '' ? undefined : parseFloat(e.target.value) });
                                         }}
                                         className={cn(
                                             "w-12 bg-slate-800 border-none text-indigo-400 text-center text-xs font-bold py-1 rounded outline-none",
@@ -171,7 +236,7 @@ export function ParticipationTable({
                                     <div className="flex justify-center gap-1">
                                         <button
                                             disabled={!isAdmin}
-                                            onClick={() => handleUpdate(p.playerId, { status: 'Confirmed' })}
+                                            onClick={() => handleLocalUpdate(p.playerId, { status: 'Confirmed' })}
                                             className={cn(
                                                 "px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-colors border",
                                                 p.status === 'Confirmed'
@@ -185,7 +250,7 @@ export function ParticipationTable({
                                         </button>
                                         <button
                                             disabled={!isAdmin}
-                                            onClick={() => handleUpdate(p.playerId, { status: 'Attended' })}
+                                            onClick={() => handleLocalUpdate(p.playerId, { status: 'Attended' })}
                                             className={cn(
                                                 "px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-colors border",
                                                 p.status === 'Attended'
@@ -208,7 +273,7 @@ export function ParticipationTable({
                                             if (isMvp && p.status === 'Confirmed') {
                                                 updates.status = 'Attended';
                                             }
-                                            handleUpdate(p.playerId, updates);
+                                            handleLocalUpdate(p.playerId, updates);
                                         }}
                                         className={cn("transition-colors", p.isMvp ? "text-amber-400" : "text-slate-700", isAdmin && "hover:text-amber-400/50", !isAdmin && "cursor-default")}
                                     >
@@ -226,7 +291,7 @@ export function ParticipationTable({
                                             value={p.notes ?? ''}
                                             onChange={(e) => {
                                                 if (!isAdmin) return;
-                                                handleUpdate(p.playerId, { notes: e.target.value });
+                                                handleLocalUpdate(p.playerId, { notes: e.target.value });
                                             }}
                                             placeholder={isAdmin ? "..." : ""}
                                         />

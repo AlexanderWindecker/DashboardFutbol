@@ -1,216 +1,206 @@
 // src/lib/data.ts
 'use server';
 
-import fs from 'fs/promises';
-import path from 'path';
+import { db } from './db';
+import { players, matches, participations, seasons, settings, specialtyRules, traitRules } from './db/schema';
 import { DashboardData, Match, Player, PlayerStats, Season } from '@/types';
-
-const DATA_FILE_PATH = path.join(process.cwd(), 'data.json');
-
-const INITIAL_DATA: DashboardData = {
-    players: [],
-    matches: [],
-    participations: [],
-    specialtyRules: [],
-    traitRules: [],
-    settings: {
-        n8nWebhookUrl: '',
-        whatsappGroupName: ''
-    },
-    seasons: [],
-    activeSeasonId: undefined
-};
-
-async function ensureDataFile() {
-    try {
-        await fs.access(DATA_FILE_PATH);
-    } catch {
-        await fs.writeFile(DATA_FILE_PATH, JSON.stringify(INITIAL_DATA, null, 2));
-    }
-}
+import { eq, and } from 'drizzle-orm';
 
 export async function getData(): Promise<DashboardData> {
-    await ensureDataFile();
-    const fileContent = await fs.readFile(DATA_FILE_PATH, 'utf-8');
-    try {
-        return JSON.parse(fileContent) as DashboardData;
-    } catch (error) {
-        console.error("Error parsing data file, returning initial data", error);
-        return INITIAL_DATA;
-    }
-}
+    const allPlayers = await db.select().from(players);
+    const allMatches = await db.select().from(matches);
+    const allParticipations = await db.select().from(participations);
+    const allSeasons = await db.select().from(seasons);
+    const allSettingsList = await db.select().from(settings);
 
-export async function saveData(data: DashboardData) {
-    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2));
+    const activeSeasonSetting = allSettingsList.find(s => s.key === 'activeSeasonId');
+
+    // Map settings list to object
+    const settingsObj = {
+        n8nWebhookUrl: allSettingsList.find(s => s.key === 'n8nWebhookUrl')?.value || '',
+        whatsappGroupName: allSettingsList.find(s => s.key === 'whatsappGroupName')?.value || ''
+    };
+
+    return {
+        players: allPlayers.map(p => {
+            const defaultSkills = {
+                ritmo: 50, tiros: 50, regates: 50, velocidad: 50, pases: 50,
+                reflejos: 50, posicionamiento: 50, estirada: 50, saque: 50, seguridad: 50
+            };
+            return {
+                ...p,
+                skills: { ...defaultSkills, ...(p.skills ? JSON.parse(p.skills) : {}) },
+                traits: p.traits ? JSON.parse(p.traits) : [],
+            };
+        }) as Player[],
+        matches: allMatches.map(m => ({
+            ...m,
+            date: m.date, // Store dates as strings for simplicity matching current types
+        })) as Match[],
+        participations: allParticipations as PlayerStats[],
+        specialtyRules: [], // These were hardcoded or simple, might need migration if used
+        traitRules: [],
+        settings: settingsObj,
+        seasons: allSeasons as Season[],
+        activeSeasonId: activeSeasonSetting?.value || undefined
+    };
 }
 
 export async function addMatch(match: Match) {
-    const data = await getData();
-    data.matches.push(match);
-    await saveData(data);
+    await db.insert(matches).values(match);
 }
 
 export async function updateMatch(updatedMatch: Match) {
-    const data = await getData();
-    const index = data.matches.findIndex(m => m.id === updatedMatch.id);
-    if (index !== -1) {
-        data.matches[index] = updatedMatch;
-        await saveData(data);
-    }
+    await db.update(matches)
+        .set(updatedMatch)
+        .where(eq(matches.id, updatedMatch.id));
 }
 
 export async function getMatch(id: string) {
-    const data = await getData();
-    return data.matches.find(m => m.id === id);
+    const res = await db.select().from(matches).where(eq(matches.id, id));
+    return res[0];
 }
 
 export async function getParticipationsForMatch(matchId: string) {
-    const data = await getData();
-    return data.participations.filter(p => p.matchId === matchId);
+    return await db.select().from(participations).where(eq(participations.matchId, matchId));
 }
 
 export async function updateParticipation(participation: PlayerStats) {
-    const data = await getData();
-    const index = data.participations.findIndex(
-        p => p.matchId === participation.matchId && p.playerId === participation.playerId
-    );
-
-    if (index !== -1) {
-        data.participations[index] = participation;
-    } else {
-        data.participations.push(participation);
-    }
-    await saveData(data);
+    await db.insert(participations)
+        .values(participation)
+        .onConflictDoUpdate({
+            target: [participations.matchId, participations.playerId],
+            set: participation
+        });
 }
 
 export async function getPlayers() {
-    const data = await getData();
-    return data.players;
+    const res = await db.select().from(players);
+    return res.map(p => ({
+        ...p,
+        skills: p.skills ? JSON.parse(p.skills) : {},
+        traits: p.traits ? JSON.parse(p.traits) : [],
+    })) as Player[];
 }
 
 export async function addPlayer(player: Player) {
-    const data = await getData();
-    if (!data.players.find(p => p.id === player.id)) {
-        player.isActive = true;
-        data.players.push(player);
-        await saveData(data);
-    }
+    await db.insert(players).values({
+        ...player,
+        skills: JSON.stringify(player.skills),
+        traits: JSON.stringify(player.traits),
+    }).onConflictDoNothing();
 }
 
 export async function updatePlayer(player: Player) {
-    const data = await getData();
-    const index = data.players.findIndex(p => p.id === player.id);
-    if (index !== -1) {
-        data.players[index] = player;
-        await saveData(data);
-    }
+    await db.update(players)
+        .set({
+            ...player,
+            skills: JSON.stringify(player.skills),
+            traits: JSON.stringify(player.traits),
+        })
+        .where(eq(players.id, player.id));
 }
 
 export async function deleteMatch(id: string) {
-    const data = await getData();
-    data.matches = data.matches.filter(m => m.id !== id);
-    data.participations = data.participations.filter(p => p.matchId !== id);
-    await saveData(data);
+    await db.delete(participations).where(eq(participations.matchId, id));
+    await db.delete(matches).where(eq(matches.id, id));
 }
 
 export async function deleteParticipation(matchId: string, playerId: string) {
-    const data = await getData();
-    data.participations = data.participations.filter(
-        p => !(p.matchId === matchId && p.playerId === playerId)
-    );
-    await saveData(data);
+    await db.delete(participations)
+        .where(and(eq(participations.matchId, matchId), eq(participations.playerId, playerId)));
 }
 
 export async function getSpecialtyRules() {
-    const data = await getData();
-    return data.specialtyRules || [];
+    const res = await db.select().from(specialtyRules);
+    return res.map(r => ({
+        ...r,
+        conditions: r.conditions ? JSON.parse(r.conditions) : []
+    }));
 }
 
 export async function getTraitRules() {
-    const data = await getData();
-    return data.traitRules || [];
+    const res = await db.select().from(traitRules);
+    return res.map(r => ({
+        ...r,
+        conditions: r.conditions ? JSON.parse(r.conditions) : []
+    }));
 }
 
 export async function saveSpecialtyRule(rule: any) {
-    const data = await getData();
-    if (!data.specialtyRules) data.specialtyRules = [];
-    const index = data.specialtyRules.findIndex((r: any) => r.id === rule.id);
-    if (index !== -1) {
-        data.specialtyRules[index] = rule;
-    } else {
-        data.specialtyRules.push(rule);
-    }
-    await saveData(data);
+    await db.insert(specialtyRules).values({
+        ...rule,
+        conditions: JSON.stringify(rule.conditions)
+    }).onConflictDoUpdate({
+        target: specialtyRules.id,
+        set: {
+            ...rule,
+            conditions: JSON.stringify(rule.conditions)
+        }
+    });
 }
 
 export async function saveTraitRule(rule: any) {
-    const data = await getData();
-    if (!data.traitRules) data.traitRules = [];
-    const index = data.traitRules.findIndex((r: any) => r.id === rule.id);
-    if (index !== -1) {
-        data.traitRules[index] = rule;
-    } else {
-        data.traitRules.push(rule);
-    }
-    await saveData(data);
+    await db.insert(traitRules).values({
+        ...rule,
+        conditions: JSON.stringify(rule.conditions)
+    }).onConflictDoUpdate({
+        target: traitRules.id,
+        set: {
+            ...rule,
+            conditions: JSON.stringify(rule.conditions)
+        }
+    });
 }
 
 export async function deleteRule(id: string, type: 'specialty' | 'trait') {
-    const data = await getData();
-    if (type === 'specialty' && data.specialtyRules) {
-        data.specialtyRules = data.specialtyRules.filter((r: any) => r.id !== id);
-    } else if (type === 'trait' && data.traitRules) {
-        data.traitRules = data.traitRules.filter((r: any) => r.id !== id);
+    if (type === 'specialty') {
+        await db.delete(specialtyRules).where(eq(specialtyRules.id, id));
+    } else {
+        await db.delete(traitRules).where(eq(traitRules.id, id));
     }
-    await saveData(data);
 }
 
 export async function getSettings() {
-    const data = await getData();
-    return data.settings || { n8nWebhookUrl: '', whatsappGroupName: '' };
+    const all = await db.select().from(settings);
+    return {
+        n8nWebhookUrl: all.find(s => s.key === 'n8nWebhookUrl')?.value || '',
+        whatsappGroupName: all.find(s => s.key === 'whatsappGroupName')?.value || ''
+    };
 }
 
-export async function saveSettings(settings: any) {
-    const data = await getData();
-    data.settings = settings;
-    await saveData(data);
+export async function saveSettings(settingsObj: any) {
+    for (const [key, value] of Object.entries(settingsObj)) {
+        await db.insert(settings).values({ key, value: String(value) }).onConflictDoUpdate({
+            target: settings.key,
+            set: { value: String(value) }
+        });
+    }
 }
 
 export async function getSeasons() {
-    const data = await getData();
-    return data.seasons || [];
+    return await db.select().from(seasons);
 }
 
 export async function saveSeason(season: Season) {
-    const data = await getData();
-    if (!data.seasons) data.seasons = [];
-    const index = data.seasons.findIndex(s => s.id === season.id);
-    if (index !== -1) {
-        data.seasons[index] = season;
-    } else {
-        data.seasons.push(season);
-    }
-    await saveData(data);
+    await db.insert(seasons).values(season).onConflictDoUpdate({
+        target: seasons.id,
+        set: season
+    });
 }
 
 export async function deleteSeason(id: string) {
-    const data = await getData();
-    if (data.seasons) {
-        data.seasons = data.seasons.filter(s => s.id !== id);
-        if (data.activeSeasonId === id) {
-            data.activeSeasonId = undefined;
-        }
-        await saveData(data);
-    }
+    await db.delete(seasons).where(eq(seasons.id, id));
 }
 
 export async function getActiveSeasonId() {
-    const data = await getData();
-    return data.activeSeasonId;
+    const res = await db.select().from(settings).where(eq(settings.key, 'activeSeasonId'));
+    return res[0]?.value;
 }
 
 export async function setActiveSeasonAction(id: string | undefined) {
-    const data = await getData();
-    data.activeSeasonId = id;
-    await saveData(data);
+    await db.insert(settings).values({ key: 'activeSeasonId', value: id || '' }).onConflictDoUpdate({
+        target: settings.key,
+        set: { value: id || '' }
+    });
 }

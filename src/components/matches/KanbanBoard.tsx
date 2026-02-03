@@ -17,7 +17,7 @@ const COLUMNS: KanbanColumn[] = [
     { id: 'Confirmed', title: 'Confirmados' },
     { id: 'Declined', title: 'Confirmaron No Van' },
     { id: 'Attended', title: 'Asistieron' },
-    { id: 'LateCancel', title: 'Baja Tardía' },
+    { id: 'LateCancel', title: 'Baja' },
     { id: 'Absent', title: 'Ausentes / Sin Aviso' },
 ];
 
@@ -95,7 +95,7 @@ function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin }: {
                                     onClick={() => stats && updateParticipationAction(stats.matchId, player.id, { status: 'LateCancel' })}
                                 >
                                     <ShieldAlert className="mr-2 h-4 w-4" />
-                                    <span>Baja Tardía</span>
+                                    <span>Baja</span>
                                 </DropdownMenuItem>
                                 <div className="h-px bg-slate-700 my-1" />
                                 <DropdownMenuItem
