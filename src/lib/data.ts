@@ -32,6 +32,8 @@ export async function getData(): Promise<DashboardData> {
                 };
                 return {
                     ...p,
+                    isActive: p.isActive ?? true,
+                    isVacation: p.isVacation ?? false,
                     skills: { ...defaultSkills, ...(p.skills ? JSON.parse(p.skills) : {}) },
                     traits: p.traits ? JSON.parse(p.traits) : [],
                 };
@@ -62,7 +64,11 @@ export async function getData(): Promise<DashboardData> {
                 conditions: r.conditions ? JSON.parse(r.conditions) : []
             })),
             settings: settingsObj,
-            seasons: allSeasons as Season[],
+            seasons: allSeasons.map(s => ({
+                ...s,
+                startDate: s.startDate || '',
+                endDate: s.endDate || ''
+            })) as Season[],
             activeSeasonId: activeSeasonSetting?.value || undefined
         };
     } catch (error) {
@@ -117,6 +123,8 @@ export async function getPlayers() {
     const res = await db.select().from(players);
     return res.map(p => ({
         ...p,
+        isActive: p.isActive ?? true,
+        isVacation: p.isVacation ?? false,
         skills: p.skills ? JSON.parse(p.skills) : {},
         traits: p.traits ? JSON.parse(p.traits) : [],
     })) as Player[];
@@ -222,7 +230,12 @@ export async function saveSettings(settingsObj: any) {
 }
 
 export async function getSeasons() {
-    return await db.select().from(seasons);
+    const res = await db.select().from(seasons);
+    return res.map(s => ({
+        ...s,
+        startDate: s.startDate || '',
+        endDate: s.endDate || ''
+    })) as Season[];
 }
 
 export async function saveSeason(season: Season) {
