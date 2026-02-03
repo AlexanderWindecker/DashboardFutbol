@@ -7,43 +7,60 @@ import { DashboardData, Match, Player, PlayerStats, Season } from '@/types';
 import { eq, and } from 'drizzle-orm';
 
 export async function getData(): Promise<DashboardData> {
-    const allPlayers = await db.select().from(players);
-    const allMatches = await db.select().from(matches);
-    const allParticipations = await db.select().from(participations);
-    const allSeasons = await db.select().from(seasons);
-    const allSettingsList = await db.select().from(settings);
+    try {
+        const allPlayers = await db.select().from(players);
+        const allMatches = await db.select().from(matches);
+        const allParticipations = await db.select().from(participations);
+        const allSeasons = await db.select().from(seasons);
+        const allSettingsList = await db.select().from(settings);
+        const sRules = await db.select().from(specialtyRules);
+        const tRules = await db.select().from(traitRules);
 
-    const activeSeasonSetting = allSettingsList.find(s => s.key === 'activeSeasonId');
+        const activeSeasonSetting = allSettingsList.find(s => s.key === 'activeSeasonId');
 
-    // Map settings list to object
-    const settingsObj = {
-        n8nWebhookUrl: allSettingsList.find(s => s.key === 'n8nWebhookUrl')?.value || '',
-        whatsappGroupName: allSettingsList.find(s => s.key === 'whatsappGroupName')?.value || ''
-    };
+        // Map settings list to object
+        const settingsObj = {
+            n8nWebhookUrl: allSettingsList.find(s => s.key === 'n8nWebhookUrl')?.value || '',
+            whatsappGroupName: allSettingsList.find(s => s.key === 'whatsappGroupName')?.value || ''
+        };
 
-    return {
-        players: allPlayers.map(p => {
-            const defaultSkills = {
-                ritmo: 50, tiros: 50, regates: 50, velocidad: 50, pases: 50,
-                reflejos: 50, posicionamiento: 50, estirada: 50, saque: 50, seguridad: 50
-            };
-            return {
-                ...p,
-                skills: { ...defaultSkills, ...(p.skills ? JSON.parse(p.skills) : {}) },
-                traits: p.traits ? JSON.parse(p.traits) : [],
-            };
-        }) as Player[],
-        matches: allMatches.map(m => ({
-            ...m,
-            date: m.date, // Store dates as strings for simplicity matching current types
-        })) as Match[],
-        participations: allParticipations as PlayerStats[],
-        specialtyRules: [], // These were hardcoded or simple, might need migration if used
-        traitRules: [],
-        settings: settingsObj,
-        seasons: allSeasons as Season[],
-        activeSeasonId: activeSeasonSetting?.value || undefined
-    };
+        return {
+            players: allPlayers.map(p => {
+                const defaultSkills = {
+                    ritmo: 50, tiros: 50, regates: 50, velocidad: 50, pases: 50,
+                    reflejos: 50, posicionamiento: 50, estirada: 50, saque: 50, seguridad: 50
+                };
+                return {
+                    ...p,
+                    skills: { ...defaultSkills, ...(p.skills ? JSON.parse(p.skills) : {}) },
+                    traits: p.traits ? JSON.parse(p.traits) : [],
+                };
+            }) as Player[],
+            matches: allMatches.map(m => ({
+                ...m,
+                date: m.date,
+            })) as Match[],
+            participations: allParticipations as PlayerStats[],
+            specialtyRules: sRules.map(r => ({
+                ...r,
+                type: r.type as 'specialty',
+                category: (r.category || undefined) as any,
+                conditions: r.conditions ? JSON.parse(r.conditions) : [],
+                description: r.description || undefined
+            })),
+            traitRules: tRules.map(r => ({
+                ...r,
+                type: r.type as 'trait',
+                conditions: r.conditions ? JSON.parse(r.conditions) : []
+            })),
+            settings: settingsObj,
+            seasons: allSeasons as Season[],
+            activeSeasonId: activeSeasonSetting?.value || undefined
+        };
+    } catch (error) {
+        console.error('❌ Error in getData:', error);
+        throw error;
+    }
 }
 
 export async function addMatch(match: Match) {
@@ -115,7 +132,10 @@ export async function getSpecialtyRules() {
     const res = await db.select().from(specialtyRules);
     return res.map(r => ({
         ...r,
-        conditions: r.conditions ? JSON.parse(r.conditions) : []
+        type: r.type as 'specialty',
+        category: (r.category || undefined) as any,
+        conditions: r.conditions ? JSON.parse(r.conditions) : [],
+        description: r.description || undefined
     }));
 }
 
@@ -123,6 +143,7 @@ export async function getTraitRules() {
     const res = await db.select().from(traitRules);
     return res.map(r => ({
         ...r,
+        type: r.type as 'trait',
         conditions: r.conditions ? JSON.parse(r.conditions) : []
     }));
 }
