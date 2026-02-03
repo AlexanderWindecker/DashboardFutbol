@@ -3,7 +3,7 @@
 
 import { db } from './db';
 import { players, matches, participations, seasons, settings, specialtyRules, traitRules } from './db/schema';
-import { DashboardData, Match, Player, PlayerStats, Season } from '@/types';
+import { DashboardData, Match, Player, PlayerStats, Season, MatchMode, MatchResult, Team } from '@/types';
 import { eq, and } from 'drizzle-orm';
 
 export async function getData(): Promise<DashboardData> {
@@ -38,9 +38,17 @@ export async function getData(): Promise<DashboardData> {
             }) as Player[],
             matches: allMatches.map(m => ({
                 ...m,
-                date: m.date,
+                mode: (m.mode || '7v7') as MatchMode,
+                result: (m.result || undefined) as MatchResult | undefined,
+                location: m.location || undefined,
+                seasonId: m.seasonId || undefined,
             })) as Match[],
-            participations: allParticipations as PlayerStats[],
+            participations: allParticipations.map(p => ({
+                ...p,
+                team: p.team as Team,
+                tacticalRole: p.tacticalRole as any,
+                notes: p.notes || undefined,
+            })) as PlayerStats[],
             specialtyRules: sRules.map(r => ({
                 ...r,
                 type: r.type as 'specialty',
@@ -75,11 +83,25 @@ export async function updateMatch(updatedMatch: Match) {
 
 export async function getMatch(id: string) {
     const res = await db.select().from(matches).where(eq(matches.id, id));
-    return res[0];
+    if (!res[0]) return null;
+    const m = res[0];
+    return {
+        ...m,
+        mode: (m.mode || '7v7') as MatchMode,
+        result: (m.result || undefined) as MatchResult | undefined,
+        location: m.location || undefined,
+        seasonId: m.seasonId || undefined,
+    } as Match;
 }
 
 export async function getParticipationsForMatch(matchId: string) {
-    return await db.select().from(participations).where(eq(participations.matchId, matchId));
+    const res = await db.select().from(participations).where(eq(participations.matchId, matchId));
+    return res.map(p => ({
+        ...p,
+        team: p.team as Team,
+        tacticalRole: p.tacticalRole as any,
+        notes: p.notes || undefined,
+    })) as PlayerStats[];
 }
 
 export async function updateParticipation(participation: PlayerStats) {

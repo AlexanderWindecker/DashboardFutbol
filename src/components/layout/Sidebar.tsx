@@ -40,8 +40,12 @@ export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClos
     useEffect(() => {
         if (isAdmin) {
             getSettings().then(setSettings);
-            getSeasons().then(setSeasons);
-            getActiveSeasonId().then(setActiveSeasonId);
+            getSeasons().then(s => setSeasons(s.map(season => ({
+                ...season,
+                startDate: season.startDate || '',
+                endDate: season.endDate || ''
+            })) as Season[]));
+            getActiveSeasonId().then(id => setActiveSeasonId(id || undefined));
         }
     }, [isSettingsOpen, isAdmin]);
 
@@ -62,17 +66,20 @@ export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClos
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <div
-                    className="p-6 flex items-center justify-between select-none"
+                    className="p-6 flex items-center gap-3 select-none"
                     onMouseDown={startT}
                     onMouseUp={clearT}
                     onTouchStart={startT}
                     onTouchEnd={clearT}
                 >
-                    <div>
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-500/30 flex items-center justify-center bg-white shadow-[0_0_15px_rgba(99,102,241,0.2)] shrink-0">
+                        <img src="/logo.png" alt="Logo" className="w-[85%] h-[85%] object-contain" />
+                    </div>
+                    <div className="flex-1">
                         <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
                             {isAdmin ? '🛡️ Admin' : 'Futbol Amateur'}
                         </h1>
-                        <p className="text-xs text-slate-500 mt-1">Dashboard Manager</p>
+                        <p className="text-xs text-slate-500 mt-0.5">Dashboard Manager</p>
                     </div>
                     <button
                         onClick={onClose}
