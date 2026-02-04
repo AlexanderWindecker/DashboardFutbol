@@ -23,7 +23,17 @@ export function PWAHandler() {
             setDeferredPrompt(e);
         };
 
+        // Track PWA installation
+        const handleAppInstalled = () => {
+            console.log('PWA was installed');
+            // We can send this to Vercel Analytics too
+            if ((window as any).va) {
+                (window as any).va('event', { name: 'pwa_install' });
+            }
+        };
+
         window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        window.addEventListener('appinstalled', handleAppInstalled);
 
         // Check if already installed
         if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) {
@@ -32,6 +42,7 @@ export function PWAHandler() {
 
         return () => {
             window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+            window.removeEventListener('appinstalled', handleAppInstalled);
         };
     }, []);
 
