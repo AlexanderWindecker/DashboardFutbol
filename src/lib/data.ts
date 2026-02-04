@@ -47,6 +47,7 @@ export async function getData(): Promise<DashboardData> {
             })) as Match[],
             participations: allParticipations.map(p => ({
                 ...p,
+                isMvp: !!p.isMvp,
                 team: p.team as Team,
                 tacticalRole: p.tacticalRole as any,
                 notes: p.notes || undefined,
@@ -104,6 +105,7 @@ export async function getParticipationsForMatch(matchId: string) {
     const res = await db.select().from(participations).where(eq(participations.matchId, matchId));
     return res.map(p => ({
         ...p,
+        isMvp: !!p.isMvp,
         team: p.team as Team,
         tacticalRole: p.tacticalRole as any,
         notes: p.notes || undefined,

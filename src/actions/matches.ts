@@ -75,6 +75,7 @@ export async function updateParticipationAction(matchId: string, playerId: strin
 
     await updateParticipation(current);
     revalidatePath(`/matches/${matchId}`);
+    revalidatePath('/matches'); // Crucial for the matches list
     revalidatePath('/stats'); // Also revalidate stats page
 }
 
