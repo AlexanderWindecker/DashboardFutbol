@@ -34,8 +34,12 @@ export async function getData(): Promise<DashboardData> {
                     ...p,
                     isActive: p.isActive ?? true,
                     isVacation: p.isVacation ?? false,
+                    isInjured: p.isInjured ?? false,
                     skills: { ...defaultSkills, ...(p.skills ? JSON.parse(p.skills) : {}) },
                     traits: p.traits ? JSON.parse(p.traits) : [],
+                    positions: p.positions ? JSON.parse(p.positions) : [],
+                    affinities: p.affinities ? JSON.parse(p.affinities) : [],
+                    conflicts: p.conflicts ? JSON.parse(p.conflicts) : [],
                 };
             }) as Player[],
             matches: allMatches.map(m => ({
@@ -127,8 +131,12 @@ export async function getPlayers() {
         ...p,
         isActive: p.isActive ?? true,
         isVacation: p.isVacation ?? false,
+        isInjured: p.isInjured ?? false,
         skills: p.skills ? JSON.parse(p.skills) : {},
         traits: p.traits ? JSON.parse(p.traits) : [],
+        positions: p.positions ? JSON.parse(p.positions) : [],
+        affinities: p.affinities ? JSON.parse(p.affinities) : [],
+        conflicts: p.conflicts ? JSON.parse(p.conflicts) : [],
     })) as Player[];
 }
 
@@ -137,6 +145,9 @@ export async function addPlayer(player: Player) {
         ...player,
         skills: JSON.stringify(player.skills),
         traits: JSON.stringify(player.traits),
+        positions: JSON.stringify(player.positions || []),
+        affinities: JSON.stringify(player.affinities || []),
+        conflicts: JSON.stringify(player.conflicts || []),
     }).onConflictDoNothing();
 }
 
@@ -146,6 +157,9 @@ export async function updatePlayer(player: Player) {
             ...player,
             skills: JSON.stringify(player.skills),
             traits: JSON.stringify(player.traits),
+            positions: JSON.stringify(player.positions || []),
+            affinities: JSON.stringify(player.affinities || []),
+            conflicts: JSON.stringify(player.conflicts || []),
         })
         .where(eq(players.id, player.id));
 }

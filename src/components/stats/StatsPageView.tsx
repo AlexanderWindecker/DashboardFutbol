@@ -42,6 +42,7 @@ export function StatsPageView({ data, settings, seasons, activeSeasonId, calcula
     const topWinners = [...displayedStats].filter(p => p.matchesAttended >= 3).sort((a, b) => b.winRate - a.winRate).slice(0, 5);
     const topAbsences = [...displayedStats].sort((a, b) => b.absences - a.absences).slice(0, 5);
     const topScorers = [...displayedStats].sort((a, b) => b.goals - a.goals).slice(0, 5);
+    const topSkills = [...displayedStats].sort((a, b) => b.skillsAverage - a.skillsAverage).slice(0, 5);
 
     return (
         <div className="space-y-8">
@@ -109,7 +110,7 @@ export function StatsPageView({ data, settings, seasons, activeSeasonId, calcula
             </div>
 
             <h2 className="text-xl font-bold text-white mt-8">Rankings Individuales</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <RankingCard
                     title="Más Comprometido"
                     icon={<Activity size={18} className="text-emerald-400" />}
@@ -117,6 +118,14 @@ export function StatsPageView({ data, settings, seasons, activeSeasonId, calcula
                     valueKey="matchesAttended"
                     label="Partidos"
                     linkHref="/stats/rankings?type=attendance"
+                />
+                <RankingCard
+                    title="Mejores Medias"
+                    icon={<TrendingUp size={18} className="text-indigo-400" />}
+                    data={topSkills}
+                    valueKey="skillsAverage"
+                    label="Media"
+                    linkHref="/stats/rankings?type=skills_average"
                 />
                 <RankingCard
                     title="Goleadores"

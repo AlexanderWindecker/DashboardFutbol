@@ -14,8 +14,8 @@ interface AffinityManagerProps {
 }
 
 export function AffinityManager({ player, allPlayers, onSave, isPending }: AffinityManagerProps) {
-    const [affinities, setAffinities] = useState<string[]>(player.affinities || []);
-    const [conflicts, setConflicts] = useState<string[]>(player.conflicts || []);
+    const [affinities, setAffinities] = useState<string[]>(Array.from(new Set(player.affinities || [])));
+    const [conflicts, setConflicts] = useState<string[]>(Array.from(new Set(player.conflicts || [])));
     const [searchTerm, setSearchTerm] = useState('');
 
     const otherPlayers = allPlayers.filter(p => p.id !== player.id);
@@ -54,7 +54,7 @@ export function AffinityManager({ player, allPlayers, onSave, isPending }: Affin
                     </h4>
                     <p className="text-xs text-slate-500">Estos jugadores intentarán estar en el MISMO equipo.</p>
                     <div className="flex flex-wrap gap-2">
-                        {affinities.map(id => {
+                        {Array.from(new Set(affinities)).map(id => {
                             const p = allPlayers.find(pl => pl.id === id);
                             return (
                                 <div key={id} className="flex items-center gap-1 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 px-2 py-1 rounded-full text-xs font-medium">
@@ -77,7 +77,7 @@ export function AffinityManager({ player, allPlayers, onSave, isPending }: Affin
                     </h4>
                     <p className="text-xs text-slate-500">Estos jugadores intentarán estar en equipos DIFERENTES.</p>
                     <div className="flex flex-wrap gap-2">
-                        {conflicts.map(id => {
+                        {Array.from(new Set(conflicts)).map(id => {
                             const p = allPlayers.find(pl => pl.id === id);
                             return (
                                 <div key={id} className="flex items-center gap-1 bg-rose-500/10 text-rose-500 border border-rose-500/20 px-2 py-1 rounded-full text-xs font-medium">

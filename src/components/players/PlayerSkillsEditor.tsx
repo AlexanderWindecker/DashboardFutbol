@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { updatePlayerSkillsAction } from '@/actions/players';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Loader2, Save, Plus, Users, TrendingUp, Info, Palmtree } from 'lucide-react';
+import { Loader2, Save, Plus, Users, TrendingUp, Info, Palmtree, Target, Waves } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/Tooltip';
@@ -83,13 +83,19 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
     const azulRate = stats.matchesAttended > 0 ? (stats.matchesAzul / stats.matchesAttended) * 100 : 0;
     const celesteRate = stats.matchesAttended > 0 ? (stats.matchesCeleste / stats.matchesAttended) * 100 : 0;
 
-    // Logic: Is Pure Goalkeeper? (First position is Arquero AND only one position)
-    const isPureGoalkeeper = positions.length === 1 && positions[0] === 'Arquero';
+    // Logic: Is Primary Position Goalkeeper?
+    const isPrimaryGoalkeeper = positions.length > 0 && positions[0] === 'Arquero';
 
-    const data = isPureGoalkeeper ? [
+    // Logic: Does the player have any Field position?
+    const hasFieldPosition = positions.some(p => p !== 'Arquero');
+
+    // Logic: Does the player have Arquero as position (regardless of order)?
+    const hasGoalkeeperPosition = positions.includes('Arquero');
+
+    const data = isPrimaryGoalkeeper ? [
         { subject: 'Reflejos', A: skills.reflejos || 50, fullMark: 100 },
         { subject: 'Ubicación', A: skills.posicionamiento || 50, fullMark: 100 },
-        { subject: 'Estirada', A: skills.estirada || 50, fullMark: 100 },
+        { subject: 'Defensa', A: skills.estirada || 50, fullMark: 100 },
         { subject: 'Saque', A: skills.saque || 50, fullMark: 100 },
         { subject: 'Seguridad', A: skills.seguridad || 50, fullMark: 100 },
     ] : [
@@ -129,7 +135,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
         );
     };
 
-    const average = isPureGoalkeeper
+    const average = isPrimaryGoalkeeper
         ? Math.round(((skills.reflejos || 50) + (skills.posicionamiento || 50) + (skills.estirada || 50) + (skills.saque || 50) + (skills.seguridad || 50)) / 5)
         : Math.round((skills.ritmo + skills.tiros + skills.regates + skills.velocidad + skills.pases) / 5);
 
@@ -343,34 +349,14 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                         </div>
                     </div>
 
-                    <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
-                        {isPureGoalkeeper ? (
-                            <>
-                                <div className="text-xs font-bold text-sky-400 uppercase mb-2">Atributos de Arquero</div>
-                                {['reflejos', 'posicionamiento', 'estirada', 'saque', 'seguridad'].map((key) => {
-                                    const k = key as keyof typeof skills;
-                                    return (
-                                        <div key={key}>
-                                            <div className="flex justify-between text-xs mb-1">
-                                                <span className="capitalize text-slate-400">{key === 'posicionamiento' ? 'Ubicación' : key}</span>
-                                                <span className="text-sky-400 font-mono">{skills[k] || 50}</span>
-                                            </div>
-                                            <input
-                                                type="range"
-                                                min="0"
-                                                max="100"
-                                                disabled={!isEditing}
-                                                value={skills[k] ?? 50}
-                                                onChange={(e) => handleChange(k, parseInt(e.target.value))}
-                                                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer disabled:cursor-default disabled:opacity-50 accent-sky-500"
-                                            />
-                                        </div>
-                                    )
-                                })}
-                            </>
-                        ) : (
-                            <>
-                                <div className="text-xs font-bold text-slate-500 uppercase mb-2">Atributos de Campo</div>
+                    <div className="space-y-6 max-h-[400px] overflow-y-auto pr-2">
+                        {hasFieldPosition && (
+                            <div className="space-y-3">
+                                <div className="text-xs font-bold text-slate-500 uppercase mb-2 border-b border-slate-800 pb-1 flex items-center gap-2">
+                                    <Target size={12} className="text-amber-500" />
+                                    Atributos de Campo
+                                    {!isPrimaryGoalkeeper && <span className="text-[10px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded ml-auto">Influye en Global</span>}
+                                </div>
                                 {['ritmo', 'velocidad', 'tiros', 'pases', 'regates'].map((key) => {
                                     const k = key as keyof typeof skills;
                                     return (
@@ -391,7 +377,45 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                                         </div>
                                     )
                                 })}
-                            </>
+                            </div>
+                        )}
+
+                        {hasGoalkeeperPosition && (
+                            <div className="space-y-3 pt-4 border-t border-slate-800">
+                                <div className="text-xs font-bold text-sky-400 uppercase mb-2 border-b border-slate-800 pb-1 flex items-center gap-2">
+                                    <Waves size={12} className="text-sky-400" />
+                                    Atributos de Arquero
+                                    {isPrimaryGoalkeeper && <span className="text-[10px] bg-sky-500/10 text-sky-500 px-1.5 py-0.5 rounded ml-auto">Influye en Global</span>}
+                                </div>
+                                {['reflejos', 'posicionamiento', 'estirada', 'saque', 'seguridad'].map((key) => {
+                                    const k = key as keyof typeof skills;
+                                    return (
+                                        <div key={key}>
+                                            <div className="flex justify-between text-xs mb-1">
+                                                <span className="capitalize text-slate-400">
+                                                    {key === 'posicionamiento' ? 'Ubicación' : (key === 'estirada' ? 'Defensa' : key)}
+                                                </span>
+                                                <span className="text-sky-400 font-mono">{skills[k] || 50}</span>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="100"
+                                                disabled={!isEditing}
+                                                value={skills[k] ?? 50}
+                                                onChange={(e) => handleChange(k, parseInt(e.target.value))}
+                                                className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer disabled:cursor-default disabled:opacity-50 accent-sky-500"
+                                            />
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        )}
+
+                        {!hasFieldPosition && !hasGoalkeeperPosition && (
+                            <div className="text-center py-10 text-slate-500 text-sm italic">
+                                Selecciona una posición para ver los atributos.
+                            </div>
                         )}
                     </div>
                 </div>

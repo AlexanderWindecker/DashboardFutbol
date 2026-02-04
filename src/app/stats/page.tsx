@@ -40,6 +40,32 @@ function calculateStats(players: Player[], matches: Match[], participations: Pla
         // Goals
         const goals = playerParticipations.reduce((sum, p) => sum + (p.goals || 0), 0);
 
+        // Skills Average (Ficha)
+        const s = player.skills || { ritmo: 50, tiros: 50, pases: 50, regates: 50, velocidad: 50 };
+        const positions = player.positions || [];
+        const isPureGoalkeeper = positions.length === 1 && positions[0] === 'Arquero';
+
+        let skillsAverage = 0;
+        if (isPureGoalkeeper) {
+            const skillValues = [
+                s.reflejos || 50,
+                s.posicionamiento || 50,
+                s.estirada || 50,
+                s.saque || 50,
+                s.seguridad || 50
+            ];
+            skillsAverage = Math.round(skillValues.reduce((a, b) => a + b, 0) / 5);
+        } else {
+            const skillValues = [
+                s.ritmo || 50,
+                s.tiros || 50,
+                s.pases || 50,
+                s.regates || 50,
+                s.velocidad || 50
+            ];
+            skillsAverage = Math.round(skillValues.reduce((a, b) => a + b, 0) / 5);
+        }
+
         return {
             ...player,
             matchesAttended,
@@ -50,7 +76,8 @@ function calculateStats(players: Player[], matches: Match[], participations: Pla
             celesteApps,
             azulApps,
             mainTeam,
-            goals
+            goals,
+            skillsAverage
         };
     });
 

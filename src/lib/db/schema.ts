@@ -7,8 +7,14 @@ export const players = pgTable('players', {
     isActive: boolean('is_active').default(true),
     isVacation: boolean('is_vacation').default(false),
     photo: text('photo'),
-    skills: text('skills'), // JSON stringified or separate table? Let's keep it simple for now as text
-    traits: text('traits'), // JSON stringified array
+    skills: text('skills'), // JSON
+    traits: text('traits'), // JSON
+    positions: text('positions'), // JSON array
+    preferredFoot: text('preferred_foot'),
+    telegramId: text('telegram_id'),
+    isInjured: boolean('is_injured').default(false),
+    affinities: text('affinities'), // JSON array
+    conflicts: text('conflicts'), // JSON array
 });
 
 export const matches = pgTable('matches', {
