@@ -116,8 +116,8 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
             traits: userTraits,
             isInjured,
             isVacation,
-            phone: phone || undefined,
-            telegramId: telegramId || undefined
+            phone,
+            telegramId
         });
         setIsPending(false);
         setIsEditing(false);
