@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   title: 'Football Dashboard',
   description: 'Amateur Football Management',
   manifest: '/manifest.json',
-  themeColor: '#4f46e5',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -23,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: '#0f172a',
+  themeColor: '#4f46e5',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,

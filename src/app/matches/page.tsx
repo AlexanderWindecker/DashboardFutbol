@@ -2,6 +2,8 @@ import { getData, getSettings } from '@/lib/data';
 import { CreateMatchDialog } from '@/components/matches/CreateMatchDialog';
 import { MatchesTable } from '@/components/matches/MatchesTable';
 
+export const dynamic = 'force-dynamic';
+
 export default async function MatchesPage() {
     const data = await getData();
     const settings = await getSettings();

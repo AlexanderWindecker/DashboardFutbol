@@ -1,4 +1,7 @@
 import { getData } from '@/lib/data';
+
+export const dynamic = 'force-dynamic';
+
 import { Player, PlayerStats, Match } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import Link from 'next/link';
@@ -196,7 +199,8 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                     background-size: 200% auto;
                     animation: shimmer 2s linear infinite;
                 }
-            `}} />
+                `
+            }} />
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">

@@ -1,5 +1,7 @@
 import { getData } from '@/lib/data';
 import { CalendarDashboard } from '@/components/dashboard/CalendarDashboard';
+
+export const dynamic = 'force-dynamic';
 import { ArrowRight, Calendar, Users } from 'lucide-react';
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
