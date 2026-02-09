@@ -1,4 +1,6 @@
 import { getData } from '@/lib/data';
+import { format, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,6 +28,12 @@ function calculateStats(players: Player[], matches: Match[], participations: Pla
         const azulApps = attendedStats.filter(p => p.team === 'Azul').length;
 
         const goals = playerParticipations.reduce((sum, p) => sum + (p.goals || 0), 0);
+
+        // Find last MVP date
+        const mvpMatches = attendedStats.filter(p => p.isMvp).map(p => matches.find(m => m.id === p.matchId)).filter(Boolean) as Match[];
+        const lastMvpDate = mvpMatches.length > 0
+            ? mvpMatches.reduce((latest, m) => new Date(m.date) > new Date(latest.date) ? m : latest).date
+            : null;
 
         // Skills Logic
         const s = player.skills || { ritmo: 50, tiros: 50, pases: 50, regates: 50, velocidad: 50 };
@@ -69,7 +77,8 @@ function calculateStats(players: Player[], matches: Match[], participations: Pla
             goals,
             skillsAverage,
             skillDetails,
-            isUsingGoalkeeperStats: showGoalkeeperStats
+            isUsingGoalkeeperStats: showGoalkeeperStats,
+            lastMvpDate
         };
     });
     return playerStats;
@@ -117,13 +126,25 @@ const RatingBadge = ({ score }: { score: number }) => {
     );
 };
 
-export default async function RankingsPage({ searchParams }: { searchParams: { type: string, pos?: string, filter?: string } }) {
-    const { players, matches, participations } = await getData();
+export default async function RankingsPage({ searchParams }: { searchParams: { type: string, pos?: string, filter?: string, seasonId?: string } }) {
+    const { players, matches: allMatches, participations: allParticipations, seasons = [] } = await getData() as any;
+    const { getActiveSeasonId, getSettings } = await import('@/lib/data');
+    const activeSeasonId = await getActiveSeasonId();
 
     const params = await Promise.resolve(searchParams);
     const type = params.type || 'attendance';
     const posFilter = params.pos || 'Todos';
     const statusFilter = params.filter || 'Activos';
+    const seasonId = params.seasonId || activeSeasonId;
+
+    // Filter matches by season if not 'all'
+    const matches = seasonId && seasonId !== 'all'
+        ? allMatches.filter((m: Match) => m.seasonId === seasonId)
+        : allMatches;
+
+    // Filter participations for those matches
+    const matchIds = new Set(matches.map((m: Match) => m.id));
+    const participations = allParticipations.filter((p: PlayerStats) => matchIds.has(p.matchId));
 
     const stats = calculateStats(players, matches, participations, posFilter);
 
@@ -143,6 +164,8 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
     if (posFilter !== 'Todos') {
         data = data.filter(p => p.positions?.includes(posFilter as any));
     }
+
+    const isMvpType = type === 'mvp';
 
     switch (type) {
         case 'attendance':
@@ -202,7 +225,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                 `
             }} />
 
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <Link href="/stats" className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white transition-all">
                         <ArrowLeft size={24} />
@@ -213,21 +236,52 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                     </div>
                 </div>
 
-                <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800 shadow-xl">
-                    {['Todos', 'Activos', 'Vacaciones', 'Lesionados'].map(f => (
+                <div className="flex flex-wrap items-center gap-3">
+                    {/* Season Selector */}
+                    <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800 shadow-xl overflow-x-auto max-w-[300px] md:max-w-none no-scrollbar">
                         <Link
-                            key={f}
-                            href={`/stats/rankings?type=${type}&pos=${posFilter}&filter=${f}`}
+                            href={`/stats/rankings?type=${type}&pos=${posFilter}&filter=${statusFilter}&seasonId=all`}
                             className={cn(
-                                "px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
-                                statusFilter === f
-                                    ? "bg-slate-800 text-white shadow-[0_0_15px_rgba(0,0,0,0.5)] border border-slate-700"
+                                "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap",
+                                (!seasonId || seasonId === 'all')
+                                    ? "bg-indigo-600 text-white shadow-lg"
                                     : "text-slate-500 hover:text-slate-300"
                             )}
                         >
-                            {f}
+                            Todo
                         </Link>
-                    ))}
+                        {seasons.map((s: any) => (
+                            <Link
+                                key={s.id}
+                                href={`/stats/rankings?type=${type}&pos=${posFilter}&filter=${statusFilter}&seasonId=${s.id}`}
+                                className={cn(
+                                    "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap",
+                                    seasonId === s.id
+                                        ? "bg-indigo-600 text-white shadow-lg"
+                                        : "text-slate-500 hover:text-slate-300"
+                                )}
+                            >
+                                {s.name}
+                            </Link>
+                        ))}
+                    </div>
+
+                    <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800 shadow-xl">
+                        {['Todos', 'Activos', 'Vacaciones', 'Lesionados'].map(f => (
+                            <Link
+                                key={f}
+                                href={`/stats/rankings?type=${type}&pos=${posFilter}&filter=${f}&seasonId=${seasonId}`}
+                                className={cn(
+                                    "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
+                                    statusFilter === f
+                                        ? "bg-slate-800 text-white shadow-sm border border-slate-700"
+                                        : "text-slate-500 hover:text-slate-300"
+                                )}
+                            >
+                                {f}
+                            </Link>
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -235,7 +289,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                 {['Todos', 'Delantero', 'Mediocampista', 'Defensor', 'Arquero'].map(pos => (
                     <Link
                         key={pos}
-                        href={`/stats/rankings?type=${type}&filter=${statusFilter}&pos=${pos}`}
+                        href={`/stats/rankings?type=${type}&filter=${statusFilter}&pos=${pos}&seasonId=${seasonId}`}
                         className={cn(
                             "px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest border-2 transition-all flex items-center gap-2",
                             posFilter === pos
@@ -271,6 +325,12 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                                     <th className="p-4 text-center bg-rose-500/5 min-w-[100px]">
                                         {isArqueroView ? 'SEG' : 'VEL'}
                                     </th>
+                                </>
+                            )}
+                            {isMvpType && (
+                                <>
+                                    <th className="p-4 text-center border-l border-slate-800/50 text-slate-400">PJ</th>
+                                    <th className="p-4 text-center text-slate-400">Último MVP</th>
                                 </>
                             )}
                             <th className="p-4 text-right font-black text-slate-400 border-l border-slate-800/50">{label}</th>
@@ -338,6 +398,27 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                                                 value={p.skillDetails.def}
                                                 colorClass="bg-rose-400 shadow-rose-500/50"
                                             />
+                                        </td>
+                                    </>
+                                )}
+                                {isMvpType && (
+                                    <>
+                                        <td className="p-4 text-center border-l border-slate-800/30 text-slate-300 font-bold">
+                                            {p.matchesAttended}
+                                        </td>
+                                        <td className="p-4 text-center text-slate-400 font-medium">
+                                            {p.lastMvpDate ? (
+                                                <div className="flex flex-col items-center">
+                                                    <span className="text-white text-xs font-bold">
+                                                        {format(parseISO(p.lastMvpDate), 'd MMM', { locale: es })}
+                                                    </span>
+                                                    <span className="text-[10px] opacity-50 uppercase">
+                                                        {format(parseISO(p.lastMvpDate), 'yyyy', { locale: es })}
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <span className="text-slate-600 italic">-</span>
+                                            )}
                                         </td>
                                     </>
                                 )}

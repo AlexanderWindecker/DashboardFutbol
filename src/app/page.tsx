@@ -10,11 +10,14 @@ import { Badge } from '@/components/ui/Badge';
 import { InstallButton } from '@/components/layout/PWAHandler';
 
 export default async function DashboardPage() {
-  const { matches, players } = await getData();
+  const { matches: allMatches, players, activeSeasonId } = await getData() as any;
+
+  const matches = activeSeasonId
+    ? allMatches.filter((m: any) => m.seasonId === activeSeasonId)
+    : allMatches;
 
   // Sort matches descending
   const sortedMatches = [...matches].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  const nextMatch = sortedMatches.find(m => new Date(m.date) >= new Date()); // Simplistic next
   const recentMatches = sortedMatches.filter(m => new Date(m.date) < new Date()).slice(0, 3);
   // Actually "nextMatch" logic is tricky if all are in past.
   // Let's just show "Recent Matches".
@@ -50,7 +53,7 @@ export default async function DashboardPage() {
                 <Users size={24} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">{players.filter(p => (p.isActive !== false) && !p.isInjured && !p.isVacation).length}</p>
+                <p className="text-2xl font-bold text-white">{players.filter((p: any) => (p.isActive !== false) && !p.isInjured && !p.isVacation).length}</p>
                 <p className="text-sm text-slate-500">Jugadores Disponibles</p>
               </div>
             </div>
