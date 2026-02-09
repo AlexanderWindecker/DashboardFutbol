@@ -2,10 +2,10 @@
 
 import { Player } from '@/types';
 import { useState } from 'react';
-import { updatePlayerSkillsAction } from '@/actions/players';
+import { updatePlayerSkillsAction, deletePlayerAction } from '@/actions/players';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Loader2, Save, Plus, Users, TrendingUp, Info, Palmtree, Target, Waves } from 'lucide-react';
+import { Loader2, Save, Plus, Users, TrendingUp, Info, Palmtree, Target, Waves, Trash2 } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/Tooltip';
@@ -18,6 +18,7 @@ import { RulesEditorModal, SKILLS } from './RulesEditorModal';
 import { getPlayerSpecialties, getPlayerTraits } from '@/lib/rules-engine';
 import { AffinityManager } from './AffinityManager';
 import { CustomRule } from '@/types';
+import { useRouter } from 'next/navigation';
 import { useAdmin } from '@/hooks/useAdmin';
 
 interface PlayerSkillsEditorProps {
@@ -73,6 +74,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
     const [showGuide, setShowGuide] = useState(false);
     const [showRulesEditor, setShowRulesEditor] = useState<'specialty' | 'trait' | null>(null);
     const { isAdmin } = useAdmin();
+    const router = useRouter();
 
     const POSSIBLE_POSITIONS = ['Delantero', 'Mediocampista', 'Defensor', 'Arquero'];
 
@@ -121,6 +123,22 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
         });
         setIsPending(false);
         setIsEditing(false);
+    }
+
+    async function handleDelete() {
+        if (!window.confirm(`¿Estás seguro de que deseas eliminar a ${player.name}? Esta acción no se puede deshacer y borrará también su historial de partidos.`)) {
+            return;
+        }
+
+        setIsPending(true);
+        try {
+            await deletePlayerAction(player.id);
+            router.push('/players');
+        } catch (error) {
+            console.error('Error al eliminar jugador:', error);
+            alert('Hubo un error al eliminar al jugador.');
+            setIsPending(false);
+        }
     }
 
     const handleChange = (key: keyof typeof skills, value: number) => {
@@ -223,6 +241,17 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                         <Button variant="ghost" size="sm" onClick={() => isEditing ? handleSave() : setIsEditing(true)}>
                             {isPending ? <Loader2 className="animate-spin" /> : (isEditing ? <Save size={18} /> : 'Editar')}
                         </Button>
+                        {isEditing && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={handleDelete}
+                                className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10"
+                                disabled={isPending}
+                            >
+                                <Trash2 size={18} />
+                            </Button>
+                        )}
                     </div>
                 )}
             </div>

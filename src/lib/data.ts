@@ -164,6 +164,13 @@ export async function updatePlayer(player: Player) {
         .where(eq(players.id, player.id));
 }
 
+export async function deletePlayer(id: string) {
+    // Delete participations first
+    await db.delete(participations).where(eq(participations.playerId, id));
+    // Then delete player
+    await db.delete(players).where(eq(players.id, id));
+}
+
 export async function deleteMatch(id: string) {
     await db.delete(participations).where(eq(participations.matchId, id));
     await db.delete(matches).where(eq(matches.id, id));

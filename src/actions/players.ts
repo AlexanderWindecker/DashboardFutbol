@@ -124,3 +124,10 @@ export async function updatePlayerSkillsAction(playerId: string, data: Partial<P
     revalidatePath(`/players/${playerId}`);
     revalidatePath('/players');
 }
+
+export async function deletePlayerAction(playerId: string) {
+    const { deletePlayer } = await import('@/lib/data');
+    await deletePlayer(playerId);
+    revalidatePath('/players');
+    revalidatePath('/stats/rankings');
+}
