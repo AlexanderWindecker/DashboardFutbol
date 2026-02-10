@@ -96,53 +96,63 @@ export function PlayersListView({ players }: PlayersListViewProps) {
 
                     return (
                         <div key={player.id} className={cn(
-                            "bg-slate-900 border border-slate-800 rounded-xl p-3 md:p-6 flex flex-col sm:flex-row items-center sm:justify-between gap-3 transition-colors group relative",
-                            isUnavailable && "opacity-60 bg-slate-950/30"
+                            "bg-slate-900 border border-slate-800 rounded-xl p-3 md:p-5 flex flex-col gap-3 transition-all group relative",
+                            isUnavailable && "opacity-70 bg-slate-950/40"
                         )}>
-                            <div className="flex items-center gap-2 md:gap-4 w-full">
-                                <div className={cn("w-8 h-8 md:w-10 md:h-10 rounded-full shrink-0 flex items-center justify-center font-bold text-base md:text-lg", isActive ? "bg-slate-800 text-slate-300" : "bg-slate-950 text-slate-700")}>
-                                    <User size={16} />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                    <div className="flex items-center gap-1.5">
-                                        {/* If privacy mode is on, just show text, else show editable if admin */}
-                                        {privacyMode || !isAdmin ? (
-                                            <span className="text-white font-medium text-xs md:text-base truncate">{displayName}</span>
-                                        ) : (
-                                            <div className="truncate flex-1">
-                                                <EditablePlayerName id={player.id} name={player.name} isActive={isActive} />
-                                            </div>
-                                        )}
-
-                                        <Link href={`/players/${player.id}`} className="text-slate-500 hover:text-sky-400 transition-colors p-1 shrink-0">
-                                            <User size={12} />
-                                        </Link>
+                            <div className="flex items-start justify-between gap-3">
+                                <Link href={`/players/${player.id}`} className="flex items-center gap-3 min-w-0 flex-1 group/link">
+                                    <div className={cn(
+                                        "w-10 h-10 md:w-12 md:h-12 rounded-xl shrink-0 flex items-center justify-center font-bold text-lg md:text-xl transition-transform group-hover/link:scale-105 shadow-lg border",
+                                        isActive ? "bg-slate-800 border-slate-700 text-slate-300" : "bg-slate-950 border-slate-900 text-slate-700"
+                                    )}>
+                                        <User size={20} />
                                     </div>
-                                    <div className="text-[10px] md:text-xs text-slate-500 flex flex-wrap items-center gap-1.5 mt-0.5 md:mt-1">
-                                        {displayPhone ? (
-                                            <span className="text-sky-400 font-mono truncate">{displayPhone}</span>
-                                        ) : (
-                                            <span className="opacity-50">ID: {displayId}</span>
-                                        )}
-                                        <div className="flex flex-wrap gap-1">
-                                            {!isActive && <Badge variant="outline" className="text-[8px] md:text-[10px] py-0 px-1 leading-tight">OFF</Badge>}
-                                            {isActive && isInjured && <Badge variant="outline" className="text-[8px] md:text-[10px] py-0 px-1 border-red-500/50 text-red-500 flex items-center gap-0.5"><Plus size={8} />Cruz</Badge>}
-                                            {isActive && isVacation && <Badge variant="outline" className="text-[8px] md:text-[10px] py-0 px-1 border-amber-500/50 text-amber-500 flex items-center gap-0.5"><Palmtree size={8} />Vacas</Badge>}
+                                    <div className="min-w-0">
+                                        <div className="flex items-center gap-2">
+                                            {privacyMode || !isAdmin ? (
+                                                <span className="text-white font-bold text-sm md:text-base truncate">{displayName}</span>
+                                            ) : (
+                                                <div className="truncate flex-1">
+                                                    <EditablePlayerName id={player.id} name={player.name} isActive={isActive} />
+                                                </div>
+                                            )}
+                                            <div className="p-1.5 rounded-lg bg-slate-800/50 text-slate-500 group-hover/link:text-sky-400 group-hover/link:bg-sky-400/10 transition-all border border-transparent group-hover/link:border-sky-400/20">
+                                                <User size={14} />
+                                            </div>
+                                        </div>
+                                        <div className="text-[10px] md:text-xs text-slate-500 mt-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                                            {displayPhone ? (
+                                                <span className="text-sky-400 font-mono font-medium truncate">{displayPhone}</span>
+                                            ) : (
+                                                <span className="opacity-40 font-mono">ID: {displayId}</span>
+                                            )}
                                         </div>
                                     </div>
-                                </div>
+                                </Link>
+
+                                {isAdmin && (
+                                    <form action={togglePlayerStatusAction.bind(null, player.id)} className="shrink-0">
+                                        <button
+                                            className={cn(
+                                                "p-2.5 rounded-xl transition-all border shadow-sm",
+                                                isActive
+                                                    ? "bg-slate-950/50 border-slate-800 text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-700 active:scale-90"
+                                                    : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/30 active:scale-90"
+                                            )}
+                                            title={isActive ? "Desactivar" : "Reactivar"}
+                                        >
+                                            {isActive ? <UserX size={18} /> : <UserCheck size={18} />}
+                                        </button>
+                                    </form>
+                                )}
                             </div>
 
-                            {isAdmin && (
-                                <form action={togglePlayerStatusAction.bind(null, player.id)} className="absolute top-2 right-2 sm:relative sm:top-0 sm:right-0">
-                                    <button
-                                        className="p-1.5 rounded-full text-slate-600 hover:bg-slate-800 hover:text-white transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
-                                        title={isActive ? "Desactivar" : "Reactivar"}
-                                    >
-                                        {isActive ? <UserX size={16} /> : <UserCheck size={16} className="text-emerald-400" />}
-                                    </button>
-                                </form>
-                            )}
+                            <div className="flex flex-wrap gap-1.5 pt-1 border-t border-slate-800/50 mt-1">
+                                {!isActive && <Badge variant="outline" className="text-[9px] md:text-[10px] py-0.5 px-2 bg-slate-950 font-bold tracking-wider">CUENTA DESACTIVADA</Badge>}
+                                {isActive && isInjured && <Badge variant="outline" className="text-[9px] md:text-[10px] py-0.5 px-2 border-red-500/30 text-red-500 bg-red-500/10 flex items-center gap-1 font-bold"><Plus size={10} className="rotate-45" />LESIONADO</Badge>}
+                                {isActive && isVacation && <Badge variant="outline" className="text-[9px] md:text-[10px] py-0.5 px-2 border-amber-500/30 text-amber-500 bg-amber-500/10 flex items-center gap-1 font-bold"><Palmtree size={10} />VACACIONES</Badge>}
+                                {isActive && !isInjured && !isVacation && <Badge variant="outline" className="text-[9px] md:text-[10px] py-0.5 px-2 border-emerald-500/30 text-emerald-500 bg-emerald-500/10 font-bold">DISPONIBLE</Badge>}
+                            </div>
                         </div>
                     )
                 })}
