@@ -4,6 +4,7 @@ import { ArrowLeft, Activity, Trophy, UserMinus, UserX } from 'lucide-react';
 import Link from 'next/link';
 import { StatCard } from '@/components/stats/StatsComponents';
 import { PlayerStreak, StreakResult } from '@/components/players/PlayerStreak';
+import { EditablePlayerName } from '@/components/players/EditablePlayerName';
 import { parseISO } from 'date-fns';
 
 export default async function PlayerProfilePage({ params }: { params: { id: string } }) {
@@ -17,6 +18,7 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
     }
 
     const playerParticipations = participations.filter(p => p.playerId === id);
+    const isActive = player.isActive ?? true;
 
     // Stats Calculations
     const matchesAttended = playerParticipations.filter(p => p.status === 'Attended').length;
@@ -144,8 +146,8 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
                 </Link>
                 <div>
                     <div className="flex items-center gap-3">
-                        <h1 className="text-3xl font-bold text-white">{player.name}</h1>
-                        <PlayerStreak streak={last5Streak} className="mt-1" />
+                        <EditablePlayerName id={player.id} name={player.name} isActive={isActive} />
+                        <PlayerStreak streak={last5Streak} className="hidden xs:flex mt-1" />
                     </div>
                     <p className="text-slate-400 text-sm">Detalle de jugador</p>
                 </div>

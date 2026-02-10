@@ -109,16 +109,7 @@ export function PlayersListView({ players }: PlayersListViewProps) {
                                     </div>
                                     <div className="min-w-0">
                                         <div className="flex items-center gap-2">
-                                            {privacyMode || !isAdmin ? (
-                                                <span className="text-white font-bold text-sm md:text-base truncate">{displayName}</span>
-                                            ) : (
-                                                <div className="truncate flex-1">
-                                                    <EditablePlayerName id={player.id} name={player.name} isActive={isActive} />
-                                                </div>
-                                            )}
-                                            <div className="p-1.5 rounded-lg bg-slate-800/50 text-slate-500 group-hover/link:text-sky-400 group-hover/link:bg-sky-400/10 transition-all border border-transparent group-hover/link:border-sky-400/20">
-                                                <User size={14} />
-                                            </div>
+                                            <span className="text-white font-bold text-sm md:text-base truncate">{displayName}</span>
                                         </div>
                                         <div className="text-[10px] md:text-xs text-slate-500 mt-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                                             {displayPhone ? (
