@@ -145,9 +145,9 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
                     <ArrowLeft size={20} />
                 </Link>
                 <div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                         <EditablePlayerName id={player.id} name={player.name} isActive={isActive} />
-                        <PlayerStreak streak={last5Streak} className="hidden xs:flex mt-1" />
+                        <PlayerStreak streak={last5Streak} className="mt-1" />
                     </div>
                     <p className="text-slate-400 text-sm">Detalle de jugador</p>
                 </div>
