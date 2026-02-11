@@ -84,13 +84,14 @@ function calculateStats(players: Player[], matches: Match[], participations: Pla
     return { playerStats, celesteWins, azulWins };
 }
 
-export default async function StatsPage({ searchParams }: { searchParams: { seasonId?: string } }) {
+export default async function StatsPage({ searchParams }: { searchParams: Promise<{ seasonId?: string }> }) {
+    const params = await searchParams;
     const data = await getData();
     const settings = await getSettings();
     const seasons = data.seasons || [];
     const activeSeasonId = data.activeSeasonId;
 
-    const selectedSeasonId = searchParams.seasonId || activeSeasonId;
+    const selectedSeasonId = params.seasonId || activeSeasonId;
 
     // Filter data by season
     const filteredMatches = selectedSeasonId

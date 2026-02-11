@@ -302,129 +302,123 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                 ))}
             </div>
 
-            {/* Podium for Top 3 */}
-            {data.length >= 3 && (
-                <div className="grid grid-cols-3 items-end gap-2 md:gap-6 px-2 py-8 md:py-12">
-                    {/* 2nd Place */}
-                    <div className="order-1 flex flex-col items-center gap-3 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-                        <div className="relative group">
-                            <div className="absolute inset-0 bg-slate-400/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-gradient-to-br from-slate-300 to-slate-500 flex items-center justify-center border-4 border-slate-100 shadow-xl relative z-10 rotate-[-4deg] group-hover:rotate-0 transition-transform">
-                                <span className="text-2xl md:text-4xl font-black text-slate-800">{data[1].name.charAt(0)}</span>
-                                <div className="absolute -top-3 -right-3 bg-slate-100 text-slate-800 w-8 h-8 rounded-full flex items-center justify-center font-black border-2 border-slate-300 shadow-md text-sm">2</div>
-                            </div>
-                        </div>
-                        <div className="text-center">
-                            <p className="text-white font-bold text-xs md:text-lg truncate max-w-[80px] md:max-w-none">{data[1].name}</p>
-                            <Badge variant="outline" className="text-[10px] md:text-xs text-slate-300 border-slate-700 bg-slate-800/50">{data[1][valueKey as keyof typeof data[0]] as number} {label}</Badge>
-                        </div>
-                    </div>
 
-                    {/* 1st Place */}
-                    <div className="order-2 flex flex-col items-center gap-4 animate-fade-in-up">
-                        <div className="relative group">
-                            <div className="absolute -inset-4 bg-amber-500/30 blur-3xl rounded-full animate-pulse" />
-                            <div className="w-20 h-20 md:w-32 md:h-32 rounded-3xl bg-gradient-to-br from-amber-300 via-amber-500 to-amber-600 flex items-center justify-center border-4 border-amber-200 shadow-[0_0_40px_rgba(251,191,36,0.5)] relative z-10 group-hover:scale-110 transition-transform cursor-pointer">
-                                <Crown className="absolute -top-10 text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,1)]" size={48} />
-                                <span className="text-3xl md:text-5xl font-black text-amber-950">{data[0].name.charAt(0)}</span>
-                                <div className="absolute -bottom-4 bg-amber-200 text-amber-950 px-4 py-1 rounded-full font-black border-2 border-amber-400 shadow-xl text-sm italic tracking-tighter">EL CAPO</div>
-                            </div>
-                        </div>
-                        <div className="text-center mt-4">
-                            <p className="text-white font-black text-sm md:text-2xl uppercase tracking-tighter drop-shadow-lg">{data[0].name}</p>
-                            <div className="mt-1 flex items-center justify-center gap-2">
-                                <RatingBadge score={data[0][valueKey as keyof typeof data[0]] as number} />
-                            </div>
-                        </div>
-                    </div>
+            {/* Rankings List - Table for Skills, Cards for others */}
+            {isSkillsRanking ? (
+                <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-2xl overflow-x-auto shadow-2xl">
+                    <table className="w-full text-left text-sm min-w-[900px]">
+                        <thead className="bg-slate-950/80 text-slate-500 border-b border-slate-800 uppercase text-[10px] font-black tracking-widest">
+                            <tr>
+                                <th className="p-4 w-12 text-center">#</th>
+                                <th className="p-4">Jugador</th>
+                                <th className="p-4 text-center border-l border-slate-800/50 bg-sky-500/5 min-w-[100px]">
+                                    {isArqueroView ? 'REF' : 'RIT'}
+                                </th>
+                                <th className="p-4 text-center bg-orange-500/5 min-w-[100px]">
+                                    {isArqueroView ? 'UBI' : 'TIR'}
+                                </th>
+                                <th className="p-4 text-center bg-emerald-500/5 min-w-[100px]">
+                                    {isArqueroView ? 'DEF' : 'PAS'}
+                                </th>
+                                <th className="p-4 text-center bg-purple-500/5 min-w-[100px]">
+                                    {isArqueroView ? 'SAQ' : 'REG'}
+                                </th>
+                                <th className="p-4 text-center bg-rose-500/5 min-w-[100px]">
+                                    {isArqueroView ? 'SEG' : 'VEL'}
+                                </th>
+                                <th className="p-4 text-right font-black text-slate-400 border-l border-slate-800/50">Media</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800/50">
+                            {data.map((p, i) => {
+                                return (
+                                    <tr key={p.id} className="hover:bg-slate-800/30 transition-all group">
+                                        <td className="p-4 text-center text-slate-600 font-mono font-bold">{i + 1}</td>
+                                        <td className="p-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 font-bold border border-slate-700">
+                                                    {p.name.charAt(0)}
+                                                </div>
+                                                <span className="font-bold text-white whitespace-nowrap">{p.name}</span>
+                                            </div>
+                                        </td>
+                                        <td className="p-4 border-l border-slate-800/30 bg-sky-500/[0.02]">
+                                            <SkillBar label={p.isUsingGoalkeeperStats ? "REF" : "RIT"} value={p.skillDetails.pac} colorClass="bg-sky-400 shadow-sky-500/50" />
+                                        </td>
+                                        <td className="p-4 bg-orange-500/[0.02]">
+                                            <SkillBar label={p.isUsingGoalkeeperStats ? "UBI" : "TIR"} value={p.skillDetails.sho} colorClass="bg-orange-400 shadow-orange-500/50" />
+                                        </td>
+                                        <td className="p-4 bg-emerald-500/[0.02]">
+                                            <SkillBar label={p.isUsingGoalkeeperStats ? "DEF" : "PAS"} value={p.skillDetails.pas} colorClass="bg-emerald-400 shadow-emerald-500/50" />
+                                        </td>
+                                        <td className="p-4 bg-purple-500/[0.02]">
+                                            <SkillBar label={p.isUsingGoalkeeperStats ? "SAQ" : "REG"} value={p.skillDetails.dri} colorClass="bg-purple-400 shadow-purple-500/50" />
+                                        </td>
+                                        <td className="p-4 bg-rose-500/[0.02]">
+                                            <SkillBar label={p.isUsingGoalkeeperStats ? "SEG" : "VEL"} value={p.skillDetails.def} colorClass="bg-rose-400 shadow-rose-500/50" />
+                                        </td>
+                                        <td className="p-4 text-right border-l border-slate-800/30">
+                                            <RatingBadge score={p.skillsAverage} />
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <div className="space-y-3">
+                    {data.map((p, i) => {
 
-                    {/* 3rd Place */}
-                    <div className="order-3 flex flex-col items-center gap-3 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-                        <div className="relative group">
-                            <div className="absolute inset-0 bg-amber-800/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <div className="w-14 h-14 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center border-4 border-amber-700 shadow-xl relative z-10 rotate-[4deg] group-hover:rotate-0 transition-transform">
-                                <span className="text-xl md:text-3xl font-black text-amber-100">{data[2].name.charAt(0)}</span>
-                                <div className="absolute -top-3 -right-3 bg-amber-700 text-amber-100 w-8 h-8 rounded-full flex items-center justify-center font-black border-2 border-amber-900 shadow-md text-sm">3</div>
+                        return (
+                            <div key={p.id} className="group relative bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-2xl p-4 transition-all hover:bg-slate-800/50 hover:border-slate-700 hover:translate-x-1 flex items-center justify-between gap-4 overflow-hidden">
+                                {/* Accent line for top 10 */}
+                                {i < 10 && <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />}
+
+                                <div className="flex items-center gap-4 min-w-0">
+                                    <span className="text-slate-600 font-bold font-mono w-6 text-center">{i + 1}</span>
+
+                                    <div className="relative">
+                                        <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 font-black border border-slate-700 group-hover:border-indigo-500/50 transition-colors">
+                                            {p.name.charAt(0)}
+                                        </div>
+                                        {p.isVacation && (
+                                            <div className="absolute -top-1.5 -right-1.5 bg-amber-500 rounded-lg p-1 border-2 border-slate-900 shadow-lg">
+                                                <Palmtree size={10} className="text-white" />
+                                            </div>
+                                        )}
+                                        {p.isInjured && (
+                                            <div className="absolute -top-1.5 -right-1.5 bg-red-600 rounded-lg p-1 border-2 border-slate-900 shadow-lg animate-pulse">
+                                                <Plus size={10} className="text-white rotate-45 stroke-[4px]" />
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex flex-col min-w-0">
+                                        <span className="font-bold text-white text-base md:text-lg truncate group-hover:text-indigo-400 transition-colors">{p.name}</span>
+                                        {isMvpType && p.lastMvpDate && (
+                                            <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                                                <Trophy size={10} className="text-amber-500" />
+                                                <span>Último: {format(parseISO(p.lastMvpDate), 'd MMM yyyy', { locale: es })}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-4 shrink-0">
+                                    {isMvpType && (
+                                        <div className="hidden sm:flex flex-col items-end">
+                                            <span className="text-[10px] text-slate-500 font-bold uppercase">Partidos</span>
+                                            <span className="text-sm font-bold text-slate-300">{p.matchesAttended}</span>
+                                        </div>
+                                    )}
+                                    <RatingBadge score={p[valueKey as keyof typeof p] as number} />
+                                </div>
                             </div>
-                        </div>
-                        <div className="text-center">
-                            <p className="text-white font-bold text-xs md:text-lg truncate max-w-[80px] md:max-w-none">{data[2].name}</p>
-                            <Badge variant="outline" className="text-[10px] md:text-xs text-amber-200/50 border-amber-900/50 bg-amber-900/20">{data[2][valueKey as keyof typeof data[0]] as number} {label}</Badge>
-                        </div>
-                    </div>
+                        );
+                    })}
                 </div>
             )}
-
-            {/* Rankings List */}
-            <div className="space-y-3">
-                {data.map((p, i) => {
-                    if (data.length >= 3 && i < 3) return null; // Already in podium
-
-                    return (
-                        <div key={p.id} className="group relative bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-2xl p-4 transition-all hover:bg-slate-800/50 hover:border-slate-700 hover:translate-x-1 flex items-center justify-between gap-4 overflow-hidden">
-                            {/* Accent line for top 10 */}
-                            {i < 10 && <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />}
-
-                            <div className="flex items-center gap-4 min-w-0">
-                                <span className="text-slate-600 font-bold font-mono w-6 text-center">{i + 1}</span>
-
-                                <div className="relative">
-                                    <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 font-black border border-slate-700 group-hover:border-indigo-500/50 transition-colors">
-                                        {p.name.charAt(0)}
-                                    </div>
-                                    {p.isVacation && (
-                                        <div className="absolute -top-1.5 -right-1.5 bg-amber-500 rounded-lg p-1 border-2 border-slate-900 shadow-lg">
-                                            <Palmtree size={10} className="text-white" />
-                                        </div>
-                                    )}
-                                    {p.isInjured && (
-                                        <div className="absolute -top-1.5 -right-1.5 bg-red-600 rounded-lg p-1 border-2 border-slate-900 shadow-lg animate-pulse">
-                                            <Plus size={10} className="text-white rotate-45 stroke-[4px]" />
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="flex flex-col min-w-0">
-                                    <span className="font-bold text-white text-base md:text-lg truncate group-hover:text-indigo-400 transition-colors">{p.name}</span>
-                                    {isMvpType && p.lastMvpDate && (
-                                        <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
-                                            <Trophy size={10} className="text-amber-500" />
-                                            <span>Último: {format(parseISO(p.lastMvpDate), 'd MMM yyyy', { locale: es })}</span>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {isSkillsRanking && (
-                                <div className="hidden md:flex items-center gap-6 px-6">
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-[10px] text-slate-500 font-bold uppercase">{p.isUsingGoalkeeperStats ? 'REF' : 'RIT'}</span>
-                                        <span className="text-sm font-bold text-white">{p.skillDetails.pac}</span>
-                                    </div>
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-[10px] text-slate-500 font-bold uppercase">{p.isUsingGoalkeeperStats ? 'UBI' : 'TIR'}</span>
-                                        <span className="text-sm font-bold text-white">{p.skillDetails.sho}</span>
-                                    </div>
-                                    <div className="flex flex-col items-center">
-                                        <span className="text-[10px] text-slate-500 font-bold uppercase">{p.isUsingGoalkeeperStats ? 'DEF' : 'PAS'}</span>
-                                        <span className="text-sm font-bold text-white">{p.skillDetails.pas}</span>
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="flex items-center gap-4 shrink-0">
-                                {isMvpType && (
-                                    <div className="hidden sm:flex flex-col items-end">
-                                        <span className="text-[10px] text-slate-500 font-bold uppercase">Partidos</span>
-                                        <span className="text-sm font-bold text-slate-300">{p.matchesAttended}</span>
-                                    </div>
-                                )}
-                                <RatingBadge score={p[valueKey as keyof typeof p] as number} />
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
 
             {data.length === 0 && (
                 <div className="text-center py-20 bg-slate-900/30 rounded-2xl border-2 border-dashed border-slate-800">
