@@ -9,6 +9,9 @@ export interface AppSettings {
     telegramGroupName?: string;
     team1Name?: string; // Overrides 'Celeste'
     team2Name?: string; // Overrides 'Azul'
+    elitePlayerIds?: string[]; // IDs of the 6 players for Superclasico
+    captain1Id?: string; // ID of Captain 1
+    captain2Id?: string; // ID of Captain 2
 }
 
 export type SkillKey = 'ritmo' | 'tiros' | 'regates' | 'velocidad' | 'pases' | 'average' | 'matchesAttended' | 'mvpCount';
@@ -88,6 +91,7 @@ export interface Match {
     notes?: string;
     location?: string;
     seasonId?: string;
+    isSuperclasico?: boolean;
 }
 
 export interface DashboardData {

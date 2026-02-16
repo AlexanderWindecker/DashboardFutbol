@@ -2,7 +2,8 @@ import { getData } from '@/lib/data';
 import { CalendarDashboard } from '@/components/dashboard/CalendarDashboard';
 
 export const dynamic = 'force-dynamic';
-import { ArrowRight, Calendar, Users } from 'lucide-react';
+import { ArrowRight, Calendar, Users, Zap } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -70,21 +71,43 @@ export default async function DashboardPage() {
                 <Link
                   key={match.id}
                   href={`/matches/${match.id}`}
-                  className="p-4 flex items-center justify-between hover:bg-slate-800/80 transition-all active:scale-[0.99] group"
+                  className={cn(
+                    "p-4 flex items-center gap-4 hover:bg-slate-800/80 transition-all active:scale-[0.99] group",
+                    match.isSuperclasico && "bg-amber-500/5 hover:bg-amber-500/10 border-l-2 border-amber-500/30"
+                  )}
                 >
-                  <div className="flex-1">
-                    <p className="text-white font-medium group-hover:text-indigo-400 transition-colors">
-                      {format(parseISO(match.date), "EEEE d 'de' MMMM", { locale: es })}
-                    </p>
-                    <div className="flex gap-2 mt-1">
-                      <Badge variant="outline" className="text-[10px]">{match.mode}</Badge>
-                      <span className="text-xs text-slate-500">{match.location}</span>
+                  {match.isSuperclasico && (
+                    <div className="w-8 h-8 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                      <Zap size={16} fill="currentColor" />
                     </div>
+                  )}
+
+                  <div className="flex-1">
+                    <p className={cn(
+                      "text-white font-semibold transition-colors",
+                      match.isSuperclasico ? "text-lg md:text-xl" : "text-sm md:text-base",
+                      "group-hover:text-indigo-400"
+                    )}>
+                      {format(parseISO(match.date), "EEEE d 'de' MMMM, yyyy", { locale: es })}
+                    </p>
+
+                    {match.isSuperclasico ? (
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <span className="text-amber-500 text-[10px] drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">✨</span>
+                        <span className="text-[12px] font-black italic tracking-tighter uppercase text-amber-500">Súperclásico</span>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2 mt-1">
+                        <Badge variant="outline" className="text-[10px]">{match.mode}</Badge>
+                        <span className="text-xs text-slate-500">{match.location}</span>
+                      </div>
+                    )}
                   </div>
+
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       {match.result ? (
-                        <Badge variant={match.result}>{match.result}</Badge>
+                        <Badge variant={match.result} className={cn(match.isSuperclasico && "border-amber-500/50")}>{match.result}</Badge>
                       ) : (
                         <Badge variant="outline">Pendiente</Badge>
                       )}

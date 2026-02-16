@@ -3,7 +3,7 @@
 
 import { db } from './db';
 import { players, matches, participations, seasons, settings, specialtyRules, traitRules } from './db/schema';
-import { DashboardData, Match, Player, PlayerStats, Season, MatchMode, MatchResult, Team } from '@/types';
+import { DashboardData, Match, Player, PlayerStats, Season, MatchMode, MatchResult, Team, AppSettings } from '@/types';
 import { eq, and } from 'drizzle-orm';
 
 export async function getData(): Promise<DashboardData> {
@@ -19,9 +19,10 @@ export async function getData(): Promise<DashboardData> {
         const activeSeasonSetting = allSettingsList.find(s => s.key === 'activeSeasonId');
 
         // Map settings list to object
-        const settingsObj = {
+        const settingsObj: AppSettings = {
             n8nWebhookUrl: allSettingsList.find(s => s.key === 'n8nWebhookUrl')?.value || '',
-            whatsappGroupName: allSettingsList.find(s => s.key === 'whatsappGroupName')?.value || ''
+            whatsappGroupName: allSettingsList.find(s => s.key === 'whatsappGroupName')?.value || '',
+            elitePlayerIds: allSettingsList.find(s => s.key === 'elitePlayerIds')?.value ? JSON.parse(allSettingsList.find(s => s.key === 'elitePlayerIds')!.value!) : []
         };
 
         return {
@@ -48,6 +49,7 @@ export async function getData(): Promise<DashboardData> {
                 result: (m.result || undefined) as MatchResult | undefined,
                 location: m.location || undefined,
                 seasonId: m.seasonId || undefined,
+                isSuperclasico: !!m.isSuperclasico,
             })) as Match[],
             participations: allParticipations.map(p => ({
                 ...p,
@@ -102,6 +104,7 @@ export async function getMatch(id: string) {
         result: (m.result || undefined) as MatchResult | undefined,
         location: m.location || undefined,
         seasonId: m.seasonId || undefined,
+        isSuperclasico: !!m.isSuperclasico,
     } as Match;
 }
 
@@ -239,15 +242,21 @@ export async function getSettings() {
     const all = await db.select().from(settings);
     return {
         n8nWebhookUrl: all.find(s => s.key === 'n8nWebhookUrl')?.value || '',
-        whatsappGroupName: all.find(s => s.key === 'whatsappGroupName')?.value || ''
+        whatsappGroupName: all.find(s => s.key === 'whatsappGroupName')?.value || '',
+        elitePlayerIds: all.find(s => s.key === 'elitePlayerIds')?.value ? JSON.parse(all.find(s => s.key === 'elitePlayerIds')!.value!) : [],
+        captain1Id: all.find(s => s.key === 'captain1Id')?.value || '',
+        captain2Id: all.find(s => s.key === 'captain2Id')?.value || '',
+        team1Name: all.find(s => s.key === 'team1Name')?.value || 'Celeste',
+        team2Name: all.find(s => s.key === 'team2Name')?.value || 'Azul',
     };
 }
 
 export async function saveSettings(settingsObj: any) {
     for (const [key, value] of Object.entries(settingsObj)) {
-        await db.insert(settings).values({ key, value: String(value) }).onConflictDoUpdate({
+        const valueToSave = typeof value === 'object' ? JSON.stringify(value) : String(value);
+        await db.insert(settings).values({ key, value: valueToSave }).onConflictDoUpdate({
             target: settings.key,
-            set: { value: String(value) }
+            set: { value: valueToSave }
         });
     }
 }
@@ -282,4 +291,30 @@ export async function setActiveSeasonAction(id: string | undefined) {
         target: settings.key,
         set: { value: id || '' }
     });
+}
+
+export async function checkSuperclasico(matchId: string) {
+    try {
+        const s = await getSettings();
+        const eliteIds = s.elitePlayerIds || [];
+        if (eliteIds.length !== 6) return false;
+
+        const participations = await getParticipationsForMatch(matchId);
+        const attendedElite = participations.filter(p => p.status === 'Attended' && eliteIds.includes(p.playerId));
+
+        if (attendedElite.length !== 6) {
+            await db.update(matches).set({ isSuperclasico: false }).where(eq(matches.id, matchId));
+            return false;
+        }
+
+        const team1Elite = attendedElite.filter(p => p.team === 'Celeste').length;
+        const team2Elite = attendedElite.filter(p => p.team === 'Azul').length;
+
+        const isSuper = team1Elite === 3 && team2Elite === 3;
+        await db.update(matches).set({ isSuperclasico: isSuper }).where(eq(matches.id, matchId));
+        return isSuper;
+    } catch (error) {
+        console.error('Error checking superclasico:', error);
+        return false;
+    }
 }

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Player, PlayerStats, Team } from '@/types';
 import { cn } from '@/lib/utils';
-import { Shield, User, LayoutGrid, Users2, Swords } from 'lucide-react';
+import { Shield, User, LayoutGrid, Users2, Swords, Crown } from 'lucide-react';
 
 interface MatchPitchProps {
     players: Player[];
@@ -11,11 +11,12 @@ interface MatchPitchProps {
     team1Name?: string;
     team2Name?: string;
     mode?: string;
+    elitePlayerIds?: string[];
 }
 
 type ViewMode = 'versus' | 'team1' | 'team2';
 
-export function MatchPitch({ players, participations, team1Name = 'Celeste', team2Name = 'Azul', mode }: MatchPitchProps) {
+export function MatchPitch({ players, participations, team1Name = 'Celeste', team2Name = 'Azul', mode, elitePlayerIds }: MatchPitchProps) {
     const [viewMode, setViewMode] = useState<ViewMode>('versus');
 
     // Parse mode to get max players per team (e.g., "6v6" -> 6, "Fútbol 7" -> 7)
@@ -189,25 +190,25 @@ export function MatchPitch({ players, participations, team1Name = 'Celeste', tea
                                             <>
                                                 {/* Top Team */}
                                                 <div className="flex-1 relative animate-in fade-in zoom-in-95 duration-300">
-                                                    <PositionGrid teamPlayers={celestePlayers} isTop={true} color="bg-sky-500" getOvr={getOvr} isSmall={true} />
+                                                    <PositionGrid teamPlayers={celestePlayers} isTop={true} color="bg-sky-500" getOvr={getOvr} isSmall={true} elitePlayerIds={elitePlayerIds} />
                                                 </div>
 
                                                 {/* Bottom Team */}
                                                 <div className="flex-1 relative border-t border-emerald-400/20 animate-in fade-in zoom-in-95 duration-300">
-                                                    <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isSmall={true} />
+                                                    <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isSmall={true} elitePlayerIds={elitePlayerIds} />
                                                 </div>
                                             </>
                                         )}
 
                                         {viewMode === 'team1' && (
                                             <div className="flex-1 relative animate-in fade-in slide-in-from-top-4 duration-500">
-                                                <PositionGrid teamPlayers={celestePlayers} isTop={false} color="bg-sky-500" getOvr={getOvr} isFullHeight={true} />
+                                                <PositionGrid teamPlayers={celestePlayers} isTop={false} color="bg-sky-500" getOvr={getOvr} isFullHeight={true} elitePlayerIds={elitePlayerIds} />
                                             </div>
                                         )}
 
                                         {viewMode === 'team2' && (
                                             <div className="flex-1 relative animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                                <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isFullHeight={true} />
+                                                <PositionGrid teamPlayers={azulPlayers} isTop={false} color="bg-blue-600" getOvr={getOvr} isFullHeight={true} elitePlayerIds={elitePlayerIds} />
                                             </div>
                                         )}
                                     </>
@@ -321,7 +322,7 @@ function PlayerList({ players, alignRight = false }: { players: any[], alignRigh
     );
 }
 
-function PositionGrid({ teamPlayers, isTop, color, getOvr, isSmall, isFullHeight }: { teamPlayers: any[], isTop: boolean, color: string, getOvr: (p: any) => number, isSmall?: boolean, isFullHeight?: boolean }) {
+function PositionGrid({ teamPlayers, isTop, color, getOvr, isSmall, isFullHeight, elitePlayerIds }: { teamPlayers: any[], isTop: boolean, color: string, getOvr: (p: any) => number, isSmall?: boolean, isFullHeight?: boolean, elitePlayerIds?: string[] }) {
     // Robust position helper
     const getPos = (p: any): string => {
         const val = String(p.tacticalRole || p.info?.positions?.[0] || '').toLowerCase().trim();
@@ -369,20 +370,16 @@ function PositionGrid({ teamPlayers, isTop, color, getOvr, isSmall, isFullHeight
                                     {getOvr(p.info)}
                                 </span>
 
-                                {/* Rating Badge */}
-                                {p.rating !== undefined && (
+                                {/* Elite Icon */}
+                                {elitePlayerIds?.includes(p.playerId) && (
                                     <div className={cn(
-                                        "absolute -top-1 -right-1 bg-indigo-600 rounded-full border border-white flex items-center justify-center shadow-lg",
+                                        "absolute -top-2 -left-2 bg-amber-500 rounded-full border border-white flex items-center justify-center shadow-lg",
                                         isSmall ? "w-4 h-4 md:w-5 md:h-5" : "w-5 h-5 md:w-7 md:h-7"
                                     )}>
-                                        <span className={cn(
-                                            "font-bold text-white leading-none",
-                                            isSmall ? "text-[7px] md:text-[8px]" : "text-[8px] md:text-xs"
-                                        )}>
-                                            {p.rating}
-                                        </span>
+                                        <Crown size={isSmall ? 8 : 12} className="text-white fill-white/20" />
                                     </div>
                                 )}
+
                             </div>
                             {/* Role Label */}
                             <div className="flex items-center justify-center mt-1">

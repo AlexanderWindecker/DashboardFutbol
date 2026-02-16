@@ -1,6 +1,6 @@
 'use server';
 
-import { addMatch, updateMatch, updateParticipation, getParticipationsForMatch, getMatch, deleteMatch } from '@/lib/data';
+import { addMatch, updateMatch, updateParticipation, getParticipationsForMatch, getMatch, deleteMatch, checkSuperclasico } from '@/lib/data';
 import { Match, MatchMode, PlayerStats, MatchResult } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -74,6 +74,7 @@ export async function updateParticipationAction(matchId: string, playerId: strin
     }
 
     await updateParticipation(current);
+    await checkSuperclasico(matchId);
     revalidatePath(`/matches/${matchId}`);
     revalidatePath('/matches'); // Crucial for the matches list
     revalidatePath('/stats'); // Also revalidate stats page
@@ -95,6 +96,7 @@ export async function addPlayerToMatchAction(matchId: string, playerId: string) 
         isMvp: false,
     };
     await updateParticipation(newStats);
+    await checkSuperclasico(matchId);
     revalidatePath(`/matches/${matchId}`);
 }
 

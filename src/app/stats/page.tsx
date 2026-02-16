@@ -1,10 +1,11 @@
 import { getData, getSettings } from '@/lib/data';
 import { Player, PlayerStats, Match } from '@/types';
 import { StatsPageView } from '@/components/stats/StatsPageView';
+import { AppSettings } from '@/types';
 
 export const dynamic = 'force-dynamic';
 
-function calculateStats(players: Player[], matches: Match[], participations: PlayerStats[]) {
+function calculateStats(players: Player[], matches: Match[], participations: PlayerStats[], settings?: AppSettings) {
     // Filter participations to only include those from the provided matches
     const matchIds = new Set(matches.map(m => m.id));
     const relevantParticipations = participations.filter(p => matchIds.has(p.matchId));
@@ -81,7 +82,27 @@ function calculateStats(players: Player[], matches: Match[], participations: Pla
         };
     });
 
-    return { playerStats, celesteWins, azulWins };
+    // Superclasico Wins by Captain
+    const superMatches = matches.filter(m => m.isSuperclasico);
+    const captain1Id = settings?.captain1Id;
+    const captain2Id = settings?.captain2Id;
+
+    let captain1Wins = 0;
+    let captain2Wins = 0;
+
+    if (captain1Id && captain2Id) {
+        superMatches.forEach(m => {
+            if (!m.result || m.result === 'Empate') return;
+
+            const p1 = participations.find(p => p.matchId === m.id && p.playerId === captain1Id);
+            const p2 = participations.find(p => p.matchId === m.id && p.playerId === captain2Id);
+
+            if (p1 && p1.team === m.result) captain1Wins++;
+            if (p2 && p2.team === m.result) captain2Wins++;
+        });
+    }
+
+    return { playerStats, celesteWins, azulWins, captain1Wins, captain2Wins };
 }
 
 export default async function StatsPage({ searchParams }: { searchParams: Promise<{ seasonId?: string }> }) {
@@ -99,7 +120,7 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         : data.matches;
 
     const calculatedStats = {
-        ...calculateStats(data.players, filteredMatches, data.participations),
+        ...calculateStats(data.players, filteredMatches, data.participations, settings),
         filteredMatches
     };
 

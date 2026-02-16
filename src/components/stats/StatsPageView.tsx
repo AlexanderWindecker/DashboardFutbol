@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { Player, PlayerStats, Match, AppSettings, Season } from '@/types';
-import { Trophy, TrendingUp, Activity, Award, UserMinus, Shield, Eye, EyeOff } from 'lucide-react';
+import { Trophy, TrendingUp, Activity, Award, UserMinus, Shield, Eye, EyeOff, Zap } from 'lucide-react';
 import { RankingCard, StatCard } from '@/components/stats/StatsComponents';
 import { TeamNameEditor } from '@/components/stats/TeamNameEditor';
 import { SeasonSelector } from '@/components/stats/SeasonSelector';
+import { cn } from '@/lib/utils';
 
 interface StatsPageViewProps {
     data: {
@@ -20,6 +21,8 @@ interface StatsPageViewProps {
         playerStats: any[];
         celesteWins: number;
         azulWins: number;
+        captain1Wins: number;
+        captain2Wins: number;
         filteredMatches: Match[];
     };
 }
@@ -27,7 +30,13 @@ interface StatsPageViewProps {
 export function StatsPageView({ data, settings, seasons, activeSeasonId, calculatedStats }: StatsPageViewProps) {
     const [privacyMode, setPrivacyMode] = useState(false);
 
-    const { playerStats, celesteWins, azulWins, filteredMatches } = calculatedStats;
+    const { playerStats, celesteWins, azulWins, captain1Wins, captain2Wins, filteredMatches } = calculatedStats;
+
+    // Get captain names
+    const captain1 = data.players.find(p => p.id === settings.captain1Id);
+    const captain2 = data.players.find(p => p.id === settings.captain2Id);
+    const captain1Name = captain1?.name || 'Capitán 1';
+    const captain2Name = captain2?.name || 'Capitán 2';
 
     // Mask player names in the stats array
     const displayedStats = privacyMode
@@ -89,6 +98,61 @@ export function StatsPageView({ data, settings, seasons, activeSeasonId, calcula
                     <p className="text-4xl font-bold text-white">{azulWins} <span className="text-lg text-slate-500 font-normal">Victorias</span></p>
                 </div>
             </div>
+
+            {/* Superclasico History Section */}
+            {(captain1Wins > 0 || captain2Wins > 0) && (
+                <div className="relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500/50 to-amber-600/50 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+                    <div className="relative bg-slate-900 border border-amber-500/20 rounded-xl p-6 overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                            <Zap size={120} className="text-amber-500" fill="currentColor" />
+                        </div>
+
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                            <div className="space-y-1">
+                                <h2 className="text-lg font-black italic text-amber-500 uppercase flex items-center gap-2 tracking-tight">
+                                    <Zap size={18} fill="currentColor" className="animate-pulse" />
+                                    Historial Súperclásicos
+                                </h2>
+                                <p className="text-xs text-slate-400">Paternidad histórica entre Capitanes.</p>
+                            </div>
+
+                            <div className="flex items-center gap-8 justify-center md:justify-end">
+                                <div className="text-center group/team">
+                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 group-hover/team:text-amber-400 transition-colors">
+                                        {captain1Name}
+                                    </p>
+                                    <p className="text-4xl font-black text-white">{captain1Wins}</p>
+                                </div>
+                                <div className="h-12 w-px bg-slate-800 rotate-12"></div>
+                                <div className="text-center group/team">
+                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 group-hover/team:text-amber-400 transition-colors">
+                                        {captain2Name}
+                                    </p>
+                                    <p className="text-4xl font-black text-white">{captain2Wins}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Paternidad Indicator */}
+                        <div className="mt-6 pt-4 border-t border-slate-800/50 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Estado de Paternidad:</span>
+                                <span className={cn(
+                                    "text-xs font-bold px-2 py-0.5 rounded-full",
+                                    captain1Wins > captain2Wins ? "bg-amber-500/10 text-amber-500" :
+                                        captain2Wins > captain1Wins ? "bg-amber-500/10 text-amber-500" :
+                                            "bg-slate-800 text-slate-400"
+                                )}>
+                                    {captain1Wins > captain2Wins ? `+${captain1Wins - captain2Wins} ${captain1Name}` :
+                                        captain2Wins > captain1Wins ? `+${captain2Wins - captain1Wins} ${captain2Name}` :
+                                            "Empate Técnico"}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:grid-cols-4">
                 <StatCard

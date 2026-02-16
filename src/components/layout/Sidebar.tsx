@@ -6,8 +6,8 @@ import { Home, Calendar, Users, Trophy, MoreHorizontal, FileText, Settings as Se
 import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 import { SettingsModal } from '../SettingsModal';
-import { getSettings, getSeasons, getActiveSeasonId } from '@/lib/data';
-import { AppSettings, Season } from '@/types';
+import { getSettings, getSeasons, getActiveSeasonId, getPlayers } from '@/lib/data';
+import { AppSettings, Season, Player } from '@/types';
 
 const API_NAV_ITEMS = [
     { name: 'Dashboard', href: '/', icon: Home },
@@ -22,6 +22,7 @@ export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClos
     const [settings, setSettings] = useState<AppSettings>({ n8nWebhookUrl: '', whatsappGroupName: '' });
     const [seasons, setSeasons] = useState<Season[]>([]);
     const [activeSeasonId, setActiveSeasonId] = useState<string | undefined>();
+    const [players, setPlayers] = useState<Player[]>([]);
     const [pressTimer, setPressTimer] = useState<any>(null);
 
     // Mismo truco para el escritorio
@@ -46,6 +47,7 @@ export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClos
                 endDate: season.endDate || ''
             })) as Season[]));
             getActiveSeasonId().then(id => setActiveSeasonId(id || undefined));
+            getPlayers().then(setPlayers);
         }
     }, [isSettingsOpen, isAdmin]);
 
@@ -157,6 +159,7 @@ export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClos
                 initialSettings={settings}
                 seasons={seasons}
                 activeSeasonId={activeSeasonId}
+                players={players}
             />
         </>
     );

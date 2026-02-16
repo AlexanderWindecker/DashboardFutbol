@@ -4,7 +4,7 @@ import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useDraggable, us
 import { Player, PlayerStats, ParticipationStatus, AppSettings } from '@/types';
 import { updateParticipationAction, deleteParticipationAction } from '@/actions/matches';
 import { cn } from '@/lib/utils';
-import { Trash2, X, MoreVertical, Check, UserMinus, ShieldAlert, History } from 'lucide-react';
+import { Trash2, X, MoreVertical, Check, UserMinus, ShieldAlert, History, Crown, Star } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 
 // Types helpers
@@ -21,12 +21,14 @@ const COLUMNS: KanbanColumn[] = [
     { id: 'Absent', title: 'Ausentes / Sin Aviso' },
 ];
 
-function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin }: {
+function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin, isElite, isCaptain }: {
     player: Player;
     stats?: PlayerStats;
     team1Name: string;
     team2Name: string;
     isAdmin: boolean;
+    isElite?: boolean;
+    isCaptain?: boolean;
 }) {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: player.id,
@@ -49,7 +51,16 @@ function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin }: {
         >
             <div className="flex justify-between items-center gap-2">
                 <div {...listeners} {...attributes} className="flex-1 cursor-grab active:cursor-grabbing">
-                    <p className="text-sm font-medium text-slate-200">{player.name}</p>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className="text-sm font-medium text-slate-200">{player.name}</p>
+                        {isElite && <Crown size={12} className="text-amber-500 fill-amber-500/20 animate-pulse" />}
+                        {isCaptain && (
+                            <div className="flex items-center gap-0.5 px-1 bg-indigo-500/20 rounded border border-indigo-500/30">
+                                <Star size={8} className="text-indigo-400 fill-indigo-400" />
+                                <span className="text-[7px] font-black text-indigo-400 uppercase">CAP</span>
+                            </div>
+                        )}
+                    </div>
                     {stats?.team && (stats.status === 'Confirmed' || stats.status === 'Attended') && (
                         <span className={cn(
                             "text-[10px] uppercase font-bold px-1.5 py-0.5 rounded mt-1 inline-block",
@@ -119,7 +130,7 @@ function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin }: {
     );
 }
 
-function DroppableColumn({ id, title, players, participations, team1Name, team2Name, isAdmin, isActiveMobile }: {
+function DroppableColumn({ id, title, players, participations, team1Name, team2Name, isAdmin, isActiveMobile, elitePlayerIds, captain1Id, captain2Id }: {
     id: ParticipationStatus;
     title: string;
     players: Player[];
@@ -128,6 +139,9 @@ function DroppableColumn({ id, title, players, participations, team1Name, team2N
     team2Name: string;
     isAdmin: boolean;
     isActiveMobile: boolean;
+    elitePlayerIds?: string[];
+    captain1Id?: string;
+    captain2Id?: string;
 }) {
     const { setNodeRef, isOver } = useDroppable({ id });
 
@@ -165,6 +179,8 @@ function DroppableColumn({ id, title, players, participations, team1Name, team2N
                         team1Name={team1Name}
                         team2Name={team2Name}
                         isAdmin={isAdmin}
+                        isElite={elitePlayerIds?.includes(player.id)}
+                        isCaptain={player.id === captain1Id || player.id === captain2Id}
                     />
                 ))}
                 {columnPlayers.length === 0 && (
@@ -277,6 +293,9 @@ export function KanbanBoard({ matchId, players, participations, settings }: {
                             team2Name={team2Name}
                             isAdmin={isAdmin}
                             isActiveMobile={activeTab === col.id}
+                            elitePlayerIds={settings?.elitePlayerIds}
+                            captain1Id={settings?.captain1Id}
+                            captain2Id={settings?.captain2Id}
                         />
                     ))}
                 </div>

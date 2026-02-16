@@ -58,11 +58,19 @@ export function CalendarDashboard({ matches }: { matches: Match[] }) {
                 components={{
                     DayContent: (props: any) => {
                         const matchOnDay = matches.find(m => isSameDay(parseISO(m.date), props.date));
+                        const isSuper = matchOnDay?.isSuperclasico;
+
                         return (
-                            <div className="relative w-full h-full flex items-center justify-center">
+                            <div className={cn(
+                                "relative w-full h-full flex items-center justify-center transition-all",
+                                isSuper && "text-amber-400 font-black drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]"
+                            )}>
                                 {props.date.getDate()}
                                 {matchOnDay && (
-                                    <div className="absolute bottom-1 w-1.5 h-1.5 bg-sky-400 rounded-full"></div>
+                                    <div className={cn(
+                                        "absolute bottom-1 w-1.5 h-1.5 rounded-full",
+                                        isSuper ? "bg-amber-500 animate-pulse" : "bg-sky-400"
+                                    )}></div>
                                 )}
                             </div>
                         )

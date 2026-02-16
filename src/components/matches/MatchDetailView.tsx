@@ -13,7 +13,8 @@ import { NotifyWhatsApp } from '@/components/matches/NotifyWhatsApp';
 import { NotifyTelegram } from '@/components/matches/NotifyTelegram';
 import { MatchPitch } from '@/components/matches/MatchPitch';
 import { KanbanBoard } from '@/components/matches/KanbanBoard';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Zap, Trophy, Crown, Star } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { useAdmin } from '@/hooks/useAdmin';
 
 interface MatchDetailViewProps {
@@ -39,7 +40,38 @@ export function MatchDetailView({ match, players, participations, settings, seas
         : players;
 
     return (
-        <div className="space-y-8">
+        <div className={cn("space-y-8 transition-all duration-700", match.isSuperclasico && "bg-amber-500/5 p-4 md:p-8 rounded-3xl border border-amber-500/20 shadow-[0_0_50px_rgba(245,158,11,0.05)]")}>
+            {match.isSuperclasico && (
+                <style dangerouslySetInnerHTML={{
+                    __html: `
+                    @keyframes shimmer-gold {
+                        0% { transform: translateX(-100%); }
+                        100% { transform: translateX(100%); }
+                    }
+                    .animate-shimmer-gold {
+                        animation: shimmer-gold 3s infinite;
+                    }
+                    `
+                }} />
+            )}
+
+            {/* Superclasico Header Banner */}
+            {match.isSuperclasico && (
+                <div className="relative overflow-hidden bg-slate-950 border border-amber-500/30 rounded-2xl p-6 text-center shadow-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent -translate-x-full animate-shimmer-gold pointer-events-none"></div>
+                    <div className="relative flex flex-col items-center gap-2">
+                        <div className="flex items-center gap-4 text-amber-500">
+                            <Zap size={24} fill="currentColor" className="animate-pulse" />
+                            <h2 className="text-2xl md:text-4xl font-black italic tracking-tighter uppercase whitespace-nowrap">
+                                ✨ Súperclásico ✨
+                            </h2>
+                            <Zap size={24} fill="currentColor" className="animate-pulse" />
+                        </div>
+                        <p className="text-amber-500/60 text-[10px] font-bold uppercase tracking-[0.3em]">Enfrentamiento de Máxima Categoría</p>
+                    </div>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div className="space-y-1">
@@ -52,7 +84,9 @@ export function MatchDetailView({ match, players, participations, settings, seas
                                     : format(date, "EEEE d 'de' MMMM", { locale: es });
                             })()}
                         </h1>
-                        <Badge variant="outline" className="text-lg px-3 py-1">{match.mode}</Badge>
+                        <Badge variant="outline" className={cn("text-lg px-3 py-1", match.isSuperclasico && "border-amber-500/50 text-amber-500 bg-amber-500/10")}>
+                            {match.mode}
+                        </Badge>
                         {isAdmin && <EditMatchDialog match={match} seasons={seasons} />}
 
                         {/* Privacy Toggle */}
@@ -70,7 +104,15 @@ export function MatchDetailView({ match, players, participations, settings, seas
                 </div>
 
                 <div className="flex flex-col items-end gap-3">
-                    {isAdmin && <MatchResultSelector matchId={match.id} currentResult={match.result} settings={settings} />}
+                    {isAdmin && (
+                        <MatchResultSelector
+                            matchId={match.id}
+                            currentResult={match.result}
+                            settings={settings}
+                            captain1Name={players.find(p => p.id === settings.captain1Id)?.name}
+                            captain2Name={players.find(p => p.id === settings.captain2Id)?.name}
+                        />
+                    )}
 
                     {/* Hide Notifications if not admin or in Privacy Mode */}
                     {isAdmin && !privacyMode && (
@@ -102,6 +144,7 @@ export function MatchDetailView({ match, players, participations, settings, seas
                 team1Name={settings?.team1Name}
                 team2Name={settings?.team2Name}
                 mode={match.mode}
+                elitePlayerIds={settings?.elitePlayerIds}
             />
 
             {/* Detailed Stats Table */}

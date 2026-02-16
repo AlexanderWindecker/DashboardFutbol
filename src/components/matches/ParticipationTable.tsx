@@ -135,7 +135,6 @@ export function ParticipationTable({
                             <th className="p-3 text-left">Equipo</th>
                             <th className="p-3 text-left">Puesto</th>
                             <th className="p-3 text-center">Goles</th>
-                            <th className="p-3 text-center">Calif.</th>
                             <th className="p-3 text-center">Asistió</th>
                             <th className="p-3 text-center">MVP Equipo</th>
                             <th className="p-3 text-left">Notas</th>
@@ -211,25 +210,6 @@ export function ParticipationTable({
                                             "w-12 bg-slate-800 border-none text-slate-300 text-center text-xs font-bold py-1 rounded outline-none",
                                             isAdmin ? "focus:ring-1 focus:ring-indigo-500" : "opacity-80"
                                         )}
-                                    />
-                                </td>
-                                <td className="p-3 text-center">
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        max="10"
-                                        step="0.1"
-                                        readOnly={!isAdmin}
-                                        value={p.rating ?? ''}
-                                        onChange={(e) => {
-                                            if (!isAdmin) return;
-                                            handleLocalUpdate(p.playerId, { rating: e.target.value === '' ? undefined : parseFloat(e.target.value) });
-                                        }}
-                                        className={cn(
-                                            "w-12 bg-slate-800 border-none text-indigo-400 text-center text-xs font-bold py-1 rounded outline-none",
-                                            isAdmin ? "focus:ring-1 focus:ring-indigo-500" : "opacity-80"
-                                        )}
-                                        placeholder="-"
                                     />
                                 </td>
                                 <td className="p-3 text-center">
@@ -314,7 +294,7 @@ export function ParticipationTable({
                             </tr>
                         ))}
                         {matchPlayers.length === 0 && (
-                            <tr><td colSpan={8} className="p-4 text-center text-slate-500">Sin jugadores presentes asignados.</td></tr>
+                            <tr><td colSpan={7} className="p-4 text-center text-slate-500">Sin jugadores presentes asignados.</td></tr>
                         )}
                     </tbody>
                 </table>

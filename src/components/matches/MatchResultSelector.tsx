@@ -8,11 +8,15 @@ import { cn } from '@/lib/utils'; // Assuming utilities exist
 export function MatchResultSelector({
     matchId,
     currentResult,
-    settings
+    settings,
+    captain1Name,
+    captain2Name
 }: {
     matchId: string;
     currentResult?: MatchResult;
     settings?: AppSettings;
+    captain1Name?: string;
+    captain2Name?: string;
 }) {
     const team1Name = settings?.team1Name || 'Celeste';
     const team2Name = settings?.team2Name || 'Azul';
@@ -28,11 +32,12 @@ export function MatchResultSelector({
                 <button
                     onClick={() => handleSetResult('Celeste')}
                     className={cn(
-                        "px-3 py-1 text-xs font-medium rounded-md transition-all",
+                        "px-3 py-1 text-xs font-medium rounded-md transition-all flex flex-col items-center",
                         currentResult === 'Celeste' ? "bg-sky-500 text-white shadow" : "text-slate-400 hover:text-white"
                     )}
                 >
-                    {team1Name}
+                    <span>{team1Name}</span>
+                    {captain1Name && <span className="text-[8px] opacity-70 leading-none mt-0.5">{captain1Name}</span>}
                 </button>
                 <button
                     onClick={() => handleSetResult('Empate')}
@@ -46,11 +51,12 @@ export function MatchResultSelector({
                 <button
                     onClick={() => handleSetResult('Azul')}
                     className={cn(
-                        "px-3 py-1 text-xs font-medium rounded-md transition-all",
+                        "px-3 py-1 text-xs font-medium rounded-md transition-all flex flex-col items-center",
                         currentResult === 'Azul' ? "bg-blue-600 text-white shadow" : "text-slate-400 hover:text-white"
                     )}
                 >
-                    {team2Name}
+                    <span>{team2Name}</span>
+                    {captain2Name && <span className="text-[8px] opacity-70 leading-none mt-0.5">{captain2Name}</span>}
                 </button>
             </div>
         </div>

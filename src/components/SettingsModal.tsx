@@ -5,8 +5,9 @@ import { AppSettings } from '@/types';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { saveSettingsAction } from '@/actions/settings';
-import { Settings, Save, Link2, MessageSquare, Info, CheckCircle2, Send, Trophy } from 'lucide-react';
-import { Season } from '@/types';
+import { Settings, Save, Link2, MessageSquare, Info, CheckCircle2, Send, Trophy, Users } from 'lucide-react';
+import clsx from 'clsx';
+import { Season, Player } from '@/types';
 import { SeasonManager } from './SeasonManager';
 
 interface SettingsModalProps {
@@ -15,9 +16,10 @@ interface SettingsModalProps {
     initialSettings: AppSettings;
     seasons: Season[];
     activeSeasonId?: string;
+    players: Player[];
 }
 
-export function SettingsModal({ isOpen, onClose, initialSettings, seasons, activeSeasonId }: SettingsModalProps) {
+export function SettingsModal({ isOpen, onClose, initialSettings, seasons, activeSeasonId, players }: SettingsModalProps) {
     const [settings, setSettings] = useState<AppSettings>(initialSettings);
     const [isSaving, setIsSaving] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
@@ -108,6 +110,92 @@ export function SettingsModal({ isOpen, onClose, initialSettings, seasons, activ
                                     placeholder="Ej: @grupo_futbol"
                                     className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 transition-all"
                                 />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-slate-800/50 space-y-4">
+                        <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                            Configuración Súperclásico
+                        </h3>
+                        <div className="p-4 bg-amber-500/5 border border-amber-500/10 rounded-xl space-y-4">
+                            <div className="flex items-center justify-between">
+                                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                                    Jugadores Elite (Elegir 6)
+                                </label>
+                                <span className={clsx(
+                                    "text-[10px] font-bold px-2 py-0.5 rounded-full",
+                                    (settings.elitePlayerIds?.length || 0) === 6 ? "bg-emerald-500/20 text-emerald-400" : "bg-slate-800 text-slate-500"
+                                )}>
+                                    {settings.elitePlayerIds?.length || 0} / 6
+                                </span>
+                            </div>
+                            <p className="text-[10px] text-slate-500">
+                                Cuando estos 6 jugadores se enfrenten 3 vs 3, el sistema activará automáticamente el diseño e historial de "Súperclásico".
+                            </p>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[200px] overflow-y-auto pr-2 no-scrollbar">
+                                {players.filter(p => p.isActive).sort((a, b) => a.name.localeCompare(b.name)).map(player => {
+                                    const isSelected = settings.elitePlayerIds?.includes(player.id);
+                                    return (
+                                        <button
+                                            key={player.id}
+                                            type="button"
+                                            onClick={() => {
+                                                const current = settings.elitePlayerIds || [];
+                                                if (isSelected) {
+                                                    setSettings({ ...settings, elitePlayerIds: current.filter(id => id !== player.id) });
+                                                } else if (current.length < 6) {
+                                                    setSettings({ ...settings, elitePlayerIds: [...current, player.id] });
+                                                }
+                                            }}
+                                            className={clsx(
+                                                "flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all border text-left",
+                                                isSelected
+                                                    ? "bg-amber-500/20 border-amber-500/50 text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.1)]"
+                                                    : "bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700"
+                                            )}
+                                        >
+                                            <div className={clsx(
+                                                "w-3 h-3 rounded-full border flex items-center justify-center shrink-0",
+                                                isSelected ? "bg-amber-500 border-amber-400" : "bg-slate-900 border-slate-800"
+                                            )}>
+                                                {isSelected && <CheckCircle2 size={10} className="text-amber-950" />}
+                                            </div>
+                                            <span className="truncate">{player.name}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            {/* Captains Selection */}
+                            <div className="pt-4 border-t border-amber-500/10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-amber-500/70 uppercase tracking-wider">Capitán 1 (Líder Histórico)</label>
+                                    <select
+                                        value={settings.captain1Id || ''}
+                                        onChange={(e) => setSettings({ ...settings, captain1Id: e.target.value })}
+                                        className="w-full bg-slate-950 border border-amber-500/20 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                                    >
+                                        <option value="">Seleccionar Capitán 1</option>
+                                        {players.filter(p => p.isActive).sort((a, b) => a.name.localeCompare(b.name)).map(p => (
+                                            <option key={p.id} value={p.id}>{p.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-bold text-amber-500/70 uppercase tracking-wider">Capitán 2 (Líder Histórico)</label>
+                                    <select
+                                        value={settings.captain2Id || ''}
+                                        onChange={(e) => setSettings({ ...settings, captain2Id: e.target.value })}
+                                        className="w-full bg-slate-950 border border-amber-500/20 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                                    >
+                                        <option value="">Seleccionar Capitán 2</option>
+                                        {players.filter(p => p.isActive).sort((a, b) => a.name.localeCompare(b.name)).map(p => (
+                                            <option key={p.id} value={p.id}>{p.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
