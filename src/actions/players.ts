@@ -131,3 +131,26 @@ export async function deletePlayerAction(playerId: string) {
     revalidatePath('/players');
     revalidatePath('/stats/rankings');
 }
+
+export async function importPlayersAction(playersToUpdate: Partial<Player>[]) {
+    const players = await getPlayers();
+
+    for (const update of playersToUpdate) {
+        if (!update.id) continue;
+        const player = players.find(p => p.id === update.id);
+        if (!player) continue;
+
+        if (update.name !== undefined) player.name = update.name;
+        if (update.skills !== undefined) {
+            player.skills = {
+                ...(player.skills || { ritmo: 50, tiros: 50, pases: 50, regates: 50, velocidad: 50 }),
+                ...update.skills
+            };
+        }
+        if (update.phone !== undefined) player.phone = update.phone;
+
+        await updatePlayer(player);
+    }
+
+    revalidatePath('/players');
+}

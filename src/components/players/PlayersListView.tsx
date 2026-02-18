@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import { Player } from '@/types';
-import { UserPlus, UserX, UserCheck, User, Sword, Share2, Eye, EyeOff, Plus, Palmtree } from 'lucide-react';
+import { UserPlus, UserX, UserCheck, User, Sword, Share2, Eye, EyeOff, Plus, Palmtree, Download, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { cn } from '@/lib/utils';
 import { EditablePlayerName } from '@/components/players/EditablePlayerName';
-import { togglePlayerStatusAction, createPlayerAction } from '@/actions/players';
+import { togglePlayerStatusAction, createPlayerAction, importPlayersAction } from '@/actions/players';
+import { useRef } from 'react';
 import Link from 'next/link';
 import { useAdmin } from '@/hooks/useAdmin';
 
@@ -18,6 +19,76 @@ interface PlayersListViewProps {
 export function PlayersListView({ players }: PlayersListViewProps) {
     const [privacyMode, setPrivacyMode] = useState(false);
     const { isAdmin } = useAdmin();
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleExportCSV = () => {
+        const headers = ['ID', 'Nombre', 'Telefono', 'Ritmo', 'Tiros', 'Pases', 'Regates', 'Velocidad'];
+        const rows = players.map(p => [
+            p.id,
+            p.name,
+            p.phone || '',
+            p.skills?.ritmo || 50,
+            p.skills?.tiros || 50,
+            p.skills?.pases || 50,
+            p.skills?.regates || 50,
+            p.skills?.velocidad || 50
+        ]);
+
+        const csvContent = [
+            headers.join(','),
+            ...rows.map(r => r.join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `plantel_futbol_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const handleImportCSV = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            const text = event.target?.result as string;
+            if (!text) return;
+
+            const lines = text.split('\n');
+            const headers = lines[0].split(',');
+            const updates: any[] = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                const values = lines[i].split(',');
+                const update: any = {
+                    id: values[0],
+                    name: values[1],
+                    phone: values[2] || undefined,
+                    skills: {
+                        ritmo: parseInt(values[3]) || 50,
+                        tiros: parseInt(values[4]) || 50,
+                        pases: parseInt(values[5]) || 50,
+                        regates: parseInt(values[6]) || 50,
+                        velocidad: parseInt(values[7]) || 50
+                    }
+                };
+                updates.push(update);
+            }
+
+            if (updates.length > 0) {
+                if (confirm(`¿Estás seguro de importar cambios para ${updates.length} jugadores?`)) {
+                    await importPlayersAction(updates);
+                }
+            }
+        };
+        reader.readAsText(file);
+    };
 
     // Sort logic
     const sortedPlayers = [...players].sort((a, b) => {
@@ -67,17 +138,45 @@ export function PlayersListView({ players }: PlayersListViewProps) {
                         </Button>
                     </Link>
                     {isAdmin && (
-                        <form action={createPlayerAction} className="flex items-center gap-1.5 ml-auto sm:ml-0">
+                        <>
                             <input
-                                name="name"
-                                placeholder="Nombre"
-                                required
-                                className="h-9 px-2 rounded-lg bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 w-24 xs:w-32"
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleImportCSV}
+                                accept=".csv"
+                                className="hidden"
                             />
-                            <Button type="submit" size="sm" className="h-9 px-3">
-                                <Plus size={16} />
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={handleExportCSV}
+                                className="border-amber-500/20 text-amber-500 hover:bg-amber-500/10 h-9 px-3"
+                            >
+                                <Download size={16} className="mr-1.5" />
+                                <span className="hidden xs:inline">Exportar</span>
                             </Button>
-                        </form>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/10 h-9 px-3"
+                            >
+                                <Upload size={16} className="mr-1.5" />
+                                <span className="hidden xs:inline">Importar</span>
+                            </Button>
+
+                            <form action={createPlayerAction} className="flex items-center gap-1.5 ml-auto sm:ml-0">
+                                <input
+                                    name="name"
+                                    placeholder="Nombre"
+                                    required
+                                    className="h-9 px-2 rounded-lg bg-slate-950 border border-slate-800 text-white text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 w-24 xs:w-32"
+                                />
+                                <Button type="submit" size="sm" className="h-9 px-3">
+                                    <Plus size={16} />
+                                </Button>
+                            </form>
+                        </>
                     )}
                 </div>
             </div>

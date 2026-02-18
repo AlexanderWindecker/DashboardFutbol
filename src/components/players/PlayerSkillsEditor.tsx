@@ -179,10 +179,10 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
     const earnedTraits = getPlayerTraits(player, traitRules, stats);
 
     return (
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-bold text-white">Perfil & Habilidades</h3>
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 md:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-3 flex-wrap">
+                    <h3 className="text-lg md:text-xl font-bold text-white">Perfil & Habilidades</h3>
                     <div className="flex items-center gap-2">
                         <div className={cn("text-white font-bold text-sm px-3 py-1 rounded-full border transition-all duration-300 relative group", getRatingColor(average))}>
                             {average}
@@ -203,55 +203,59 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                                 )}
                             </div>
                         </div>
-                        <span className="text-sm text-slate-400 font-medium italic">
+                        <span className="text-xs md:text-sm text-slate-400 font-medium italic">
                             {getScoreDescription(average)}
                         </span>
                     </div>
                 </div>
                 {isAdmin && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap justify-end">
                         {isEditing && (
-                            <div className="flex items-center gap-2">
-                                <label className="flex items-center gap-2 cursor-pointer bg-slate-800/50 px-3 py-1 rounded-full border border-slate-700 hover:bg-slate-800 transition-colors">
+                            <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+                                <label className="flex items-center gap-1.5 cursor-pointer bg-slate-800/50 px-2 md:px-3 py-1 rounded-full border border-slate-700 hover:bg-slate-800 transition-colors">
                                     <input
                                         type="checkbox"
                                         checked={isInjured}
                                         onChange={(e) => setIsInjured(e.target.checked)}
-                                        className="w-4 h-4 rounded border-slate-600 text-red-600 focus:ring-red-500 bg-slate-900"
+                                        className="w-3.5 h-3.5 md:w-4 md:h-4 rounded border-slate-600 text-red-600 focus:ring-red-500 bg-slate-900"
                                     />
-                                    <span className="text-xs text-slate-300 font-medium flex items-center gap-1">
-                                        <Plus size={12} className="text-red-500 stroke-[3px]" />
+                                    <span className="text-[10px] md:text-xs text-slate-300 font-medium flex items-center gap-1">
+                                        <Plus size={10} className="text-red-500 md:hidden stroke-[3px]" />
+                                        <span className="hidden md:inline"><Plus size={12} className="text-red-500 stroke-[3px]" /></span>
                                         Lesionado
                                     </span>
                                 </label>
-                                <label className="flex items-center gap-2 cursor-pointer bg-slate-800/50 px-3 py-1 rounded-full border border-slate-700 hover:bg-slate-800 transition-colors">
+                                <label className="flex items-center gap-1.5 cursor-pointer bg-slate-800/50 px-2 md:px-3 py-1 rounded-full border border-slate-700 hover:bg-slate-800 transition-colors">
                                     <input
                                         type="checkbox"
                                         checked={isVacation}
                                         onChange={(e) => setIsVacation(e.target.checked)}
-                                        className="w-4 h-4 rounded border-slate-600 text-amber-500 focus:ring-amber-500 bg-slate-900"
+                                        className="w-3.5 h-3.5 md:w-4 md:h-4 rounded border-slate-600 text-amber-500 focus:ring-amber-500 bg-slate-900"
                                     />
-                                    <span className="text-xs text-slate-300 font-medium flex items-center gap-1">
-                                        <Palmtree size={12} className="text-amber-500" />
+                                    <span className="text-[10px] md:text-xs text-slate-300 font-medium flex items-center gap-1">
+                                        <Palmtree size={10} className="text-amber-500 md:hidden" />
+                                        <span className="hidden md:inline"><Palmtree size={12} className="text-amber-500" /></span>
                                         Vacaciones
                                     </span>
                                 </label>
                             </div>
                         )}
-                        <Button variant="ghost" size="sm" onClick={() => isEditing ? handleSave() : setIsEditing(true)}>
-                            {isPending ? <Loader2 className="animate-spin" /> : (isEditing ? <Save size={18} /> : 'Editar')}
-                        </Button>
-                        {isEditing && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleDelete}
-                                className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10"
-                                disabled={isPending}
-                            >
-                                <Trash2 size={18} />
+                        <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="sm" onClick={() => isEditing ? handleSave() : setIsEditing(true)} className="h-8 md:h-9 px-2 md:px-3">
+                                {isPending ? <Loader2 className="animate-spin" size={16} /> : (isEditing ? <Save size={16} md:size={18} /> : <span className="text-xs">Editar</span>)}
                             </Button>
-                        )}
+                            {isEditing && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={handleDelete}
+                                    className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 h-8 md:h-9 px-2 md:px-3"
+                                    disabled={isPending}
+                                >
+                                    <Trash2 size={16} md:size={18} />
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 )}
             </div>
