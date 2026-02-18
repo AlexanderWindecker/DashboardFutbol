@@ -143,7 +143,10 @@ export async function importPlayersAction(playersToUpdate: Partial<Player>[]) {
         if (update.name !== undefined) player.name = update.name;
         if (update.skills !== undefined) {
             player.skills = {
-                ...(player.skills || { ritmo: 50, tiros: 50, pases: 50, regates: 50, velocidad: 50 }),
+                ...(player.skills || {
+                    ritmo: 50, tiros: 50, pases: 50, regates: 50, velocidad: 50,
+                    reflejos: 50, posicionamiento: 50, estirada: 50, saque: 50, seguridad: 50
+                }),
                 ...update.skills
             };
         }

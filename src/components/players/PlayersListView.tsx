@@ -22,7 +22,7 @@ export function PlayersListView({ players }: PlayersListViewProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleExportCSV = () => {
-        const headers = ['ID', 'Nombre', 'Telefono', 'Ritmo', 'Tiros', 'Pases', 'Regates', 'Velocidad'];
+        const headers = ['ID', 'Nombre', 'Telefono', 'Ritmo', 'Tiros', 'Pases', 'Regates', 'Velocidad', 'Reflejos', 'Posicionamiento', 'Estirada', 'Saque', 'Seguridad'];
         const rows = players.map(p => [
             p.id,
             p.name,
@@ -31,7 +31,12 @@ export function PlayersListView({ players }: PlayersListViewProps) {
             p.skills?.tiros || 50,
             p.skills?.pases || 50,
             p.skills?.regates || 50,
-            p.skills?.velocidad || 50
+            p.skills?.velocidad || 50,
+            p.skills?.reflejos || 50,
+            p.skills?.posicionamiento || 50,
+            p.skills?.estirada || 50,
+            p.skills?.saque || 50,
+            p.skills?.seguridad || 50
         ]);
 
         const csvContent = [
@@ -75,7 +80,12 @@ export function PlayersListView({ players }: PlayersListViewProps) {
                         tiros: parseInt(values[4]) || 50,
                         pases: parseInt(values[5]) || 50,
                         regates: parseInt(values[6]) || 50,
-                        velocidad: parseInt(values[7]) || 50
+                        velocidad: parseInt(values[7]) || 50,
+                        reflejos: parseInt(values[8]) || 50,
+                        posicionamiento: parseInt(values[9]) || 50,
+                        estirada: parseInt(values[10]) || 50,
+                        saque: parseInt(values[11]) || 50,
+                        seguridad: parseInt(values[12]) || 50
                     }
                 };
                 updates.push(update);
