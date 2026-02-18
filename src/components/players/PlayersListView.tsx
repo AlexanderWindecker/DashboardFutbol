@@ -22,6 +22,7 @@ export function PlayersListView({ players }: PlayersListViewProps) {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleExportCSV = () => {
+        const categoryHeader = ['', '', '', 'Skills Jugador', '', '', '', '', 'Skills Arquero', '', '', '', ''];
         const headers = ['ID', 'Nombre', 'Telefono', 'Ritmo', 'Tiros', 'Pases', 'Regates', 'Velocidad', 'Reflejos', 'Posicionamiento', 'Estirada', 'Saque', 'Seguridad'];
         const rows = players.map(p => [
             p.id,
@@ -40,6 +41,7 @@ export function PlayersListView({ players }: PlayersListViewProps) {
         ]);
 
         const csvContent = [
+            categoryHeader.join(','),
             headers.join(','),
             ...rows.map(r => r.join(','))
         ].join('\n');
@@ -65,10 +67,11 @@ export function PlayersListView({ players }: PlayersListViewProps) {
             if (!text) return;
 
             const lines = text.split('\n');
-            const headers = lines[0].split(',');
+            // Detect if first line is the category header or actual headers
+            const startLine = lines[0].includes('Skills Jugador') ? 2 : 1;
             const updates: any[] = [];
 
-            for (let i = 1; i < lines.length; i++) {
+            for (let i = startLine; i < lines.length; i++) {
                 if (!lines[i].trim()) continue;
                 const values = lines[i].split(',');
                 const update: any = {
