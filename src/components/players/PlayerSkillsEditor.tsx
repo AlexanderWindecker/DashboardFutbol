@@ -242,7 +242,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                         )}
                         <div className="flex items-center gap-1">
                             <Button variant="ghost" size="sm" onClick={() => isEditing ? handleSave() : setIsEditing(true)} className="h-8 md:h-9 px-2 md:px-3">
-                                {isPending ? <Loader2 className="animate-spin" size={16} /> : (isEditing ? <Save size={16} md:size={18} /> : <span className="text-xs">Editar</span>)}
+                                {isPending ? <Loader2 className="animate-spin" size={16} /> : (isEditing ? <Save size={18} /> : <span className="text-xs">Editar</span>)}
                             </Button>
                             {isEditing && (
                                 <Button
@@ -252,7 +252,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                                     className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 h-8 md:h-9 px-2 md:px-3"
                                     disabled={isPending}
                                 >
-                                    <Trash2 size={16} md:size={18} />
+                                    <Trash2 size={18} />
                                 </Button>
                             )}
                         </div>
