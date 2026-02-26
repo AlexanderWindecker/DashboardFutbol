@@ -408,13 +408,13 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
 
                                 <div className="flex items-center gap-4 shrink-0">
                                     {(isMvpType || isGoalType) && (
-                                        <div className="hidden sm:flex flex-col items-end">
+                                        <div className="flex flex-col items-end">
                                             <span className="text-[10px] text-slate-500 font-bold uppercase">Partidos</span>
                                             <span className="text-sm font-bold text-slate-300">{p.matchesAttended}</span>
                                         </div>
                                     )}
                                     {isGoalType && (
-                                        <div className="hidden sm:flex flex-col items-end mr-2">
+                                        <div className="flex flex-col items-end mr-2">
                                             <span className="text-[10px] text-slate-500 font-bold uppercase">Promedio</span>
                                             <span className="text-sm font-bold text-slate-300">
                                                 {p.matchesAttended > 0 ? (p.goals / p.matchesAttended).toFixed(2) : '0.00'}
