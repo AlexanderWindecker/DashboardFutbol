@@ -126,16 +126,19 @@ const RatingBadge = ({ score }: { score: number }) => {
     );
 };
 
-export default async function RankingsPage({ searchParams }: { searchParams: { type: string, pos?: string, filter?: string, seasonId?: string } }) {
+export default async function RankingsPage({ searchParams }: { searchParams: { type: string, pos?: string, filter?: string, seasonId?: string, sort?: string } }) {
     const { players, matches: allMatches, participations: allParticipations, seasons = [] } = await getData() as any;
     const { getActiveSeasonId, getSettings } = await import('@/lib/data');
     const activeSeasonId = await getActiveSeasonId();
 
     const params = await Promise.resolve(searchParams);
     const type = params.type || 'attendance';
+    const isGoalType = type === 'goals';
     const posFilter = params.pos || 'Todos';
     const statusFilter = params.filter || 'Activos';
-    const seasonId = params.seasonId || activeSeasonId;
+    const paramSeasonId = params.seasonId === 'undefined' ? undefined : params.seasonId;
+    const seasonId = paramSeasonId || activeSeasonId || 'all';
+    const sortFilter = params.sort || 'todos';
 
     // Filter matches by season if not 'all'
     const matches = seasonId && seasonId !== 'all'
@@ -153,20 +156,21 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
     let valueKey = 'matchesAttended';
     let label = 'Partidos';
 
-    if (statusFilter === 'Activos') {
-        data = data.filter(p => !p.isVacation && !p.isInjured);
-    } else if (statusFilter === 'Vacaciones') {
-        data = data.filter(p => p.isVacation);
-    } else if (statusFilter === 'Lesionados') {
-        data = data.filter(p => p.isInjured);
-    }
+    if (!isGoalType) {
+        if (statusFilter === 'Activos') {
+            data = data.filter(p => !p.isVacation && !p.isInjured);
+        } else if (statusFilter === 'Vacaciones') {
+            data = data.filter(p => p.isVacation);
+        } else if (statusFilter === 'Lesionados') {
+            data = data.filter(p => p.isInjured);
+        }
 
-    if (posFilter !== 'Todos') {
-        data = data.filter(p => p.positions?.includes(posFilter as any));
+        if (posFilter !== 'Todos') {
+            data = data.filter(p => p.positions?.includes(posFilter as any));
+        }
     }
 
     const isMvpType = type === 'mvp';
-    const isGoalType = type === 'goals';
 
     switch (type) {
         case 'attendance':
@@ -197,7 +201,17 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
         case 'goals':
             title = 'Goleadores';
             data = data.filter(p => (p.goals || 0) > 0);
-            data.sort((a, b) => (b.goals || 0) - (a.goals || 0));
+
+            if (sortFilter === 'promedio') {
+                data.sort((a, b) => {
+                    const avgA = a.matchesAttended > 0 ? (a.goals || 0) / a.matchesAttended : 0;
+                    const avgB = b.matchesAttended > 0 ? (b.goals || 0) / b.matchesAttended : 0;
+                    return avgB - avgA;
+                });
+            } else {
+                data.sort((a, b) => (b.goals || 0) - (a.goals || 0));
+            }
+
             valueKey = 'goals';
             label = 'Goles';
             break;
@@ -242,7 +256,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                     {/* Season Selector */}
                     <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800 shadow-xl overflow-x-auto max-w-[300px] md:max-w-none no-scrollbar">
                         <Link
-                            href={`/stats/rankings?type=${type}&pos=${posFilter}&filter=${statusFilter}&seasonId=all`}
+                            href={`/stats/rankings?type=${type}&pos=${isGoalType ? 'Todos' : posFilter}&filter=${isGoalType ? 'Todos' : statusFilter}&seasonId=all${isGoalType ? '&sort=' + sortFilter : ''}`}
                             className={cn(
                                 "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap",
                                 (!seasonId || seasonId === 'all')
@@ -255,7 +269,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                         {seasons.map((s: any) => (
                             <Link
                                 key={s.id}
-                                href={`/stats/rankings?type=${type}&pos=${posFilter}&filter=${statusFilter}&seasonId=${s.id}`}
+                                href={`/stats/rankings?type=${type}&pos=${isGoalType ? 'Todos' : posFilter}&filter=${isGoalType ? 'Todos' : statusFilter}&seasonId=${s.id}${isGoalType ? '&sort=' + sortFilter : ''}`}
                                 className={cn(
                                     "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all whitespace-nowrap",
                                     seasonId === s.id
@@ -273,7 +287,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                             {['Todos', 'Activos', 'Vacaciones', 'Lesionados'].map(f => (
                                 <Link
                                     key={f}
-                                    href={`/stats/rankings?type=${type}&pos=${posFilter}&filter=${f}&seasonId=${seasonId}`}
+                                    href={`/stats/rankings?type=${type}&pos=${posFilter}&filter=${f}&seasonId=${seasonId}&sort=${sortFilter}`}
                                     className={cn(
                                         "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
                                         statusFilter === f
@@ -289,12 +303,12 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                 </div>
             </div>
 
-            {!isGoalType && (
+            {!isGoalType ? (
                 <div className="flex flex-wrap gap-2 pb-2">
                     {['Todos', 'Delantero', 'Mediocampista', 'Defensor', 'Arquero'].map(pos => (
                         <Link
                             key={pos}
-                            href={`/stats/rankings?type=${type}&filter=${statusFilter}&pos=${pos}&seasonId=${seasonId}`}
+                            href={`/stats/rankings?type=${type}&filter=${statusFilter}&pos=${pos}&seasonId=${seasonId}&sort=${sortFilter}`}
                             className={cn(
                                 "px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest border-2 transition-all flex items-center gap-2",
                                 posFilter === pos
@@ -303,6 +317,23 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                             )}
                         >
                             {pos}
+                        </Link>
+                    ))}
+                </div>
+            ) : (
+                <div className="flex flex-wrap gap-2 pb-2">
+                    {['todos', 'promedio'].map(srt => (
+                        <Link
+                            key={srt}
+                            href={`/stats/rankings?type=${type}&filter=Todos&pos=Todos&seasonId=${seasonId}&sort=${srt}`}
+                            className={cn(
+                                "px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest border-2 transition-all flex items-center gap-2",
+                                sortFilter === srt
+                                    ? "bg-indigo-600 border-indigo-400 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] scale-105"
+                                    : "bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-300"
+                            )}
+                        >
+                            {srt}
                         </Link>
                     ))}
                 </div>
