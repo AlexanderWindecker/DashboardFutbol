@@ -9,7 +9,9 @@ export interface AppSettings {
     telegramGroupName?: string;
     team1Name?: string; // Overrides 'Celeste'
     team2Name?: string; // Overrides 'Azul'
-    elitePlayerIds?: string[]; // IDs of the 6 players for Superclasico
+    elitePlayerIds?: string[]; // IDs of the 6 players for Superclasico (Union of both teams)
+    team1EliteIds?: string[]; // IDs of Captain 1's teammates (exactly 3 including captain)
+    team2EliteIds?: string[]; // IDs of Captain 2's teammates (exactly 3 including captain)
     captain1Id?: string; // ID of Captain 1
     captain2Id?: string; // ID of Captain 2
 }

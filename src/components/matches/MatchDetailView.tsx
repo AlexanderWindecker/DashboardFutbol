@@ -144,7 +144,7 @@ export function MatchDetailView({ match, players, participations, settings, seas
                 team1Name={settings?.team1Name}
                 team2Name={settings?.team2Name}
                 mode={match.mode}
-                elitePlayerIds={settings?.elitePlayerIds}
+                elitePlayerIds={match.isSuperclasico ? settings?.elitePlayerIds : undefined}
             />
 
             {/* Detailed Stats Table */}

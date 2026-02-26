@@ -18,11 +18,12 @@ export async function getData(): Promise<DashboardData> {
 
         const activeSeasonSetting = allSettingsList.find(s => s.key === 'activeSeasonId');
 
-        // Map settings list to object
         const settingsObj: AppSettings = {
             n8nWebhookUrl: allSettingsList.find(s => s.key === 'n8nWebhookUrl')?.value || '',
             whatsappGroupName: allSettingsList.find(s => s.key === 'whatsappGroupName')?.value || '',
-            elitePlayerIds: allSettingsList.find(s => s.key === 'elitePlayerIds')?.value ? JSON.parse(allSettingsList.find(s => s.key === 'elitePlayerIds')!.value!) : []
+            elitePlayerIds: allSettingsList.find(s => s.key === 'elitePlayerIds')?.value ? JSON.parse(allSettingsList.find(s => s.key === 'elitePlayerIds')!.value!) : [],
+            team1EliteIds: allSettingsList.find(s => s.key === 'team1EliteIds')?.value ? JSON.parse(allSettingsList.find(s => s.key === 'team1EliteIds')!.value!) : [],
+            team2EliteIds: allSettingsList.find(s => s.key === 'team2EliteIds')?.value ? JSON.parse(allSettingsList.find(s => s.key === 'team2EliteIds')!.value!) : []
         };
 
         return {
@@ -244,6 +245,8 @@ export async function getSettings() {
         n8nWebhookUrl: all.find(s => s.key === 'n8nWebhookUrl')?.value || '',
         whatsappGroupName: all.find(s => s.key === 'whatsappGroupName')?.value || '',
         elitePlayerIds: all.find(s => s.key === 'elitePlayerIds')?.value ? JSON.parse(all.find(s => s.key === 'elitePlayerIds')!.value!) : [],
+        team1EliteIds: all.find(s => s.key === 'team1EliteIds')?.value ? JSON.parse(all.find(s => s.key === 'team1EliteIds')!.value!) : [],
+        team2EliteIds: all.find(s => s.key === 'team2EliteIds')?.value ? JSON.parse(all.find(s => s.key === 'team2EliteIds')!.value!) : [],
         captain1Id: all.find(s => s.key === 'captain1Id')?.value || '',
         captain2Id: all.find(s => s.key === 'captain2Id')?.value || '',
         team1Name: all.find(s => s.key === 'team1Name')?.value || 'Celeste',
@@ -297,20 +300,38 @@ export async function checkSuperclasico(matchId: string) {
     try {
         const s = await getSettings();
         const eliteIds = s.elitePlayerIds || [];
-        if (eliteIds.length !== 6) return false;
+        const t1EliteIds = s.team1EliteIds || [];
+        const t2EliteIds = s.team2EliteIds || [];
+
+        if (eliteIds.length !== 6 || t1EliteIds.length !== 3 || t2EliteIds.length !== 3) {
+            await db.update(matches).set({ isSuperclasico: false }).where(eq(matches.id, matchId));
+            return false;
+        }
 
         const participations = await getParticipationsForMatch(matchId);
-        const attendedElite = participations.filter(p => p.status === 'Attended' && eliteIds.includes(p.playerId));
+        const attendedElite = participations.filter(p => (p.status === 'Attended' || p.status === 'Confirmed') && eliteIds.includes(p.playerId));
 
         if (attendedElite.length !== 6) {
             await db.update(matches).set({ isSuperclasico: false }).where(eq(matches.id, matchId));
             return false;
         }
 
-        const team1Elite = attendedElite.filter(p => p.team === 'Celeste').length;
-        const team2Elite = attendedElite.filter(p => p.team === 'Azul').length;
+        const team1Elite = attendedElite.filter(p => p.team === 'Celeste').map(p => p.playerId);
+        const team2Elite = attendedElite.filter(p => p.team === 'Azul').map(p => p.playerId);
 
-        const isSuper = team1Elite === 3 && team2Elite === 3;
+        // Sort arrays to compare equality regardless of order
+        const sortedT1Config = [...t1EliteIds].sort();
+        const sortedT2Config = [...t2EliteIds].sort();
+
+        const sortedT1Actual = [...team1Elite].sort();
+        const sortedT2Actual = [...team2Elite].sort();
+
+        const matchConfig1 = JSON.stringify(sortedT1Config) === JSON.stringify(sortedT1Actual) && JSON.stringify(sortedT2Config) === JSON.stringify(sortedT2Actual);
+        // Also check swapped teams case (e.g. Captain 1's team is now Azul instead of Celeste)
+        const matchConfig2 = JSON.stringify(sortedT1Config) === JSON.stringify(sortedT2Actual) && JSON.stringify(sortedT2Config) === JSON.stringify(sortedT1Actual);
+
+        const isSuper = matchConfig1 || matchConfig2;
+
         await db.update(matches).set({ isSuperclasico: isSuper }).where(eq(matches.id, matchId));
         return isSuper;
     } catch (error) {

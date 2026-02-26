@@ -53,7 +53,6 @@ function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin, isElite
                 <div {...listeners} {...attributes} className="flex-1 cursor-grab active:cursor-grabbing">
                     <div className="flex items-center gap-1.5 flex-wrap">
                         <p className="text-sm font-medium text-slate-200">{player.name}</p>
-                        {isElite && <Crown size={12} className="text-amber-500 fill-amber-500/20 animate-pulse" />}
                         {isCaptain && (
                             <div className="flex items-center gap-0.5 px-1 bg-indigo-500/20 rounded border border-indigo-500/30">
                                 <Star size={8} className="text-indigo-400 fill-indigo-400" />

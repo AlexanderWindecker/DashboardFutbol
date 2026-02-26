@@ -37,7 +37,6 @@ export function MatchResultSelector({
                     )}
                 >
                     <span>{team1Name}</span>
-                    {captain1Name && <span className="text-[8px] opacity-70 leading-none mt-0.5">{captain1Name}</span>}
                 </button>
                 <button
                     onClick={() => handleSetResult('Empate')}
@@ -56,7 +55,6 @@ export function MatchResultSelector({
                     )}
                 >
                     <span>{team2Name}</span>
-                    {captain2Name && <span className="text-[8px] opacity-70 leading-none mt-0.5">{captain2Name}</span>}
                 </button>
             </div>
         </div>

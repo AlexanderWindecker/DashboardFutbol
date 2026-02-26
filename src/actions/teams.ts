@@ -73,6 +73,9 @@ export async function generateRandomTeamsAction(matchId: string) {
         await updateParticipation(cleanParticipation);
     }
 
+    const { checkSuperclasico } = await import('@/lib/data');
+    await checkSuperclasico(matchId);
+
     revalidatePath(`/matches/${matchId}`);
     return { success: true };
 }

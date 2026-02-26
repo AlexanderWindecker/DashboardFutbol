@@ -1,11 +1,19 @@
 'use server';
 
-import { saveSettings } from '@/lib/data';
+import { saveSettings, getData, checkSuperclasico } from '@/lib/data';
 import { AppSettings } from '@/types';
 import { revalidatePath } from 'next/cache';
 
 export async function saveSettingsAction(settings: AppSettings) {
-    await saveSettings(settings);
+    await saveSettings(settings); // Saving settings to db
+
+    // Now trigger re-evaluation for all matches (or at least recent ones)
+    // To be safe we can just re-evaluate all matches since this is a global setting
+    const { matches } = await getData();
+    for (const m of matches) {
+        await checkSuperclasico(m.id);
+    }
+
     revalidatePath('/');
     revalidatePath('/matches');
     revalidatePath('/stats');
