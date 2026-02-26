@@ -196,6 +196,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
             break;
         case 'goals':
             title = 'Goleadores';
+            data = data.filter(p => (p.goals || 0) > 0);
             data.sort((a, b) => (b.goals || 0) - (a.goals || 0));
             valueKey = 'goals';
             label = 'Goles';
@@ -267,41 +268,45 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                         ))}
                     </div>
 
-                    <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800 shadow-xl">
-                        {['Todos', 'Activos', 'Vacaciones', 'Lesionados'].map(f => (
-                            <Link
-                                key={f}
-                                href={`/stats/rankings?type=${type}&pos=${posFilter}&filter=${f}&seasonId=${seasonId}`}
-                                className={cn(
-                                    "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
-                                    statusFilter === f
-                                        ? "bg-slate-800 text-white shadow-sm border border-slate-700"
-                                        : "text-slate-500 hover:text-slate-300"
-                                )}
-                            >
-                                {f}
-                            </Link>
-                        ))}
-                    </div>
+                    {!isGoalType && (
+                        <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800 shadow-xl">
+                            {['Todos', 'Activos', 'Vacaciones', 'Lesionados'].map(f => (
+                                <Link
+                                    key={f}
+                                    href={`/stats/rankings?type=${type}&pos=${posFilter}&filter=${f}&seasonId=${seasonId}`}
+                                    className={cn(
+                                        "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all",
+                                        statusFilter === f
+                                            ? "bg-slate-800 text-white shadow-sm border border-slate-700"
+                                            : "text-slate-500 hover:text-slate-300"
+                                    )}
+                                >
+                                    {f}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 
-            <div className="flex flex-wrap gap-2 pb-2">
-                {['Todos', 'Delantero', 'Mediocampista', 'Defensor', 'Arquero'].map(pos => (
-                    <Link
-                        key={pos}
-                        href={`/stats/rankings?type=${type}&filter=${statusFilter}&pos=${pos}&seasonId=${seasonId}`}
-                        className={cn(
-                            "px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest border-2 transition-all flex items-center gap-2",
-                            posFilter === pos
-                                ? "bg-indigo-600 border-indigo-400 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] scale-105"
-                                : "bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-300"
-                        )}
-                    >
-                        {pos}
-                    </Link>
-                ))}
-            </div>
+            {!isGoalType && (
+                <div className="flex flex-wrap gap-2 pb-2">
+                    {['Todos', 'Delantero', 'Mediocampista', 'Defensor', 'Arquero'].map(pos => (
+                        <Link
+                            key={pos}
+                            href={`/stats/rankings?type=${type}&filter=${statusFilter}&pos=${pos}&seasonId=${seasonId}`}
+                            className={cn(
+                                "px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest border-2 transition-all flex items-center gap-2",
+                                posFilter === pos
+                                    ? "bg-indigo-600 border-indigo-400 text-white shadow-[0_0_20px_rgba(79,70,229,0.3)] scale-105"
+                                    : "bg-slate-900 border-slate-800 text-slate-500 hover:border-slate-700 hover:text-slate-300"
+                            )}
+                        >
+                            {pos}
+                        </Link>
+                    ))}
+                </div>
+            )}
 
 
             {/* Rankings List - Table for Skills, Cards for others */}
@@ -379,7 +384,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                                 <div className="flex items-center gap-4 min-w-0">
                                     <span className="text-slate-600 font-bold font-mono w-6 text-center">{i + 1}</span>
 
-                                    <div className="relative">
+                                    <div className="relative hidden sm:block">
                                         <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 font-black border border-slate-700 group-hover:border-indigo-500/50 transition-colors">
                                             {p.name.charAt(0)}
                                         </div>
