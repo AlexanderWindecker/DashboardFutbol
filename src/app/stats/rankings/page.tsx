@@ -225,8 +225,8 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
 
     // Push inactive players to the bottom securely
     data.sort((a, b) => {
-        const aInactive = (a.isVacation || a.isInjured) ? 1 : 0;
-        const bInactive = (b.isVacation || b.isInjured) ? 1 : 0;
+        const aInactive = (a.isVacation || a.isInjured || a.isActive === false) ? 1 : 0;
+        const bInactive = (b.isVacation || b.isInjured || b.isActive === false) ? 1 : 0;
         return aInactive - bInactive;
     });
 
@@ -376,7 +376,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                         <tbody className="divide-y divide-slate-800/50">
                             {data.map((p, i) => {
                                 return (
-                                    <tr key={p.id} className={cn("hover:bg-slate-800/30 transition-all group", (p.isVacation || p.isInjured) && "opacity-50 grayscale")}>
+                                    <tr key={p.id} className={cn("hover:bg-slate-800/30 transition-all group", (p.isVacation || p.isInjured || p.isActive === false) && "opacity-50 grayscale")}>
                                         <td className="p-4 text-center text-slate-600 font-mono font-bold">{i + 1}</td>
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
@@ -415,7 +415,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                     {data.map((p, i) => {
 
                         return (
-                            <div key={p.id} className={cn("group relative bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-2xl p-4 transition-all hover:bg-slate-800/50 hover:border-slate-700 hover:translate-x-1 flex items-center justify-between gap-4 overflow-hidden", (p.isVacation || p.isInjured) && "opacity-50 grayscale")}>
+                            <div key={p.id} className={cn("group relative bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-2xl p-4 transition-all hover:bg-slate-800/50 hover:border-slate-700 hover:translate-x-1 flex items-center justify-between gap-4 overflow-hidden", (p.isVacation || p.isInjured || p.isActive === false) && "opacity-50 grayscale")}>
                                 {/* Accent line for top 10 */}
                                 {i < 10 && <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />}
 
