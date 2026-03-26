@@ -10,8 +10,8 @@ export default async function ComparePlayersPage({ searchParams }: { searchParam
     const data = await getData() as any;
     const players = data.players.filter((p: any) => p.isActive !== false);
 
-    const player1 = players.find(p => p.id === p1Id);
-    const player2 = players.find(p => p.id === p2Id);
+    const player1 = players.find((p: any) => p.id === p1Id);
+    const player2 = players.find((p: any) => p.id === p2Id);
 
     return (
         <div className="space-y-6">
