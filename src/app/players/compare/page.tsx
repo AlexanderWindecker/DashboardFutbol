@@ -5,12 +5,10 @@ import { ChevronLeft } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ComparePlayersPage({ searchParams }: { searchParams: { p1?: string, p2?: string } }) {
-    const data = await getData();
-    const players = data.players.filter(p => p.isActive !== false);
-
-    const p1Id = searchParams.p1;
-    const p2Id = searchParams.p2;
+export default async function ComparePlayersPage({ searchParams }: { searchParams: Promise<{ p1?: string, p2?: string }> }) {
+    const { p1: p1Id, p2: p2Id } = await searchParams;
+    const data = await getData() as any;
+    const players = data.players.filter((p: any) => p.isActive !== false);
 
     const player1 = players.find(p => p.id === p1Id);
     const player2 = players.find(p => p.id === p2Id);

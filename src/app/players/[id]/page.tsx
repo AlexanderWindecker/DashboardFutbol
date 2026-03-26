@@ -1,11 +1,11 @@
 import { getData } from '@/lib/data';
 import { PlayerSkillsEditor } from '@/components/players/PlayerSkillsEditor';
-import { ArrowLeft, Activity, Trophy, UserMinus, UserX } from 'lucide-react';
+import { ArrowLeft, Activity, Trophy, UserMinus, UserX, Sword } from 'lucide-react';
 import Link from 'next/link';
 import { StatCard } from '@/components/stats/StatsComponents';
 import { PlayerStreak, StreakResult } from '@/components/players/PlayerStreak';
 import { EditablePlayerName } from '@/components/players/EditablePlayerName';
-import { parseISO } from 'date-fns';
+import { Button } from '@/components/ui/Button';
 
 export default async function PlayerProfilePage({ params }: { params: { id: string } }) {
     // Await params for Next 15
@@ -140,18 +140,29 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center gap-4">
-                <Link href="/players" className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white">
-                    <ArrowLeft size={20} />
-                </Link>
-                <div>
-                    <div className="flex flex-wrap items-center gap-3">
-                        <EditablePlayerName id={player.id} name={player.name} isActive={isActive} />
-                        <PlayerStreak streak={last5Streak} className="mt-1" />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <Link href="/players" className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white shrink-0">
+                        <ArrowLeft size={20} />
+                    </Link>
+                    <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-3">
+                            <EditablePlayerName id={player.id} name={player.name} isActive={isActive} />
+                            <PlayerStreak streak={last5Streak} className="mt-1" />
+                        </div>
+                        <p className="text-slate-400 text-sm">Detalle de jugador</p>
                     </div>
-                    <p className="text-slate-400 text-sm">Detalle de jugador</p>
+                </div>
+                <div className="flex shrink-0">
+                    <Link href={`/players/${player.id}/matchups`} className="w-full sm:w-auto">
+                        <Button variant="outline" className="w-full border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/10 gap-2 h-10 px-4">
+                            <Sword size={16} />
+                            <span>Historial vs Todos</span>
+                        </Button>
+                    </Link>
                 </div>
             </div>
+
 
             {/* Stats Overview */}
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
