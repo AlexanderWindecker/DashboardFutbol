@@ -4,7 +4,7 @@ import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useDraggable, us
 import { Player, PlayerStats, ParticipationStatus, AppSettings } from '@/types';
 import { updateParticipationAction, deleteParticipationAction } from '@/actions/matches';
 import { cn } from '@/lib/utils';
-import { Trash2, X, MoreVertical, Check, UserMinus, ShieldAlert, History, Crown, Star } from 'lucide-react';
+import { Trash2, X, MoreVertical, Check, UserMinus, ShieldAlert, History, Crown, Star, Info } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 
 // Types helpers
@@ -30,6 +30,7 @@ function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin, isElite
     isElite?: boolean;
     isCaptain?: boolean;
 }) {
+    const [showReasons, setShowReasons] = useState(false);
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: player.id,
         data: { player, stats },
@@ -53,6 +54,17 @@ function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin, isElite
                 <div {...listeners} {...attributes} className="flex-1 cursor-grab active:cursor-grabbing">
                     <div className="flex items-center gap-1.5 flex-wrap">
                         <p className="text-sm font-medium text-slate-200">{player.name}</p>
+                        {stats?.skillReasons && stats.skillReasons.length > 0 && (
+                            <button 
+                                onClick={(e) => { e.stopPropagation(); setShowReasons(!showReasons); }}
+                                className={cn(
+                                    "p-1 rounded-full transition-colors",
+                                    showReasons ? "bg-amber-500/20 text-amber-500" : "text-slate-500 hover:text-amber-400"
+                                )}
+                            >
+                                <Info size={12} />
+                            </button>
+                        )}
                         {isCaptain && (
                             <div className="flex items-center gap-0.5 px-1 bg-indigo-500/20 rounded border border-indigo-500/30">
                                 <Star size={8} className="text-indigo-400 fill-indigo-400" />
@@ -67,6 +79,19 @@ function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin, isElite
                         )}>
                             {stats.team === 'Celeste' ? team1Name : team2Name}
                         </span>
+                    )}
+                    {stats?.skillReasons && stats.skillReasons.length > 0 && showReasons && (
+                        <div className="mt-2 space-y-1 bg-slate-950/50 p-2 rounded border border-amber-500/10 animate-in fade-in slide-in-from-top-1 duration-200">
+                            <div className="flex items-center gap-1.5 mb-1">
+                                <span className="text-[7px] font-black text-amber-500 uppercase">Motivos RPG</span>
+                            </div>
+                            {stats.skillReasons.map((reason, idx) => (
+                                <div key={idx} className="text-[9px] text-slate-400 flex items-center gap-1.5">
+                                    <div className="w-1 h-1 rounded-full bg-amber-500/50" />
+                                    {reason}
+                                </div>
+                            ))}
+                        </div>
                     )}
                 </div>
 

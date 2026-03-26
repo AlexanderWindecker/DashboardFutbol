@@ -14,6 +14,8 @@ import { SpecialtiesGuide } from './SpecialtiesGuide';
 import { WinLossChart } from './WinLossChart';
 import { PlayerAffinity } from './PlayerAffinity';
 import { Pencil, Settings } from 'lucide-react';
+import { SkillDeltaBadge } from './SkillDeltaBadge';
+import { SkillsEngineGuideModal } from './SkillsEngineGuideModal';
 import { RulesEditorModal, SKILLS } from './RulesEditorModal';
 import { getPlayerSpecialties, getPlayerTraits } from '@/lib/rules-engine';
 import { AffinityManager } from './AffinityManager';
@@ -183,9 +185,16 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div className="flex items-center gap-3 flex-wrap">
                     <h3 className="text-lg md:text-xl font-bold text-white">Perfil & Habilidades</h3>
+                    <SkillsEngineGuideModal />
                     <div className="flex items-center gap-2">
-                        <div className={cn("text-white font-bold text-sm px-3 py-1 rounded-full border transition-all duration-300 relative group", getRatingColor(average))}>
-                            {average}
+                        <div className={cn("text-white font-bold text-sm px-3 py-1 rounded-full border transition-all duration-300 relative group flex items-center gap-1.5", getRatingColor(average))}>
+                            <span>{average}</span>
+                            {player.skills?.deltas && (
+                                <SkillDeltaBadge 
+                                    delta={(player.skills.deltas.ritmo + player.skills.deltas.velocidad + player.skills.deltas.tiros + player.skills.deltas.pases + player.skills.deltas.regates) / 5} 
+                                    className="bg-black/20"
+                                />
+                            )}
                             <div className="absolute -top-1 -right-1 flex gap-0.5">
                                 {isInjured && (
                                     <Tooltip content="Jugador Lesionado">
@@ -391,12 +400,15 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                                     {!isPrimaryGoalkeeper && <span className="text-[10px] bg-amber-500/10 text-amber-500 px-1.5 py-0.5 rounded ml-auto">Influye en Global</span>}
                                 </div>
                                 {['ritmo', 'velocidad', 'tiros', 'pases', 'regates'].map((key) => {
-                                    const k = key as keyof typeof skills;
+                                    const k = key as 'ritmo' | 'velocidad' | 'tiros' | 'pases' | 'regates';
                                     return (
                                         <div key={key}>
                                             <div className="flex justify-between text-xs mb-1">
                                                 <span className="capitalize text-slate-400">{key === 'ritmo' ? 'Ritmo (Estado Fisico)' : (key === 'velocidad' ? 'Velocidad Pura' : key)}</span>
-                                                <span className="text-sky-400 font-mono">{skills[k]}</span>
+                                                <div className="flex items-center gap-2">
+                                                    {player.skills?.deltas && <SkillDeltaBadge delta={player.skills.deltas[k]} />}
+                                                    <span className="text-sky-400 font-mono">{Math.round(skills[k] as number)}</span>
+                                                </div>
                                             </div>
                                             <input
                                                 type="range"
@@ -421,14 +433,14 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                                     {isPrimaryGoalkeeper && <span className="text-[10px] bg-sky-500/10 text-sky-500 px-1.5 py-0.5 rounded ml-auto">Influye en Global</span>}
                                 </div>
                                 {['reflejos', 'posicionamiento', 'estirada', 'saque', 'seguridad'].map((key) => {
-                                    const k = key as keyof typeof skills;
+                                    const k = key as 'reflejos' | 'posicionamiento' | 'estirada' | 'saque' | 'seguridad';
                                     return (
                                         <div key={key}>
                                             <div className="flex justify-between text-xs mb-1">
                                                 <span className="capitalize text-slate-400">
                                                     {key === 'posicionamiento' ? 'Ubicación' : (key === 'estirada' ? 'Defensa' : key)}
                                                 </span>
-                                                <span className="text-sky-400 font-mono">{skills[k] || 50}</span>
+                                                <span className="text-sky-400 font-mono">{Math.round((skills[k] as number) || 50)}</span>
                                             </div>
                                             <input
                                                 type="range"

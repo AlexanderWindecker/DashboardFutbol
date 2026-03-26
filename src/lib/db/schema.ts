@@ -38,6 +38,7 @@ export const participations = pgTable('participations', {
     isMvp: boolean('is_mvp').default(false),
     rating: doublePrecision('rating'),
     tacticalRole: text('tactical_role'),
+    skillReasons: text('skill_reasons'), // JSON array of strings
     notes: text('notes'),
 }, (table) => ({
     pk: primaryKey({ columns: [table.matchId, table.playerId] }),

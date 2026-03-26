@@ -46,18 +46,18 @@ function calculateStats(players: Player[], matches: Match[], participations: Pla
 
         let skillsAverage = 0;
         const skillDetails = showGoalkeeperStats ? {
-            pac: s.reflejos || 50,
-            sho: s.posicionamiento || 50,
-            pas: s.estirada || 50,
-            dri: s.saque || 50,
-            def: s.seguridad || 50,
+            pac: Math.round(s.reflejos || 50),
+            sho: Math.round(s.posicionamiento || 50),
+            pas: Math.round(s.estirada || 50),
+            dri: Math.round(s.saque || 50),
+            def: Math.round(s.seguridad || 50),
             label1: 'REF', label2: 'UBI', label3: 'DEF', label4: 'SAQ', label5: 'SEG'
         } : {
-            pac: s.ritmo || 50,
-            sho: s.tiros || 50,
-            pas: s.pases || 50,
-            dri: s.regates || 50,
-            def: s.velocidad || 50,
+            pac: Math.round(s.ritmo || 50),
+            sho: Math.round(s.tiros || 50),
+            pas: Math.round(s.pases || 50),
+            dri: Math.round(s.regates || 50),
+            def: Math.round(s.velocidad || 50),
             label1: 'RIT', label2: 'TIR', label3: 'PAS', label4: 'REG', label5: 'VEL'
         };
 
@@ -355,6 +355,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                             <tr>
                                 <th className="p-4 w-12 text-center">#</th>
                                 <th className="p-4">Jugador</th>
+                                <th className="p-4 text-center">PJ</th>
                                 <th className="p-4 text-center border-l border-slate-800/50 bg-sky-500/5 min-w-[100px]">
                                     {isArqueroView ? 'REF' : 'RIT'}
                                 </th>
@@ -385,6 +386,9 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                                                 </div>
                                                 <span className="font-bold text-white whitespace-nowrap">{p.name}</span>
                                             </div>
+                                        </td>
+                                        <td className="p-4 text-center">
+                                            <span className="text-slate-400 font-mono font-bold">{p.matchesAttended}</span>
                                         </td>
                                         <td className="p-4 border-l border-slate-800/30 bg-sky-500/[0.02]">
                                             <SkillBar label={p.isUsingGoalkeeperStats ? "REF" : "RIT"} value={p.skillDetails.pac} colorClass="bg-sky-400 shadow-sky-500/50" />
@@ -450,9 +454,9 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                                 </div>
 
                                 <div className="flex items-center gap-4 shrink-0">
-                                    {(isMvpType || isGoalType) && (
+                                    {(isMvpType || isGoalType || type === 'winners') && (
                                         <div className="flex flex-col items-end">
-                                            <span className="text-[10px] text-slate-500 font-bold uppercase">Partidos</span>
+                                            <span className="text-[10px] text-slate-400 font-bold uppercase">Partidos</span>
                                             <span className="text-sm font-bold text-slate-300">{p.matchesAttended}</span>
                                         </div>
                                     )}

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Player, PlayerStats, AppSettings } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import { updateParticipationAction } from '@/actions/matches';
-import { Check, Star, Shield, AlertCircle, Trash2, Users, X, Save, RefreshCcw } from 'lucide-react';
+import { Check, Star, Shield, AlertCircle, Trash2, Users, X, Save, RefreshCcw, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdmin } from '@/hooks/useAdmin';
 
@@ -21,6 +21,7 @@ export function ParticipationTable({
     const [localParticipations, setLocalParticipations] = useState<PlayerStats[]>(initialParticipations);
     const [hasChanges, setHasChanges] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [openInfoPlayerId, setOpenInfoPlayerId] = useState<string | null>(null);
 
     // Sync from props if no local changes
     useEffect(() => {
@@ -143,7 +144,50 @@ export function ParticipationTable({
                     <tbody className="divide-y divide-slate-800">
                         {matchPlayers.map((p) => (
                             <tr key={p.playerId} className="hover:bg-slate-800/30">
-                                <td className="p-3 font-medium text-slate-200">{p.playerName}</td>
+                                <td className="p-3 font-medium text-slate-200">
+                                    <div className="flex items-center gap-2 group">
+                                        <span>{p.playerName}</span>
+                                        {p.skillReasons && p.skillReasons.length > 0 && (
+                                            <div className="relative">
+                                                <button 
+                                                    onClick={() => setOpenInfoPlayerId(openInfoPlayerId === p.playerId ? null : p.playerId)}
+                                                    className={cn(
+                                                        "p-1 rounded-full transition-colors",
+                                                        openInfoPlayerId === p.playerId ? "bg-amber-500/20 text-amber-500" : "text-slate-500 hover:text-amber-400 group-hover:text-slate-400"
+                                                    )}
+                                                >
+                                                    <Info size={14} />
+                                                </button>
+                                                
+                                                {openInfoPlayerId === p.playerId && (
+                                                    <>
+                                                        {/* Backdrop for mobile to close when clicking outside */}
+                                                        <div 
+                                                            className="fixed inset-0 z-40 md:hidden" 
+                                                            onClick={(e) => { e.stopPropagation(); setOpenInfoPlayerId(null); }}
+                                                        />
+                                                        <div className="absolute left-0 top-full mt-2 z-50 w-48 p-3 bg-slate-900 border border-amber-500/30 rounded-xl shadow-2xl animate-in fade-in zoom-in duration-200">
+                                                            <div className="flex justify-between items-center mb-2 border-b border-slate-800 pb-1">
+                                                                <span className="text-[10px] font-bold text-amber-500 uppercase">Desglose RPG</span>
+                                                                <button onClick={() => setOpenInfoPlayerId(null)} className="text-slate-500 hover:text-white">
+                                                                    <X size={10} />
+                                                                </button>
+                                                            </div>
+                                                            <div className="space-y-1.5">
+                                                                {p.skillReasons.map((reason, idx) => (
+                                                                    <div key={idx} className="text-[10px] text-slate-300 flex items-center gap-1.5">
+                                                                        <div className="w-1 h-1 rounded-full bg-amber-500" />
+                                                                        {reason}
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </td>
                                 <td className="p-3">
                                     <div className="flex gap-1.5">
                                         <button

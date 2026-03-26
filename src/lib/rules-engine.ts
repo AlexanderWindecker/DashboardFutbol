@@ -17,7 +17,7 @@ export function evaluateRule(player: Player, rule: CustomRule, stats?: any): boo
         } else if (condition.skill === 'matchesAttended' || condition.skill === 'mvpCount') {
             skillValue = stats ? stats[condition.skill] : 0;
         } else {
-            skillValue = skills[condition.skill as keyof typeof skills] || 0;
+            skillValue = (skills[condition.skill as keyof typeof skills] as number) || 0;
         }
 
         switch (condition.operator) {

@@ -4,6 +4,7 @@ import { addMatch, updateMatch, updateParticipation, getParticipationsForMatch, 
 import { Match, MatchMode, PlayerStats, MatchResult } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { syncAllPlayerStats } from '@/lib/skills-engine';
 
 export async function createMatchAction(formData: FormData) {
     const date = formData.get('date') as string;
@@ -31,9 +32,11 @@ export async function updateMatchResultAction(matchId: string, result: MatchResu
 
     match.result = result;
     await updateMatch(match);
+    await syncAllPlayerStats(); // Trigger recalculation
     revalidatePath(`/matches/${matchId}`);
     revalidatePath('/matches');
     revalidatePath('/stats');
+    revalidatePath('/players');
 }
 
 export async function updateMatchDetailsAction(matchId: string, formData: FormData) {
@@ -75,15 +78,19 @@ export async function updateParticipationAction(matchId: string, playerId: strin
 
     await updateParticipation(current);
     await checkSuperclasico(matchId);
+    await syncAllPlayerStats(); // Trigger recalculation
     revalidatePath(`/matches/${matchId}`);
     revalidatePath('/matches'); // Crucial for the matches list
     revalidatePath('/stats'); // Also revalidate stats page
+    revalidatePath('/players');
 }
 
 export async function deleteParticipationAction(matchId: string, playerId: string) {
     const { deleteParticipation } = await import('@/lib/data');
     await deleteParticipation(matchId, playerId);
+    await syncAllPlayerStats();
     revalidatePath(`/matches/${matchId}`);
+    revalidatePath('/players');
 }
 
 export async function addPlayerToMatchAction(matchId: string, playerId: string) {

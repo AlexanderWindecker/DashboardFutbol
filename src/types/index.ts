@@ -47,6 +47,13 @@ export interface Player {
         pases: number;
         regates: number;
         velocidad: number;
+        deltas?: {
+            ritmo: number;
+            tiros: number;
+            pases: number;
+            regates: number;
+            velocidad: number;
+        };
         // GK Specific
         reflejos?: number;
         posicionamiento?: number; // Ubicacion
@@ -73,6 +80,7 @@ export interface PlayerStats {
     goals?: number;
     rating?: number;
     isMvp: boolean; // MVP of their team
+    skillReasons?: string[]; // Log of why skills changed
     notes?: string;
 }
 

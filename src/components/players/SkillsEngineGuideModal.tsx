@@ -1,0 +1,76 @@
+'use client';
+
+import { Modal } from '@/components/ui/Modal';
+import { HelpCircle } from 'lucide-react';
+import { useState } from 'react';
+
+export function SkillsEngineGuideModal() {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <>
+            <button
+                onClick={() => setIsOpen(true)}
+                className="p-1.5 rounded-full bg-slate-800 text-sky-400 hover:bg-slate-700 transition flex items-center justify-center shrink-0"
+                title="Ver Reglas del Motor RPG"
+            >
+                <HelpCircle size={16} />
+            </button>
+
+            <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="⚽ REGLAS: Motor de Evolución (RPG)">
+                <div className="space-y-4 text-sm text-slate-300">
+                    <p>
+                        Tu plantilla evoluciona como si fuera el **Modo Carrera**. Cada partido jugado recalcula de forma automática las habilidades ocultas de los jugadores basándose en su rendimiento estadístico real:
+                    </p>
+
+                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+                        <h4 className="font-bold text-emerald-400">📈 Subidas (Positivas)</h4>
+                        <ul className="list-disc pl-5 space-y-1">
+                            <li><strong>Asistencia al Partido:</strong> <span className="text-emerald-400">+0.2 Ritmo</span>, <span className="text-emerald-400">+0.1 Pases</span>, <span className="text-emerald-400">+0.1 Regates</span>.</li>
+                            <li><strong>Victoria del Equipo:</strong> Jugar bien y ganar da <span className="text-emerald-400">+0.2 Pases/Regates</span> extra a todos.</li>
+                            <li><strong>Goles (Dinámico):</strong> En F9 (<span className="text-emerald-400">+0.5 Tiros</span>), F7 (<span className="text-emerald-400">+0.3</span>), y F5/F6 (<span className="text-emerald-400">+0.2</span>). ¡Evita la inflación de medias en canchas chicas!</li>
+                            <li><strong>Ser Goleador del partido:</strong> <span className="text-emerald-400">+1.0 Tiros</span>, y suma Ritmo/Velocidad extra.</li>
+                            <li><strong>Premio MVP:</strong> Quien salga MVP se lleva ¡<span className="text-emerald-400">+0.5 en TODAS</span> las stats!</li>
+                        </ul>
+                    </div>
+
+                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+                        <h4 className="font-bold text-amber-400">🔥 Rachas (Consecitivas)</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-slate-400">
+                            <li><strong>3 y 5 Victorias seguidas:</strong> <span className="text-amber-400">+0.5 y +0.75 Global respectivamente</span>.</li>
+                            <li><strong>3 Partidos seguidos jugados:</strong> <span className="text-amber-400">+0.5</span> Ritmo/Regate.</li>
+                            <li><strong>5 Partidos seguidos jugados:</strong> <span className="text-amber-400">+0.75</span> a todas las habilidades.</li>
+                            <li><strong>10 y 15 Partidos seguidos jugados:</strong> Saltos finales de <span className="text-amber-400">+1.0 y +1.5 Globales</span>.</li>
+                        </ul>
+                    </div>
+
+                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+                        <h4 className="font-bold text-rose-500">📉 Bajadas o Castigos</h4>
+                        <ul className="list-disc pl-5 space-y-1 text-slate-400">
+                            <li><strong>Derrota del Equipo:</strong> Perder el partido baja minimamente <span className="text-rose-500">-0.1 en todo</span>, afectando la moral.</li>
+                            <li><strong>Sequía Goleadora (Pólvora Mojada):</strong> Acumular 3 partidos seguidos jugados sin meter ningún gol resta <span className="text-rose-500">-0.5 en Tiros</span>.</li>
+                            <li><strong>Inactividad / No convocado:</strong> Quien no figure en el partido sufre <span className="text-rose-500">-0.2 en todo</span> por pérdida de rodaje.</li>
+                            <li><strong>Avisar Ausencia (Declined):</strong> Cancelar con buen aviso resta apenas <span className="text-rose-500">-0.1 en todo</span>.</li>
+                            <li><strong>Falta sin aviso / Cancelar Tarde:</strong> Castigo severo de <span className="text-rose-500">-0.5 en TODAS</span> las habilidades y quiebra las rachas.</li>
+                            <li><strong>Lesión (Injured):</strong> Baja fortísima de <span className="text-rose-500">-1.0 en todo</span>.</li>
+                        </ul>
+                    </div>
+
+                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+                        <h4 className="font-bold text-sky-400">🛡️ Tope de Habilidad (Soft-Cap 85)</h4>
+                        <p className="text-slate-400">
+                            Para mantener el realismo, cuando una habilidad supera los <strong>85 puntos</strong>, su crecimiento se hace un <span className="text-sky-400 font-bold">50% más lento</span>.
+                        </p>
+                        <p className="text-slate-500 text-xs italic">
+                            Ejemplo: Si tenes 85+ en Tiros y haces un Gol (+0.5), el motor ahora solo te otorgará la mitad (+0.25).
+                        </p>
+                    </div>
+
+                    <p className="text-xs italic text-slate-500 mt-4 text-center">
+                        * Todos los valores se acumulan decimal a decimal y se redondean únicamente en los gráficos visuales para una lectura limpia (Ej: 53.6 = 54).
+                    </p>
+                </div>
+            </Modal>
+        </>
+    );
+}

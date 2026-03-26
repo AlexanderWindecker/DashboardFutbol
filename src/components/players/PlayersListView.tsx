@@ -11,6 +11,8 @@ import { togglePlayerStatusAction, createPlayerAction, importPlayersAction } fro
 import { useRef } from 'react';
 import Link from 'next/link';
 import { useAdmin } from '@/hooks/useAdmin';
+import { GlobalSkillBadge } from '@/components/players/SkillDeltaBadge';
+import { SkillsEngineGuideModal } from '@/components/players/SkillsEngineGuideModal';
 
 interface PlayersListViewProps {
     players: Player[];
@@ -124,6 +126,7 @@ export function PlayersListView({ players }: PlayersListViewProps) {
                 <div>
                     <div className="flex items-center gap-3">
                         <h1 className="text-2xl md:text-3xl font-bold text-white">Jugadores</h1>
+                        <SkillsEngineGuideModal />
                         {/* Privacy Toggle */}
                         <button
                             onClick={() => setPrivacyMode(!privacyMode)}
@@ -213,13 +216,50 @@ export function PlayersListView({ players }: PlayersListViewProps) {
                         )}>
                             <div className="flex items-start justify-between gap-3">
                                 <Link href={`/players/${player.id}`} className="flex items-center gap-3 min-w-0 flex-1 group/link">
-                                    <div className={cn(
-                                        "w-10 h-10 md:w-12 md:h-12 rounded-xl shrink-0 flex items-center justify-center font-bold text-lg md:text-xl transition-transform group-hover/link:scale-105 shadow-lg border",
-                                        isActive ? "bg-slate-800 border-slate-700 text-slate-300" : "bg-slate-950 border-slate-900 text-slate-700"
-                                    )}>
-                                        <User size={20} />
-                                    </div>
-                                    <div className="min-w-0">
+                                    {/* Skill Score Icon Box */}
+                                    {(() => {
+                                        const s = player.skills as any;
+                                        const isGk = player.positions?.includes('Arquero') && player.positions?.length === 1;
+                                        const avg = isGk 
+                                            ? Math.round(((s?.reflejos || 50) + (s?.posicionamiento || 50) + (s?.estirada || 50) + (s?.saque || 50) + (s?.seguridad || 50)) / 5)
+                                            : Math.round(((s?.ritmo || 50) + (s?.velocidad || 50) + (s?.tiros || 50) + (s?.pases || 50) + (s?.regates || 50)) / 5);
+                                        
+                                        const d = s?.deltas as any;
+                                        const delta = d ? (
+                                            isGk 
+                                                ? (d.reflejos + d.posicionamiento + d.estirada + d.saque + d.seguridad) / 5
+                                                : (d.ritmo + d.velocidad + d.tiros + d.pases + d.regates) / 5
+                                        ) : undefined;
+
+                                        const getRatingColor = (score: number) => {
+                                            if (score >= 90) return "bg-violet-600 border-violet-400 shadow-violet-500/30";
+                                            if (score >= 80) return "bg-emerald-600 border-emerald-400 shadow-emerald-500/30";
+                                            if (score >= 70) return "bg-blue-600 border-blue-400 shadow-blue-500/30";
+                                            if (score >= 60) return "bg-yellow-600 border-yellow-400 shadow-yellow-500/30";
+                                            return "bg-slate-700 border-slate-600 text-slate-300";
+                                        };
+
+                                        return (
+                                            <div className="relative shrink-0">
+                                                <div className={cn(
+                                                    "w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center font-black text-lg md:text-xl transition-transform group-hover/link:scale-105 shadow-lg border text-white",
+                                                    isActive ? getRatingColor(avg) : "bg-slate-950 border-slate-900 text-slate-700"
+                                                )}>
+                                                    {avg}
+                                                </div>
+                                                {delta !== undefined && delta !== 0 && (
+                                                    <div className={cn(
+                                                        "absolute -bottom-1 -right-1 px-1 rounded-md text-[8px] md:text-[9px] font-bold border shadow-sm",
+                                                        delta > 0 ? "bg-emerald-500 text-white border-emerald-400" : "bg-rose-500 text-white border-rose-400"
+                                                    )}>
+                                                        {delta > 0 ? '+' : ''}{delta.toFixed(1)}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })()}
+
+                                    <div className="min-w-0 flex-1">
                                         <div className="flex items-center gap-2">
                                             <span className="text-white font-bold text-sm md:text-base truncate">{displayName}</span>
                                         </div>

@@ -57,6 +57,7 @@ export async function getData(): Promise<DashboardData> {
                 isMvp: !!p.isMvp,
                 team: p.team as Team,
                 tacticalRole: p.tacticalRole as any,
+                skillReasons: p.skillReasons ? JSON.parse(p.skillReasons) : [],
                 notes: p.notes || undefined,
             })) as PlayerStats[],
             specialtyRules: sRules.map(r => ({
@@ -116,16 +117,21 @@ export async function getParticipationsForMatch(matchId: string) {
         isMvp: !!p.isMvp,
         team: p.team as Team,
         tacticalRole: p.tacticalRole as any,
+        skillReasons: p.skillReasons ? JSON.parse(p.skillReasons) : [],
         notes: p.notes || undefined,
     })) as PlayerStats[];
 }
 
 export async function updateParticipation(participation: PlayerStats) {
+    const dataToSave = {
+        ...participation,
+        skillReasons: participation.skillReasons ? JSON.stringify(participation.skillReasons) : null
+    };
     await db.insert(participations)
-        .values(participation)
+        .values(dataToSave as any)
         .onConflictDoUpdate({
             target: [participations.matchId, participations.playerId],
-            set: participation
+            set: dataToSave as any
         });
 }
 
