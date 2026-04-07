@@ -5,6 +5,7 @@ import { updateParticipationAction } from '@/actions/matches';
 import { Check, Star, Shield, AlertCircle, Trash2, Users, X, Save, RefreshCcw, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdmin } from '@/hooks/useAdmin';
+import { Modal } from '@/components/ui/Modal';
 
 export function ParticipationTable({
     players,
@@ -85,6 +86,8 @@ export function ParticipationTable({
         setHasChanges(false);
     };
 
+    const selectedPlayer = matchPlayers.find(p => p.playerId === openInfoPlayerId);
+
     return (
         <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden mt-8">
             <div className="p-4 border-b border-slate-800 bg-slate-950/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -148,43 +151,16 @@ export function ParticipationTable({
                                     <div className="flex items-center gap-2 group">
                                         <span>{p.playerName}</span>
                                         {p.skillReasons && p.skillReasons.length > 0 && (
-                                            <div className="relative">
-                                                <button 
-                                                    onClick={() => setOpenInfoPlayerId(openInfoPlayerId === p.playerId ? null : p.playerId)}
-                                                    className={cn(
-                                                        "p-1 rounded-full transition-colors",
-                                                        openInfoPlayerId === p.playerId ? "bg-amber-500/20 text-amber-500" : "text-slate-500 hover:text-amber-400 group-hover:text-slate-400"
-                                                    )}
-                                                >
-                                                    <Info size={14} />
-                                                </button>
-                                                
-                                                {openInfoPlayerId === p.playerId && (
-                                                    <>
-                                                        {/* Backdrop for mobile to close when clicking outside */}
-                                                        <div 
-                                                            className="fixed inset-0 z-40 md:hidden" 
-                                                            onClick={(e) => { e.stopPropagation(); setOpenInfoPlayerId(null); }}
-                                                        />
-                                                        <div className="absolute left-0 top-full mt-2 z-50 w-48 p-3 bg-slate-900 border border-amber-500/30 rounded-xl shadow-2xl animate-in fade-in zoom-in duration-200">
-                                                            <div className="flex justify-between items-center mb-2 border-b border-slate-800 pb-1">
-                                                                <span className="text-[10px] font-bold text-amber-500 uppercase">Desglose RPG</span>
-                                                                <button onClick={() => setOpenInfoPlayerId(null)} className="text-slate-500 hover:text-white">
-                                                                    <X size={10} />
-                                                                </button>
-                                                            </div>
-                                                            <div className="space-y-1.5">
-                                                                {p.skillReasons.map((reason, idx) => (
-                                                                    <div key={idx} className="text-[10px] text-slate-300 flex items-center gap-1.5">
-                                                                        <div className="w-1 h-1 rounded-full bg-amber-500" />
-                                                                        {reason}
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    </>
+                                            <button 
+                                                onClick={() => setOpenInfoPlayerId(openInfoPlayerId === p.playerId ? null : p.playerId)}
+                                                className={cn(
+                                                    "p-1 rounded-full transition-colors",
+                                                    openInfoPlayerId === p.playerId ? "bg-amber-500/20 text-amber-500" : "text-slate-500 hover:text-amber-400 group-hover:text-slate-400"
                                                 )}
-                                            </div>
+                                                title="Ver desglose de habilidades"
+                                            >
+                                                <Info size={14} />
+                                            </button>
                                         )}
                                     </div>
                                 </td>
@@ -343,6 +319,27 @@ export function ParticipationTable({
                     </tbody>
                 </table>
             </div>
+
+            {/* Player Info Modal */}
+            <Modal
+                isOpen={!!selectedPlayer}
+                onClose={() => setOpenInfoPlayerId(null)}
+                title={`Desglose RPG - ${selectedPlayer?.playerName}`}
+            >
+                <div className="space-y-4">
+                    <p className="text-sm text-slate-400 mb-4">
+                        Detalle de las variaciones de habilidades aplicadas en este partido basados en su desempeño y constancia.
+                    </p>
+                    <div className="space-y-2">
+                        {selectedPlayer?.skillReasons?.map((reason, idx) => (
+                            <div key={idx} className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-xl border border-amber-500/10 text-slate-200">
+                                <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
+                                <span className="text-sm">{reason}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 }

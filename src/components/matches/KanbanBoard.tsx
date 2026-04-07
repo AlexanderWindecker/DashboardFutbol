@@ -4,7 +4,7 @@ import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, useDraggable, us
 import { Player, PlayerStats, ParticipationStatus, AppSettings } from '@/types';
 import { updateParticipationAction, deleteParticipationAction } from '@/actions/matches';
 import { cn } from '@/lib/utils';
-import { Trash2, X, MoreVertical, Check, UserMinus, ShieldAlert, History, Crown, Star, Info } from 'lucide-react';
+import { Trash2, X, MoreVertical, Check, UserMinus, ShieldAlert, History, Crown, Star, Info, UserX } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
 
 // Types helpers
@@ -131,6 +131,13 @@ function DraggablePlayer({ player, stats, team1Name, team2Name, isAdmin, isElite
                                 >
                                     <ShieldAlert className="mr-2 h-4 w-4" />
                                     <span>Baja</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    className="text-slate-400 focus:text-slate-300 focus:bg-slate-500/10 cursor-pointer"
+                                    onClick={() => stats && updateParticipationAction(stats.matchId, player.id, { status: 'Absent' })}
+                                >
+                                    <UserX className="mr-2 h-4 w-4" />
+                                    <span>Ausentes / Sin Aviso</span>
                                 </DropdownMenuItem>
                                 <div className="h-px bg-slate-700 my-1" />
                                 <DropdownMenuItem
