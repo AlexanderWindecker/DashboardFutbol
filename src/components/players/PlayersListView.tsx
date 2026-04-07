@@ -227,8 +227,8 @@ export function PlayersListView({ players }: PlayersListViewProps) {
                                         const d = s?.deltas as any;
                                         const delta = d ? (
                                             isGk 
-                                                ? (d.reflejos + d.posicionamiento + d.estirada + d.saque + d.seguridad) / 5
-                                                : (d.ritmo + d.velocidad + d.tiros + d.pases + d.regates) / 5
+                                                ? ((d.reflejos || 0) + (d.posicionamiento || 0) + (d.estirada || 0) + (d.saque || 0) + (d.seguridad || 0)) / 5
+                                                : ((d.ritmo || 0) + (d.velocidad || 0) + (d.tiros || 0) + (d.pases || 0) + (d.regates || 0)) / 5
                                         ) : undefined;
 
                                         const getRatingColor = (score: number) => {

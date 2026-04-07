@@ -7,6 +7,11 @@ export interface SkillDeltas {
     tiros: number;
     regates: number;
     pases: number;
+    reflejos?: number;
+    posicionamiento?: number;
+    estirada?: number;
+    saque?: number;
+    seguridad?: number;
 }
 
 function applyDiminishingReturns(oldVal: number, newVal: number): number {
@@ -32,6 +37,11 @@ export interface PlayerSkillsData {
     matchesPlayed?: number; 
     goals?: number;
     mvps?: number;
+    reflejos?: number;
+    posicionamiento?: number;
+    estirada?: number;
+    saque?: number;
+    seguridad?: number;
 }
 
 export interface ParticipationUpdate {
@@ -70,7 +80,12 @@ export function recalculateAllSkills(
             goalDrought: 0,
             matchesPlayed: 0,
             goals: 0,
-            mvps: 0
+            mvps: 0,
+            reflejos: p.skills?.reflejos || 50,
+            posicionamiento: p.skills?.posicionamiento || 50,
+            estirada: p.skills?.estirada || 50,
+            saque: p.skills?.saque || 50,
+            seguridad: p.skills?.seguridad || 50
         });
     }
 
@@ -234,7 +249,12 @@ export function recalculateAllSkills(
                 velocidad: Number((stats.velocidad - prev.velocidad).toFixed(1)),
                 tiros: Number((stats.tiros - prev.tiros).toFixed(1)),
                 regates: Number((stats.regates - prev.regates).toFixed(1)),
-                pases: Number((stats.pases - prev.pases).toFixed(1))
+                pases: Number((stats.pases - prev.pases).toFixed(1)),
+                reflejos: stats.reflejos !== undefined && prev.reflejos !== undefined ? Number((stats.reflejos - prev.reflejos).toFixed(1)) : 0,
+                posicionamiento: stats.posicionamiento !== undefined && prev.posicionamiento !== undefined ? Number((stats.posicionamiento - prev.posicionamiento).toFixed(1)) : 0,
+                estirada: stats.estirada !== undefined && prev.estirada !== undefined ? Number((stats.estirada - prev.estirada).toFixed(1)) : 0,
+                saque: stats.saque !== undefined && prev.saque !== undefined ? Number((stats.saque - prev.saque).toFixed(1)) : 0,
+                seguridad: stats.seguridad !== undefined && prev.seguridad !== undefined ? Number((stats.seguridad - prev.seguridad).toFixed(1)) : 0,
             };
             
             // Format to 1 decimal place permanently to avoid huge floats
@@ -243,6 +263,11 @@ export function recalculateAllSkills(
             stats.tiros = Number(stats.tiros.toFixed(1));
             stats.regates = Number(stats.regates.toFixed(1));
             stats.pases = Number(stats.pases.toFixed(1));
+            if (stats.reflejos !== undefined) stats.reflejos = Number(stats.reflejos.toFixed(1));
+            if (stats.posicionamiento !== undefined) stats.posicionamiento = Number(stats.posicionamiento.toFixed(1));
+            if (stats.estirada !== undefined) stats.estirada = Number(stats.estirada.toFixed(1));
+            if (stats.saque !== undefined) stats.saque = Number(stats.saque.toFixed(1));
+            if (stats.seguridad !== undefined) stats.seguridad = Number(stats.seguridad.toFixed(1));
             
             playerStats.set(p.playerId, stats);
 
@@ -265,13 +290,23 @@ export function recalculateAllSkills(
                     
                     // Decay -0.2 to all skills for missing a match entirely
                     stats.ritmo -= 0.2; stats.velocidad -= 0.2; stats.tiros -= 0.2; stats.pases -= 0.2; stats.regates -= 0.2;
+                    if (stats.reflejos !== undefined) stats.reflejos -= 0.2;
+                    if (stats.posicionamiento !== undefined) stats.posicionamiento -= 0.2;
+                    if (stats.estirada !== undefined) stats.estirada -= 0.2;
+                    if (stats.saque !== undefined) stats.saque -= 0.2;
+                    if (stats.seguridad !== undefined) stats.seguridad -= 0.2;
                     
                     stats.deltas = {
                         ritmo: Number((stats.ritmo - prevInactive.ritmo).toFixed(1)),
                         velocidad: Number((stats.velocidad - prevInactive.velocidad).toFixed(1)),
                         tiros: Number((stats.tiros - prevInactive.tiros).toFixed(1)),
                         regates: Number((stats.regates - prevInactive.regates).toFixed(1)),
-                        pases: Number((stats.pases - prevInactive.pases).toFixed(1))
+                        pases: Number((stats.pases - prevInactive.pases).toFixed(1)),
+                        reflejos: stats.reflejos !== undefined && prevInactive.reflejos !== undefined ? Number((stats.reflejos - prevInactive.reflejos).toFixed(1)) : 0,
+                        posicionamiento: stats.posicionamiento !== undefined && prevInactive.posicionamiento !== undefined ? Number((stats.posicionamiento - prevInactive.posicionamiento).toFixed(1)) : 0,
+                        estirada: stats.estirada !== undefined && prevInactive.estirada !== undefined ? Number((stats.estirada - prevInactive.estirada).toFixed(1)) : 0,
+                        saque: stats.saque !== undefined && prevInactive.saque !== undefined ? Number((stats.saque - prevInactive.saque).toFixed(1)) : 0,
+                        seguridad: stats.seguridad !== undefined && prevInactive.seguridad !== undefined ? Number((stats.seguridad - prevInactive.seguridad).toFixed(1)) : 0,
                     };
                     
                     stats.ritmo = Number(stats.ritmo.toFixed(1));
@@ -279,6 +314,11 @@ export function recalculateAllSkills(
                     stats.tiros = Number(stats.tiros.toFixed(1));
                     stats.regates = Number(stats.regates.toFixed(1));
                     stats.pases = Number(stats.pases.toFixed(1));
+                    if (stats.reflejos !== undefined) stats.reflejos = Number(stats.reflejos.toFixed(1));
+                    if (stats.posicionamiento !== undefined) stats.posicionamiento = Number(stats.posicionamiento.toFixed(1));
+                    if (stats.estirada !== undefined) stats.estirada = Number(stats.estirada.toFixed(1));
+                    if (stats.saque !== undefined) stats.saque = Number(stats.saque.toFixed(1));
+                    if (stats.seguridad !== undefined) stats.seguridad = Number(stats.seguridad.toFixed(1));
                 }
             }
         }
