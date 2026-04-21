@@ -216,10 +216,10 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
             label = 'Goles';
             break;
         case 'skills_average':
-            title = 'Mejor Media (Ficha)';
+            title = 'Rating Global';
             data.sort((a, b) => b.skillsAverage - a.skillsAverage);
             valueKey = 'skillsAverage';
-            label = 'Media';
+            label = 'Rating';
             break;
     }
 
@@ -371,7 +371,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                                 <th className="p-4 text-center bg-rose-500/5 min-w-[100px]">
                                     {isArqueroView ? 'SEG' : 'VEL'}
                                 </th>
-                                <th className="p-4 text-right font-black text-slate-400 border-l border-slate-800/50">Media</th>
+                                <th className="p-4 text-right font-black text-slate-400 border-l border-slate-800/50">Rating</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-800/50">

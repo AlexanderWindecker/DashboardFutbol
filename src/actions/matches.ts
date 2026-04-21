@@ -52,9 +52,12 @@ export async function updateMatchDetailsAction(matchId: string, formData: FormDa
     match.weather = (formData.get('weather') as 'Despejado' | 'Lluvia') || 'Despejado';
 
     await updateMatch(match);
+    await syncAllPlayerStats(); // Trigger recalculation when details/weather change
+    
     revalidatePath(`/matches/${matchId}`);
     revalidatePath('/matches');
     revalidatePath('/stats');
+    revalidatePath('/players');
 }
 
 export async function updateParticipationAction(matchId: string, playerId: string, updates: Partial<PlayerStats>) {

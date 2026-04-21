@@ -184,11 +184,11 @@ export function StatsPageView({ data, settings, seasons, activeSeasonId, calcula
                     linkHref="/stats/rankings?type=attendance"
                 />
                 <RankingCard
-                    title="Mejores Medias"
+                    title="Rating Global"
                     icon={<TrendingUp size={18} className="text-indigo-400" />}
                     data={topSkills}
                     valueKey="skillsAverage"
-                    label="Media"
+                    label="Rating"
                     linkHref="/stats/rankings?type=skills_average"
                 />
                 <RankingCard
