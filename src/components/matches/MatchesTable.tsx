@@ -4,7 +4,7 @@ import { Match, Player, PlayerStats, AppSettings, Season } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { ArrowRight, Trophy, Zap, Shield } from 'lucide-react';
+import { ArrowRight, Trophy, Zap, Shield, Sun, CloudRain } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -96,7 +96,16 @@ export function MatchesTable({ matches, players, participations, settings }: Mat
                                     </Badge>
                                 </td>
                                 <td className="p-4 text-slate-300">
-                                    {match.location || <span className="text-slate-600">-</span>}
+                                    <div className="flex items-center gap-2">
+                                        {match.weather === 'Lluvia' ? (
+                                            <CloudRain size={16} className="text-blue-400 shrink-0" />
+                                        ) : (
+                                            <Sun size={16} className="text-amber-400 shrink-0" />
+                                        )}
+                                        <span className="truncate max-w-[150px]">
+                                            {match.location || <span className="text-slate-600">-</span>}
+                                        </span>
+                                    </div>
                                 </td>
                                 <td className="p-4 text-slate-300">
                                     {match.result ? (
