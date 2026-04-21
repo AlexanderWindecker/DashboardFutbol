@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { updateMatchDetailsAction, deleteMatchAction } from '@/actions/matches';
 import { Match, Season } from '@/types';
 import { Button } from '@/components/ui/Button';
-import { X, Pencil, Loader2, Save, Trash2, Trophy } from 'lucide-react';
+import { X, Pencil, Loader2, Save, Trash2, Trophy, Sun, CloudRain } from 'lucide-react';
 
 export function EditMatchDialog({ match, seasons }: { match: Match, seasons: Season[] }) {
     const [isOpen, setIsOpen] = useState(false);
@@ -98,6 +98,26 @@ export function EditMatchDialog({ match, seasons }: { match: Match, seasons: Sea
                             placeholder="Ej. Canchas del Centro"
                             className="w-full h-10 px-3 rounded-lg bg-slate-950 border border-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-slate-400 mb-2">Clima (Multiplicador x2 en Lluvia)</label>
+                        <div className="grid grid-cols-2 gap-3">
+                            <label className="relative flex items-center justify-center h-12 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer overflow-hidden group has-[:checked]:border-amber-500/50 has-[:checked]:bg-amber-500/10">
+                                <input type="radio" name="weather" value="Despejado" defaultChecked={match.weather !== 'Lluvia'} className="hidden" />
+                                <div className="flex items-center gap-2 text-slate-400 group-has-[:checked]:text-amber-500 transition-colors">
+                                    <Sun size={18} />
+                                    <span className="font-medium">Despejado</span>
+                                </div>
+                            </label>
+                            <label className="relative flex items-center justify-center h-12 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer overflow-hidden group has-[:checked]:border-blue-500/50 has-[:checked]:bg-blue-500/10">
+                                <input type="radio" name="weather" value="Lluvia" defaultChecked={match.weather === 'Lluvia'} className="hidden" />
+                                <div className="flex items-center gap-2 text-slate-400 group-has-[:checked]:text-blue-400 transition-colors">
+                                    <CloudRain size={18} />
+                                    <span className="font-medium">Lluvia</span>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <div className="flex items-center justify-between mt-8 pt-4 border-t border-slate-800">

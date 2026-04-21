@@ -120,14 +120,18 @@ export function recalculateAllSkills(
 
             const prev = { ...stats };
             const reasons: string[] = [];
+            const weatherMultiplier = match.weather === 'Lluvia' ? 2 : 1;
+            if (weatherMultiplier === 2) {
+                reasons.push("☔ Clima: Lluvia (Multiplicador x2)");
+            }
 
             if (p.status === 'Attended') {
                 stats.matchesPlayed = (stats.matchesPlayed || 0) + 1;
                 stats.streak = (stats.streak || 0) + 1;
                 
                 // 1. Presencia (Entrenamiento base del partido)
-                stats.ritmo += 0.2; stats.velocidad += 0.1; stats.pases += 0.1; stats.regates += 0.1;
-                reasons.push("Asistencia +0.2 Ritmo/Físico");
+                stats.ritmo += 0.2 * weatherMultiplier; stats.velocidad += 0.1 * weatherMultiplier; stats.pases += 0.1 * weatherMultiplier; stats.regates += 0.1 * weatherMultiplier;
+                reasons.push(`Asistencia +${(0.2 * weatherMultiplier).toFixed(1)} Ritmo/Físico`);
 
                 // Determine Goal Multiplier based on match mode
                 let goalMultiplier = 0.5;
@@ -136,31 +140,31 @@ export function recalculateAllSkills(
 
                 // 2. Goles y Sequía (Pólvora Mojada)
                 if (p.goals && p.goals > 0) {
-                    stats.tiros += (goalMultiplier * p.goals);
+                    stats.tiros += (goalMultiplier * p.goals * weatherMultiplier);
                     stats.goals = (stats.goals || 0) + p.goals;
                     stats.goalDrought = 0; // reset drought
                     const label = match.mode === '9v9' || match.mode === '8v8' ? 'Fútbol 9' : 'Fútbol Chico';
-                    reasons.push(`Goles ${label} +${(goalMultiplier * p.goals).toFixed(1)} Tiros`);
+                    reasons.push(`Goles ${label} +${(goalMultiplier * p.goals * weatherMultiplier).toFixed(1)} Tiros`);
                 } else {
                     stats.goalDrought = (stats.goalDrought || 0) + 1;
                     if (stats.goalDrought === 3) {
-                        stats.tiros -= 0.5; // Castigo por no meter goles en 3 partidos seguidos
+                        stats.tiros -= 0.5 * weatherMultiplier; // Castigo por no meter goles en 3 partidos seguidos
                         stats.goalDrought = 0; // reset to avoid infinite stacking every game
-                        reasons.push("Sequía Goleadora -0.5 Tiros");
+                        reasons.push(`Sequía Goleadora -${(0.5 * weatherMultiplier).toFixed(1)} Tiros`);
                     }
                 }
 
                 // 3. Goleador
                 if (maxGoals > 0 && topScorers.some(s => s.playerId === p.playerId)) {
-                    stats.tiros += 1.0; stats.ritmo += 0.5; stats.velocidad += 0.5;
-                    reasons.push("Goleador del Partido +1.0");
+                    stats.tiros += 1.0 * weatherMultiplier; stats.ritmo += 0.5 * weatherMultiplier; stats.velocidad += 0.5 * weatherMultiplier;
+                    reasons.push(`Goleador del Partido +${(1.0 * weatherMultiplier).toFixed(1)}`);
                 }
 
                 // 4. MVP
                 if (p.isMvp) {
-                    stats.tiros += 0.5; stats.pases += 0.5; stats.regates += 0.5; stats.velocidad += 0.5; stats.ritmo += 0.5;
+                    stats.tiros += 0.5 * weatherMultiplier; stats.pases += 0.5 * weatherMultiplier; stats.regates += 0.5 * weatherMultiplier; stats.velocidad += 0.5 * weatherMultiplier; stats.ritmo += 0.5 * weatherMultiplier;
                     stats.mvps = (stats.mvps || 0) + 1;
-                    reasons.push("Premio MVP +0.5 Global");
+                    reasons.push(`Premio MVP +${(0.5 * weatherMultiplier).toFixed(1)} Global`);
                 }
 
                 // 5. Resultados del Partido (Win/Loss) y Rachas de Victoria
@@ -172,68 +176,68 @@ export function recalculateAllSkills(
                 }
 
                 if (won) {
-                    stats.pases += 0.2; stats.regates += 0.2;
+                    stats.pases += 0.2 * weatherMultiplier; stats.regates += 0.2 * weatherMultiplier;
                     stats.winStreak = (stats.winStreak || 0) + 1;
-                    reasons.push("Victoria +0.2 Pases/Deltas");
+                    reasons.push(`Victoria +${(0.2 * weatherMultiplier).toFixed(1)} Pases/Deltas`);
                     
                     if (stats.winStreak === 3) {
-                        stats.ritmo += 0.5; stats.velocidad += 0.5; stats.tiros += 0.5; stats.pases += 0.5; stats.regates += 0.5;
-                        reasons.push("Racha de Victorias (3x) +0.5");
+                        stats.ritmo += 0.5 * weatherMultiplier; stats.velocidad += 0.5 * weatherMultiplier; stats.tiros += 0.5 * weatherMultiplier; stats.pases += 0.5 * weatherMultiplier; stats.regates += 0.5 * weatherMultiplier;
+                        reasons.push(`Racha de Victorias (3x) +${(0.5 * weatherMultiplier).toFixed(1)}`);
                     } else if (stats.winStreak === 5) {
-                        stats.ritmo += 0.75; stats.velocidad += 0.75; stats.tiros += 0.75; stats.pases += 0.75; stats.regates += 0.75;
-                        reasons.push("Imbatible (5x Victorias) +0.75");
+                        stats.ritmo += 0.75 * weatherMultiplier; stats.velocidad += 0.75 * weatherMultiplier; stats.tiros += 0.75 * weatherMultiplier; stats.pases += 0.75 * weatherMultiplier; stats.regates += 0.75 * weatherMultiplier;
+                        reasons.push(`Imbatible (5x Victorias) +${(0.75 * weatherMultiplier).toFixed(1)}`);
                     }
                 } else if (lost) {
                     stats.winStreak = 0;
-                    stats.ritmo -= 0.1; stats.pases -= 0.1; stats.regates -= 0.1;
-                    reasons.push("Derrota -0.1 Moral/Táctica");
+                    stats.ritmo -= 0.1 * weatherMultiplier; stats.pases -= 0.1 * weatherMultiplier; stats.regates -= 0.1 * weatherMultiplier;
+                    reasons.push(`Derrota -${(0.1 * weatherMultiplier).toFixed(1)} Moral/Táctica`);
                 } else {
                     stats.winStreak = 0; // Break streak on draw
                 }
 
                 // 6. Rachas de Asistencia
                 if (stats.streak === 3) { 
-                    stats.ritmo += 0.5; stats.regates += 0.5; 
-                    reasons.push("Racha Asistencia (3x) +0.5");
+                    stats.ritmo += 0.5 * weatherMultiplier; stats.regates += 0.5 * weatherMultiplier; 
+                    reasons.push(`Racha Asistencia (3x) +${(0.5 * weatherMultiplier).toFixed(1)}`);
                 } 
                 else if (stats.streak === 5) { 
-                    stats.tiros += 0.75; stats.pases += 0.75; stats.regates += 0.75; stats.velocidad += 0.75; stats.ritmo += 0.75; 
-                    reasons.push("Racha Asistencia (5x) +0.75");
+                    stats.tiros += 0.75 * weatherMultiplier; stats.pases += 0.75 * weatherMultiplier; stats.regates += 0.75 * weatherMultiplier; stats.velocidad += 0.75 * weatherMultiplier; stats.ritmo += 0.75 * weatherMultiplier; 
+                    reasons.push(`Racha Asistencia (5x) +${(0.75 * weatherMultiplier).toFixed(1)}`);
                 } 
                 else if (stats.streak === 10) { 
-                    stats.tiros += 1.0; stats.pases += 1.0; stats.regates += 1.0; stats.velocidad += 1.0; stats.ritmo += 1.0; 
-                    reasons.push("Constancia (10x partidos) +1.0");
+                    stats.tiros += 1.0 * weatherMultiplier; stats.pases += 1.0 * weatherMultiplier; stats.regates += 1.0 * weatherMultiplier; stats.velocidad += 1.0 * weatherMultiplier; stats.ritmo += 1.0 * weatherMultiplier; 
+                    reasons.push(`Constancia (10x partidos) +${(1.0 * weatherMultiplier).toFixed(1)}`);
                 } 
                 else if (stats.streak === 15) { 
-                    stats.tiros += 1.5; stats.pases += 1.5; stats.regates += 1.5; stats.velocidad += 1.5; stats.ritmo += 1.5; 
-                    reasons.push("Leyenda (15x partidos) +1.5");
+                    stats.tiros += 1.5 * weatherMultiplier; stats.pases += 1.5 * weatherMultiplier; stats.regates += 1.5 * weatherMultiplier; stats.velocidad += 1.5 * weatherMultiplier; stats.ritmo += 1.5 * weatherMultiplier; 
+                    reasons.push(`Leyenda (15x partidos) +${(1.5 * weatherMultiplier).toFixed(1)}`);
                 }
 
                 // 6. Diferencia de Goles
                 if (p.team && goalDiffs[p.team] !== undefined) {
                     const diff = goalDiffs[p.team];
-                    if (diff >= 10) { stats.pases += 0.5; stats.regates += 0.5; stats.tiros += 0.5; }
-                    else if (diff >= 5) { stats.pases += 0.3; stats.regates += 0.3; }
-                    else if (diff <= -10) { stats.pases -= 0.5; stats.regates -= 0.5; stats.tiros -= 0.5; }
-                    else if (diff <= -5) { stats.pases -= 0.3; stats.regates -= 0.3; }
+                    if (diff >= 10) { stats.pases += 0.5 * weatherMultiplier; stats.regates += 0.5 * weatherMultiplier; stats.tiros += 0.5 * weatherMultiplier; }
+                    else if (diff >= 5) { stats.pases += 0.3 * weatherMultiplier; stats.regates += 0.3 * weatherMultiplier; }
+                    else if (diff <= -10) { stats.pases -= 0.5 * weatherMultiplier; stats.regates -= 0.5 * weatherMultiplier; stats.tiros -= 0.5 * weatherMultiplier; }
+                    else if (diff <= -5) { stats.pases -= 0.3 * weatherMultiplier; stats.regates -= 0.3 * weatherMultiplier; }
                 }
 
             } else if (p.status === 'Absent' || p.status === 'LateCancel') {
                 stats.streak = 0;
-                stats.ritmo -= 0.5; stats.velocidad -= 0.5; stats.tiros -= 0.5; stats.pases -= 0.5; stats.regates -= 0.5;
-                reasons.push("Falta sin aviso -0.5 Global");
+                stats.ritmo -= 0.5 * weatherMultiplier; stats.velocidad -= 0.5 * weatherMultiplier; stats.tiros -= 0.5 * weatherMultiplier; stats.pases -= 0.5 * weatherMultiplier; stats.regates -= 0.5 * weatherMultiplier;
+                reasons.push(`Falta sin aviso -${(0.5 * weatherMultiplier).toFixed(1)} Global`);
             } else if (p.status === 'Declined') {
                 stats.streak = 0;
-                stats.ritmo -= 0.1; stats.velocidad -= 0.1; stats.tiros -= 0.1; stats.pases -= 0.1; stats.regates -= 0.1;
-                reasons.push("Ausencia Justificada -0.1");
+                stats.ritmo -= 0.1 * weatherMultiplier; stats.velocidad -= 0.1 * weatherMultiplier; stats.tiros -= 0.1 * weatherMultiplier; stats.pases -= 0.1 * weatherMultiplier; stats.regates -= 0.1 * weatherMultiplier;
+                reasons.push(`Ausencia Justificada -${(0.1 * weatherMultiplier).toFixed(1)}`);
             } else if (p.status === 'Injured') {
                 stats.streak = 0;
-                stats.tiros -= 1; stats.pases -= 1; stats.regates -= 1; stats.velocidad -= 1; stats.ritmo -= 1;
-                reasons.push("Lesión de Gravedad -1.0");
+                stats.tiros -= 1 * weatherMultiplier; stats.pases -= 1 * weatherMultiplier; stats.regates -= 1 * weatherMultiplier; stats.velocidad -= 1 * weatherMultiplier; stats.ritmo -= 1 * weatherMultiplier;
+                reasons.push(`Lesión de Gravedad -${(1.0 * weatherMultiplier).toFixed(1)}`);
             } else if (p.status === 'Vacation') {
                 stats.streak = 0;
-                stats.ritmo -= 0.5; stats.velocidad -= 0.5;
-                reasons.push("Vacaciones -0.5 Físico");
+                stats.ritmo -= 0.5 * weatherMultiplier; stats.velocidad -= 0.5 * weatherMultiplier;
+                reasons.push(`Vacaciones -${(0.5 * weatherMultiplier).toFixed(1)} Físico`);
             }
 
             // Apply soft-cap (Diminishing Returns) > 85
@@ -280,6 +284,8 @@ export function recalculateAllSkills(
 
         // Penalty for players entirely missing from this match (Inactivity Decay)
         const activeIds = new Set(matchParts.map(p => p.playerId));
+        const weatherMultiplier = match.weather === 'Lluvia' ? 2 : 1;
+        
         for (const [playerId, stats] of playerStats.entries()) {
             if (!activeIds.has(playerId)) {
                 
@@ -289,12 +295,12 @@ export function recalculateAllSkills(
                     stats.streak = 0;
                     
                     // Decay -0.2 to all skills for missing a match entirely
-                    stats.ritmo -= 0.2; stats.velocidad -= 0.2; stats.tiros -= 0.2; stats.pases -= 0.2; stats.regates -= 0.2;
-                    if (stats.reflejos !== undefined) stats.reflejos -= 0.2;
-                    if (stats.posicionamiento !== undefined) stats.posicionamiento -= 0.2;
-                    if (stats.estirada !== undefined) stats.estirada -= 0.2;
-                    if (stats.saque !== undefined) stats.saque -= 0.2;
-                    if (stats.seguridad !== undefined) stats.seguridad -= 0.2;
+                    stats.ritmo -= 0.2 * weatherMultiplier; stats.velocidad -= 0.2 * weatherMultiplier; stats.tiros -= 0.2 * weatherMultiplier; stats.pases -= 0.2 * weatherMultiplier; stats.regates -= 0.2 * weatherMultiplier;
+                    if (stats.reflejos !== undefined) stats.reflejos -= 0.2 * weatherMultiplier;
+                    if (stats.posicionamiento !== undefined) stats.posicionamiento -= 0.2 * weatherMultiplier;
+                    if (stats.estirada !== undefined) stats.estirada -= 0.2 * weatherMultiplier;
+                    if (stats.saque !== undefined) stats.saque -= 0.2 * weatherMultiplier;
+                    if (stats.seguridad !== undefined) stats.seguridad -= 0.2 * weatherMultiplier;
                     
                     stats.deltas = {
                         ritmo: Number((stats.ritmo - prevInactive.ritmo).toFixed(1)),

@@ -102,6 +102,7 @@ export interface Match {
     location?: string;
     seasonId?: string;
     isSuperclasico?: boolean;
+    weather?: 'Despejado' | 'Lluvia';
 }
 
 export interface DashboardData {

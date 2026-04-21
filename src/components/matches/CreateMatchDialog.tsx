@@ -3,10 +3,9 @@
 import { useState } from 'react';
 import { createMatchAction } from '@/actions/matches';
 import { Button } from '@/components/ui/Button';
-import { X, Plus, Loader2 } from 'lucide-react';
+import { X, Plus, Loader2, Sun, CloudRain, Trophy } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Season } from '@/types';
-import { Trophy } from 'lucide-react';
 import { useAdmin } from '@/hooks/useAdmin';
 
 interface CreateMatchDialogProps {
@@ -99,6 +98,26 @@ export function CreateMatchDialog({ seasons, activeSeasonId }: CreateMatchDialog
                             placeholder="Ej. Canchas del Centro"
                             className="w-full h-10 px-3 rounded-lg bg-slate-950 border border-slate-800 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                         />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-slate-400 mb-2">Clima (Multiplicador x2 en Lluvia)</label>
+                        <div className="grid grid-cols-2 gap-3">
+                            <label className="relative flex items-center justify-center h-12 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer overflow-hidden group has-[:checked]:border-amber-500/50 has-[:checked]:bg-amber-500/10">
+                                <input type="radio" name="weather" value="Despejado" defaultChecked className="hidden" />
+                                <div className="flex items-center gap-2 text-slate-400 group-has-[:checked]:text-amber-500 transition-colors">
+                                    <Sun size={18} />
+                                    <span className="font-medium">Despejado</span>
+                                </div>
+                            </label>
+                            <label className="relative flex items-center justify-center h-12 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer overflow-hidden group has-[:checked]:border-blue-500/50 has-[:checked]:bg-blue-500/10">
+                                <input type="radio" name="weather" value="Lluvia" className="hidden" />
+                                <div className="flex items-center gap-2 text-slate-400 group-has-[:checked]:text-blue-400 transition-colors">
+                                    <CloudRain size={18} />
+                                    <span className="font-medium">Lluvia</span>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <div className="flex justify-end gap-3 mt-6">

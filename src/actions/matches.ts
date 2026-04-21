@@ -11,13 +11,15 @@ export async function createMatchAction(formData: FormData) {
     const mode = formData.get('mode') as MatchMode;
     const location = formData.get('location') as string;
     const seasonId = formData.get('seasonId') as string;
+    const weather = (formData.get('weather') as 'Despejado' | 'Lluvia') || 'Despejado';
 
     const newMatch: Match = {
         id: crypto.randomUUID(),
         date,
         mode,
         location,
-        seasonId: seasonId || undefined
+        seasonId: seasonId || undefined,
+        weather,
     };
 
     await addMatch(newMatch);
@@ -47,6 +49,7 @@ export async function updateMatchDetailsAction(matchId: string, formData: FormDa
     match.mode = formData.get('mode') as MatchMode;
     match.location = formData.get('location') as string;
     match.seasonId = (formData.get('seasonId') as string) || undefined;
+    match.weather = (formData.get('weather') as 'Despejado' | 'Lluvia') || 'Despejado';
 
     await updateMatch(match);
     revalidatePath(`/matches/${matchId}`);

@@ -25,6 +25,7 @@ export const matches = pgTable('matches', {
     result: text('result'),
     seasonId: text('season_id'),
     isSuperclasico: boolean('is_superclasico').default(false),
+    weather: text('weather').default('Despejado'),
     createdAt: timestamp('created_at').defaultNow(),
 });
 

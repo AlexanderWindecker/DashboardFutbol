@@ -13,7 +13,7 @@ import { NotifyWhatsApp } from '@/components/matches/NotifyWhatsApp';
 import { NotifyTelegram } from '@/components/matches/NotifyTelegram';
 import { MatchPitch } from '@/components/matches/MatchPitch';
 import { KanbanBoard } from '@/components/matches/KanbanBoard';
-import { Eye, EyeOff, Zap, Trophy, Crown, Star } from 'lucide-react';
+import { Eye, EyeOff, Zap, Trophy, Crown, Star, Sun, CloudRain } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdmin } from '@/hooks/useAdmin';
 
@@ -98,10 +98,25 @@ export function MatchDetailView({ match, players, participations, settings, seas
                             {privacyMode ? <EyeOff size={20} className="text-indigo-400" /> : <Eye size={20} />}
                         </button>
                     </div>
-                    <p className="text-slate-400 flex items-center gap-2">
-                        {match.location || 'Sin ubicación definida'}
-                    </p>
-                </div>
+                        <p className="text-slate-400 flex items-center gap-2">
+                            {match.location || 'Sin ubicación definida'}
+                        </p>
+
+                        <div className="flex items-center gap-3 pt-1">
+                            {match.weather === 'Lluvia' ? (
+                                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400">
+                                    <CloudRain size={16} />
+                                    <span className="text-[10px] font-bold uppercase tracking-wider">Clima: Lluvia</span>
+                                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white shadow-lg shadow-blue-500/40">x2</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500">
+                                    <Sun size={16} />
+                                    <span className="text-[10px] font-bold uppercase tracking-wider">Clima: Despejado</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
 
                 <div className="flex flex-col items-end gap-3">
                     {isAdmin && (
