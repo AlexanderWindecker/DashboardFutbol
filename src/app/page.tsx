@@ -9,6 +9,7 @@ import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Badge } from '@/components/ui/Badge';
 import { InstallButton } from '@/components/layout/PWAHandler';
+import { NewsTicker } from '@/components/dashboard/NewsTicker';
 
 export default async function DashboardPage() {
   const { matches: allMatches, players, activeSeasonId } = await getData() as any;
@@ -24,7 +25,7 @@ export default async function DashboardPage() {
   // Let's just show "Recent Matches".
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-16">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
           Bienvenido al Dashboard
@@ -127,6 +128,9 @@ export default async function DashboardPage() {
           <CalendarDashboard matches={matches} />
         </div>
       </div>
+
+      {/* Render the NewsTicker globally for the dashboard */}
+      <NewsTicker data={await getData()} />
     </div>
   );
 }
