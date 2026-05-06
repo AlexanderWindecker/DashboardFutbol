@@ -59,6 +59,7 @@ export async function getData(): Promise<DashboardData> {
                 tacticalRole: p.tacticalRole as any,
                 skillReasons: p.skillReasons ? JSON.parse(p.skillReasons) : [],
                 notes: p.notes || undefined,
+                ownGoals: p.ownGoals || 0,
             })) as PlayerStats[],
             specialtyRules: sRules.map(r => ({
                 ...r,
@@ -119,6 +120,7 @@ export async function getParticipationsForMatch(matchId: string) {
         tacticalRole: p.tacticalRole as any,
         skillReasons: p.skillReasons ? JSON.parse(p.skillReasons) : [],
         notes: p.notes || undefined,
+        ownGoals: p.ownGoals || 0,
     })) as PlayerStats[];
 }
 

@@ -35,6 +35,7 @@ export const participations = pgTable('participations', {
     team: text('team'),
     status: text('status').notNull(), // 'Attended', 'Confirmed', etc.
     goals: integer('goals').default(0),
+    ownGoals: integer('own_goals').default(0),
     assists: integer('assists').default(0),
     isMvp: boolean('is_mvp').default(false),
     rating: doublePrecision('rating'),

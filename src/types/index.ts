@@ -78,6 +78,7 @@ export interface PlayerStats {
     tacticalRole?: 'Arquero' | 'Defensor' | 'Mediocampista' | 'Delantero' | 'Suplente' | null;
     assists: number;
     goals?: number;
+    ownGoals?: number;
     rating?: number;
     isMvp: boolean; // MVP of their team
     skillReasons?: string[]; // Log of why skills changed

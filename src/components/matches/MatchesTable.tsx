@@ -6,7 +6,7 @@ import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ArrowRight, Trophy, Zap, Shield, Sun, CloudRain } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { cn } from '@/lib/utils';
+import { cn, calculateMatchScore } from '@/lib/utils';
 
 interface MatchesTableProps {
     matches: Match[];
@@ -109,11 +109,30 @@ export function MatchesTable({ matches, players, participations, settings }: Mat
                                 </td>
                                 <td className="p-4 text-slate-300">
                                     {match.result ? (
-                                        <Badge variant={match.result}>
-                                            {match.result === 'Celeste' ? team1Name :
-                                                match.result === 'Azul' ? team2Name :
-                                                    match.result}
-                                        </Badge>
+                                        (() => {
+                                            const matchParticipations = participations.filter(p => p.matchId === match.id);
+                                            const score = calculateMatchScore(matchParticipations);
+                                            const isCelesteWinner = match.result === 'Celeste';
+                                            const isAzulWinner = match.result === 'Azul';
+                                            const isDraw = match.result === 'Empate';
+                                            
+                                            return (
+                                                <div className={cn(
+                                                    "text-xs md:text-sm font-mono font-bold flex gap-2 items-center px-3 py-1.5 rounded-lg border w-max",
+                                                    isCelesteWinner ? "bg-sky-950/30 border-sky-900/50" : 
+                                                    isAzulWinner ? "bg-blue-950/30 border-blue-900/50" : 
+                                                    "bg-slate-900 border-slate-700"
+                                                )}>
+                                                    <span className={cn(isCelesteWinner ? "text-sky-400 text-base drop-shadow-md" : isDraw ? "text-slate-300" : "text-slate-500")}>
+                                                        {team1Name} {score.celeste}
+                                                    </span>
+                                                    <span className="text-slate-600">-</span>
+                                                    <span className={cn(isAzulWinner ? "text-blue-500 text-base drop-shadow-md" : isDraw ? "text-slate-300" : "text-slate-500")}>
+                                                        {score.azul} {team2Name}
+                                                    </span>
+                                                </div>
+                                            )
+                                        })()
                                     ) : (
                                         <span className="text-slate-600">-</span>
                                     )}

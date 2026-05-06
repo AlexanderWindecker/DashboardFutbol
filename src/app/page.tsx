@@ -3,7 +3,7 @@ import { CalendarDashboard } from '@/components/dashboard/CalendarDashboard';
 
 export const dynamic = 'force-dynamic';
 import { ArrowRight, Calendar, Users, Zap } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, calculateMatchScore } from '@/lib/utils';
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -12,7 +12,7 @@ import { InstallButton } from '@/components/layout/PWAHandler';
 import { NewsTicker } from '@/components/dashboard/NewsTicker';
 
 export default async function DashboardPage() {
-  const { matches: allMatches, players, activeSeasonId } = await getData() as any;
+  const { matches: allMatches, players, activeSeasonId, participations, settings } = await getData() as any;
 
   const matches = activeSeasonId
     ? allMatches.filter((m: any) => m.seasonId === activeSeasonId)
@@ -108,7 +108,33 @@ export default async function DashboardPage() {
                   <div className="flex items-center gap-4">
                     <div className="text-right">
                       {match.result ? (
-                        <Badge variant={match.result} className={cn(match.isSuperclasico && "border-amber-500/50")}>{match.result}</Badge>
+                        (() => {
+                            const matchParticipations = participations.filter((p: any) => p.matchId === match.id);
+                            const score = calculateMatchScore(matchParticipations as any);
+                            const isCelesteWinner = match.result === 'Celeste';
+                            const isAzulWinner = match.result === 'Azul';
+                            const isDraw = match.result === 'Empate';
+                            
+                            const t1Name = settings?.team1Name || 'Celeste';
+                            const t2Name = settings?.team2Name || 'Azul';
+
+                            return (
+                                <div className={cn(
+                                    "text-[10px] md:text-xs font-mono font-bold flex gap-1.5 items-center px-2 py-1 rounded-md border",
+                                    isCelesteWinner ? "bg-sky-950/30 border-sky-900/50" : 
+                                    isAzulWinner ? "bg-blue-950/30 border-blue-900/50" : 
+                                    "bg-slate-900 border-slate-700"
+                                )}>
+                                    <span className={cn(isCelesteWinner ? "text-sky-400 drop-shadow-md" : isDraw ? "text-slate-300" : "text-slate-500")}>
+                                        {t1Name.substring(0,3).toUpperCase()} {score.celeste}
+                                    </span>
+                                    <span className="text-slate-600">-</span>
+                                    <span className={cn(isAzulWinner ? "text-blue-500 drop-shadow-md" : isDraw ? "text-slate-300" : "text-slate-500")}>
+                                        {score.azul} {t2Name.substring(0,3).toUpperCase()}
+                                    </span>
+                                </div>
+                            )
+                        })()
                       ) : (
                         <Badge variant="outline">Pendiente</Badge>
                       )}

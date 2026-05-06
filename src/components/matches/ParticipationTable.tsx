@@ -139,6 +139,7 @@ export function ParticipationTable({
                             <th className="p-3 text-left">Equipo</th>
                             <th className="p-3 text-left">Puesto</th>
                             <th className="p-3 text-center">Goles</th>
+                            <th className="p-3 text-center text-red-400/80">En contra</th>
                             <th className="p-3 text-center">Asistió</th>
                             <th className="p-3 text-center">MVP Equipo</th>
                             <th className="p-3 text-left">Notas</th>
@@ -229,6 +230,28 @@ export function ParticipationTable({
                                         className={cn(
                                             "w-12 bg-slate-800 border-none text-slate-300 text-center text-xs font-bold py-1 rounded outline-none",
                                             isAdmin ? "focus:ring-1 focus:ring-indigo-500" : "opacity-80"
+                                        )}
+                                    />
+                                </td>
+                                <td className="p-3 text-center">
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        readOnly={!isAdmin}
+                                        value={p.ownGoals || 0}
+                                        onChange={(e) => {
+                                            if (!isAdmin) return;
+                                            const ownGoals = parseInt(e.target.value) || 0;
+                                            const updates: Partial<PlayerStats> = { ownGoals };
+                                            if (ownGoals > 0 && p.status === 'Confirmed') {
+                                                updates.status = 'Attended';
+                                            }
+                                            handleLocalUpdate(p.playerId, updates);
+                                        }}
+                                        className={cn(
+                                            "w-12 border-none text-center text-xs font-bold py-1 rounded outline-none transition-colors",
+                                            (p.ownGoals || 0) > 0 ? "bg-red-950/50 text-red-400 border border-red-900" : "bg-slate-800 text-slate-500",
+                                            isAdmin ? "focus:ring-1 focus:ring-red-500" : "opacity-80"
                                         )}
                                     />
                                 </td>

@@ -14,7 +14,7 @@ import { NotifyTelegram } from '@/components/matches/NotifyTelegram';
 import { MatchPitch } from '@/components/matches/MatchPitch';
 import { KanbanBoard } from '@/components/matches/KanbanBoard';
 import { Eye, EyeOff, Zap, Trophy, Crown, Star, Sun, CloudRain } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, calculateMatchScore } from '@/lib/utils';
 import { useAdmin } from '@/hooks/useAdmin';
 
 interface MatchDetailViewProps {
@@ -138,6 +138,83 @@ export function MatchDetailView({ match, players, participations, settings, seas
                     )}
                 </div>
             </div>
+
+            {/* Scoreboard (Only if match has result) */}
+            {match.result && (
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center relative overflow-hidden shadow-2xl mt-4 mb-8">
+                    {/* Background glow based on winner */}
+                    <div className={cn(
+                        "absolute inset-0 opacity-20 pointer-events-none transition-colors duration-1000",
+                        match.result === 'Celeste' ? "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-sky-500/40 via-transparent to-transparent" :
+                        match.result === 'Azul' ? "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-600/40 via-transparent to-transparent" :
+                        "bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-500/20 via-transparent to-transparent"
+                    )} />
+                    
+                    <h3 className="text-slate-400 text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-4 z-10">Marcador Final</h3>
+                    
+                    {(() => {
+                        const score = calculateMatchScore(participations);
+                        const isCelesteWinner = match.result === 'Celeste';
+                        const isAzulWinner = match.result === 'Azul';
+                        
+                        // Calculate total own goals to show in small text
+                        const celesteOwnGoals = participations.filter(p => p.team === 'Celeste').reduce((acc, p) => acc + (p.ownGoals || 0), 0);
+                        const azulOwnGoals = participations.filter(p => p.team === 'Azul').reduce((acc, p) => acc + (p.ownGoals || 0), 0);
+                        
+                        return (
+                            <div className="flex flex-col items-center z-10 w-full max-w-2xl mx-auto">
+                                <div className="flex items-center justify-between w-full">
+                                    {/* Celeste Team */}
+                                    <div className="flex flex-col items-center flex-1">
+                                        <span className={cn(
+                                            "text-lg md:text-2xl font-black uppercase tracking-wider mb-2 transition-colors text-center",
+                                            isCelesteWinner ? "text-sky-400 drop-shadow-[0_0_15px_rgba(56,189,248,0.5)]" : "text-slate-500"
+                                        )}>
+                                            {settings?.team1Name || 'Celeste'}
+                                        </span>
+                                        <span className={cn(
+                                            "text-6xl md:text-8xl font-black font-mono transition-colors drop-shadow-lg",
+                                            isCelesteWinner ? "text-white" : "text-slate-400"
+                                        )}>
+                                            {score.celeste}
+                                        </span>
+                                    </div>
+                                    
+                                    {/* Divider */}
+                                    <div className="flex flex-col items-center justify-center px-4 md:px-8">
+                                        <span className="text-2xl md:text-4xl text-slate-700 font-black">-</span>
+                                    </div>
+                                    
+                                    {/* Azul Team */}
+                                    <div className="flex flex-col items-center flex-1">
+                                        <span className={cn(
+                                            "text-lg md:text-2xl font-black uppercase tracking-wider mb-2 transition-colors text-center",
+                                            isAzulWinner ? "text-blue-500 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]" : "text-slate-500"
+                                        )}>
+                                            {settings?.team2Name || 'Azul'}
+                                        </span>
+                                        <span className={cn(
+                                            "text-6xl md:text-8xl font-black font-mono transition-colors drop-shadow-lg",
+                                            isAzulWinner ? "text-white" : "text-slate-400"
+                                        )}>
+                                            {score.azul}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                {(celesteOwnGoals > 0 || azulOwnGoals > 0) && (
+                                    <div className="mt-6 text-xs md:text-sm text-slate-400 bg-slate-900/80 px-4 py-2 rounded-full border border-slate-800">
+                                        Goles en contra: 
+                                        {celesteOwnGoals > 0 && <span className="ml-2 text-sky-400/70">{settings?.team1Name || 'Celeste'} ({celesteOwnGoals})</span>}
+                                        {celesteOwnGoals > 0 && azulOwnGoals > 0 && <span className="mx-2 text-slate-600">|</span>}
+                                        {azulOwnGoals > 0 && <span className="ml-2 text-blue-400/70">{settings?.team2Name || 'Azul'} ({azulOwnGoals})</span>}
+                                    </div>
+                                )}
+                            </div>
+                        )
+                    })()}
+                </div>
+            )}
 
             {/* Kanban Section */}
             <div className="space-y-4">
