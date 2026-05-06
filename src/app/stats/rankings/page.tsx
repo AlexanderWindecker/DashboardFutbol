@@ -150,7 +150,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
     const participations = allParticipations.filter((p: PlayerStats) => matchIds.has(p.matchId));
 
     // Exclude completely inactive players from all rankings
-    const activePlayersForStats = players.filter(p => p.isActive !== false);
+    const activePlayersForStats = players.filter((p: Player) => p.isActive !== false);
 
     const stats = calculateStats(activePlayersForStats, matches, participations, posFilter);
 
