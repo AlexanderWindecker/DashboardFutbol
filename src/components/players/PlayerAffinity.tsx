@@ -69,7 +69,14 @@ export function PlayerAffinity({ topAffinity, worstAffinity, allAffinity }: Play
                 >
                     <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                         <div className="grid grid-cols-1 gap-3">
-                            {allAffinity.map((record) => {
+                            {[...allAffinity].sort((a, b) => {
+                                const totalA = a.wins + a.losses + a.draws;
+                                const totalB = b.wins + b.losses + b.draws;
+                                const rateA = totalA > 0 ? a.wins / totalA : 0;
+                                const rateB = totalB > 0 ? b.wins / totalB : 0;
+                                if (rateB !== rateA) return rateB - rateA;
+                                return totalB - totalA; // Tiebreaker: total matches played
+                            }).map((record) => {
                                 const total = record.wins + record.losses + record.draws;
                                 const winRate = total > 0 ? Math.round((record.wins / total) * 100) : 0;
                                 let variant: 'success' | 'danger' | 'default' = 'default';

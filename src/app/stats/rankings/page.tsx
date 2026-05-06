@@ -149,7 +149,10 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
     const matchIds = new Set(matches.map((m: Match) => m.id));
     const participations = allParticipations.filter((p: PlayerStats) => matchIds.has(p.matchId));
 
-    const stats = calculateStats(players, matches, participations, posFilter);
+    // Exclude completely inactive players from all rankings
+    const activePlayersForStats = players.filter(p => p.isActive !== false);
+
+    const stats = calculateStats(activePlayersForStats, matches, participations, posFilter);
 
     let title = 'Ranking';
     let data = [...stats];

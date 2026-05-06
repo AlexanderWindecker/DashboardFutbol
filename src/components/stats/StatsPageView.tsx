@@ -46,12 +46,14 @@ export function StatsPageView({ data, settings, seasons, activeSeasonId, calcula
         }))
         : playerStats;
 
-    const topAttendance = [...displayedStats].sort((a, b) => b.matchesAttended - a.matchesAttended).slice(0, 5);
-    const topMvp = [...displayedStats].sort((a, b) => b.mvpCount - a.mvpCount).slice(0, 5);
-    const topWinners = [...displayedStats].filter(p => p.matchesAttended >= 3).sort((a, b) => b.winRate - a.winRate).slice(0, 5);
-    const topAbsences = [...displayedStats].sort((a, b) => b.absences - a.absences).slice(0, 5);
-    const topScorers = [...displayedStats].sort((a, b) => b.goals - a.goals).slice(0, 5);
-    const topSkills = [...displayedStats].sort((a, b) => b.skillsAverage - a.skillsAverage).slice(0, 5);
+    const activeStats = displayedStats.filter(p => p.isActive !== false);
+
+    const topAttendance = [...activeStats].sort((a, b) => b.matchesAttended - a.matchesAttended).slice(0, 5);
+    const topMvp = [...activeStats].sort((a, b) => b.mvpCount - a.mvpCount).slice(0, 5);
+    const topWinners = [...activeStats].filter(p => p.matchesAttended >= 3).sort((a, b) => b.winRate - a.winRate).slice(0, 5);
+    const topAbsences = [...activeStats].sort((a, b) => b.absences - a.absences).slice(0, 5);
+    const topScorers = [...activeStats].sort((a, b) => b.goals - a.goals).slice(0, 5);
+    const topSkills = [...activeStats].sort((a, b) => b.skillsAverage - a.skillsAverage).slice(0, 5);
 
     return (
         <div className="space-y-8">
@@ -162,7 +164,7 @@ export function StatsPageView({ data, settings, seasons, activeSeasonId, calcula
                 />
                 <StatCard
                     title="Jugadores"
-                    value={data.players.length}
+                    value={data.players.filter(p => p.isActive !== false).length}
                     icon={<TrendingUp size={20} className="text-slate-400" />}
                 />
                 <StatCard

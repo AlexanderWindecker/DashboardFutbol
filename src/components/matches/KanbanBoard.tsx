@@ -245,11 +245,7 @@ export function KanbanBoard({ matchId, players, participations, settings }: {
 
     useEffect(() => {
         setIsMounted(true);
-        const interval = setInterval(() => {
-            router.refresh();
-        }, 5000);
-        return () => clearInterval(interval);
-    }, [router]);
+    }, []);
 
     if (!isMounted) return <div className="flex gap-4 overflow-x-auto pb-4 h-[450px] animate-pulse bg-slate-900/20 rounded-xl" />;
 

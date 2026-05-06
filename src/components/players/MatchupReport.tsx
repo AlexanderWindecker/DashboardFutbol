@@ -23,7 +23,7 @@ interface RivalStats {
 }
 
 export function MatchupReport({ player, allPlayers, matches, participations }: MatchupReportProps) {
-    const [sortKey, setSortKey] = useState<'matches' | 'winRate'>('matches');
+    const [sortKey, setSortKey] = useState<'matches' | 'winRate' | 'wins' | 'draws' | 'losses'>('matches');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
     const matchupStats = useMemo(() => {
@@ -46,7 +46,7 @@ export function MatchupReport({ player, allPlayers, matches, participations }: M
             
             rivalsInMatch.forEach(rivalPart => {
                 const rival = allPlayers.find(p => p.id === rivalPart.playerId);
-                if (!rival) return;
+                if (!rival || rival.isActive === false) return;
 
                 let rivalStat = statsMap.get(rival.id);
                 if (!rivalStat) {
@@ -107,7 +107,7 @@ export function MatchupReport({ player, allPlayers, matches, participations }: M
             .slice(0, 3);
     }, [matchupStats]);
 
-    const toggleSort = (key: 'matches' | 'winRate') => {
+    const toggleSort = (key: 'matches' | 'winRate' | 'wins' | 'draws' | 'losses') => {
         if (sortKey === key) {
             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
         } else {
@@ -214,8 +214,8 @@ export function MatchupReport({ player, allPlayers, matches, participations }: M
                     <h3 className="text-xs font-black text-white uppercase tracking-[0.2em] flex items-center gap-3">
                         <Users size={16} className="text-indigo-400" /> Matriz de Enfrentamientos
                     </h3>
-                    <div className="flex gap-2">
-                         <div className="text-[10px] font-bold text-slate-500 mr-2 uppercase self-center hidden sm:block">Ordenar por:</div>
+                    <div className="flex flex-wrap gap-2 items-center">
+                         <div className="text-[10px] font-bold text-slate-500 mr-1 uppercase hidden sm:block">Ordenar por:</div>
                          <button 
                             onClick={() => toggleSort('matches')}
                             className={cn(
@@ -223,7 +223,34 @@ export function MatchupReport({ player, allPlayers, matches, participations }: M
                                 sortKey === 'matches' ? "bg-indigo-600 border-indigo-500 text-white" : "bg-slate-800 border-slate-700 text-slate-400"
                             )}
                          >
-                            Partidos {sortKey === 'matches' && (sortOrder === 'asc' ? <ChevronUp size={10} className="inline ml-1" /> : <ChevronDown size={10} className="inline ml-1" />)}
+                            PJ {sortKey === 'matches' && (sortOrder === 'asc' ? <ChevronUp size={10} className="inline ml-1" /> : <ChevronDown size={10} className="inline ml-1" />)}
+                         </button>
+                         <button 
+                            onClick={() => toggleSort('wins')}
+                            className={cn(
+                                "text-[10px] font-bold px-3 py-1 rounded-full border transition-all",
+                                sortKey === 'wins' ? "bg-emerald-600 border-emerald-500 text-white" : "bg-slate-800 border-slate-700 text-slate-400 hover:text-emerald-400"
+                            )}
+                         >
+                            G {sortKey === 'wins' && (sortOrder === 'asc' ? <ChevronUp size={10} className="inline ml-1" /> : <ChevronDown size={10} className="inline ml-1" />)}
+                         </button>
+                         <button 
+                            onClick={() => toggleSort('draws')}
+                            className={cn(
+                                "text-[10px] font-bold px-3 py-1 rounded-full border transition-all",
+                                sortKey === 'draws' ? "bg-slate-600 border-slate-500 text-white" : "bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-300"
+                            )}
+                         >
+                            E {sortKey === 'draws' && (sortOrder === 'asc' ? <ChevronUp size={10} className="inline ml-1" /> : <ChevronDown size={10} className="inline ml-1" />)}
+                         </button>
+                         <button 
+                            onClick={() => toggleSort('losses')}
+                            className={cn(
+                                "text-[10px] font-bold px-3 py-1 rounded-full border transition-all",
+                                sortKey === 'losses' ? "bg-rose-600 border-rose-500 text-white" : "bg-slate-800 border-slate-700 text-slate-400 hover:text-rose-400"
+                            )}
+                         >
+                            P {sortKey === 'losses' && (sortOrder === 'asc' ? <ChevronUp size={10} className="inline ml-1" /> : <ChevronDown size={10} className="inline ml-1" />)}
                          </button>
                          <button 
                             onClick={() => toggleSort('winRate')}
@@ -232,7 +259,7 @@ export function MatchupReport({ player, allPlayers, matches, participations }: M
                                 sortKey === 'winRate' ? "bg-indigo-600 border-indigo-500 text-white" : "bg-slate-800 border-slate-700 text-slate-400"
                             )}
                          >
-                            Tu % Victoria {sortKey === 'winRate' && (sortOrder === 'asc' ? <ChevronUp size={10} className="inline ml-1" /> : <ChevronDown size={10} className="inline ml-1" />)}
+                            % Vict {sortKey === 'winRate' && (sortOrder === 'asc' ? <ChevronUp size={10} className="inline ml-1" /> : <ChevronDown size={10} className="inline ml-1" />)}
                          </button>
                     </div>
                 </div>
