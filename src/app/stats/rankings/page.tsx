@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 import { Player, PlayerStats, Match } from '@/types';
 import { Badge } from '@/components/ui/Badge';
 import Link from 'next/link';
-import { ArrowLeft, Filter, Activity, Trophy, UserMinus, Star, Palmtree, Plus, Target, Zap, Waves, Move, Crown } from 'lucide-react';
+import { ArrowLeft, Filter, Activity, Trophy, UserMinus, Star, Palmtree, Plus, Target, Zap, Waves, Move, Crown, ChevronUp, ChevronDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 function calculateStats(players: Player[], matches: Match[], participations: PlayerStats[], posFilter: string) {
@@ -233,8 +233,82 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
         return aInactive - bInactive;
     });
 
+    // Calculate previous rank to show changes
+    const sortedMatches = [...matches].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const latestMatchDate = sortedMatches.length > 0 ? sortedMatches[0].date : null;
+    
+    const prevMatches = latestMatchDate ? matches.filter((m: Match) => m.date !== latestMatchDate) : [];
+    const prevMatchIds = new Set(prevMatches.map((m: Match) => m.id));
+    const prevParticipations = participations.filter((p: PlayerStats) => prevMatchIds.has(p.matchId));
+    
+    const prevStatsRaw = calculateStats(activePlayersForStats, prevMatches, prevParticipations, posFilter);
+    let prevData = [...prevStatsRaw];
+
+    if (!isGoalType) {
+        if (statusFilter === 'Activos') {
+            prevData = prevData.filter(p => !p.isVacation && !p.isInjured);
+        } else if (statusFilter === 'Vacaciones') {
+            prevData = prevData.filter(p => p.isVacation);
+        } else if (statusFilter === 'Lesionados') {
+            prevData = prevData.filter(p => p.isInjured);
+        }
+        if (posFilter !== 'Todos') {
+            prevData = prevData.filter(p => p.positions?.includes(posFilter as any));
+        }
+    }
+
+    switch (type) {
+        case 'attendance':
+            prevData.sort((a, b) => b.matchesAttended - a.matchesAttended);
+            break;
+        case 'mvp':
+            prevData.sort((a, b) => b.mvpCount - a.mvpCount);
+            break;
+        case 'winners':
+            prevData = prevData.filter(p => p.matchesAttended >= 3);
+            prevData.sort((a, b) => b.winRate - a.winRate);
+            break;
+        case 'absences':
+            prevData.sort((a, b) => b.absences - a.absences);
+            break;
+        case 'goals':
+            prevData = prevData.filter(p => (p.goals || 0) > 0);
+            if (sortFilter === 'promedio') {
+                prevData.sort((a, b) => {
+                    const avgA = a.matchesAttended > 0 ? (a.goals || 0) / a.matchesAttended : 0;
+                    const avgB = b.matchesAttended > 0 ? (b.goals || 0) / b.matchesAttended : 0;
+                    return avgB - avgA;
+                });
+            } else {
+                prevData.sort((a, b) => (b.goals || 0) - (a.goals || 0));
+            }
+            break;
+        case 'skills_average':
+            prevData.sort((a, b) => b.skillsAverage - a.skillsAverage);
+            break;
+    }
+
+    prevData.sort((a, b) => {
+        const aInactive = (a.isVacation || a.isInjured || a.isActive === false) ? 1 : 0;
+        const bInactive = (b.isVacation || b.isInjured || b.isActive === false) ? 1 : 0;
+        return aInactive - bInactive;
+    });
+
+    const prevRankMap = new Map();
+    prevData.forEach((p, index) => {
+        prevRankMap.set(p.id, index + 1);
+    });
+
     const isSkillsRanking = type === 'skills_average';
     const isArqueroView = posFilter === 'Arquero';
+
+    const getRankChangeIcon = (prevRank: number | undefined, currentRank: number) => {
+        if (!prevRank) return <Minus size={14} className="text-slate-600" />;
+        const delta = prevRank - currentRank;
+        if (delta > 0) return <ChevronUp size={14} className="text-emerald-500" />;
+        if (delta < 0) return <ChevronDown size={14} className="text-rose-500" />;
+        return <Minus size={14} className="text-slate-600" />;
+    };
 
     return (
         <div className="space-y-6">
@@ -381,7 +455,12 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                             {data.map((p, i) => {
                                 return (
                                     <tr key={p.id} className={cn("hover:bg-slate-800/30 transition-all group", (p.isVacation || p.isInjured || p.isActive === false) && "opacity-50 grayscale")}>
-                                        <td className="p-4 text-center text-slate-600 font-mono font-bold">{i + 1}</td>
+                                        <td className="p-4 text-center">
+                                            <div className="flex flex-col items-center justify-center gap-1">
+                                                <span className="text-slate-600 font-mono font-bold leading-none">{i + 1}</span>
+                                                {getRankChangeIcon(prevRankMap.get(p.id), i + 1)}
+                                            </div>
+                                        </td>
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 font-bold border border-slate-700">
@@ -427,7 +506,10 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                                 {i < 10 && <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" />}
 
                                 <div className="flex items-center gap-4 min-w-0">
-                                    <span className="text-slate-600 font-bold font-mono w-6 text-center">{i + 1}</span>
+                                    <div className="flex flex-col items-center justify-center w-6 shrink-0 gap-1">
+                                        <span className="text-slate-600 font-bold font-mono text-center leading-none">{i + 1}</span>
+                                        {getRankChangeIcon(prevRankMap.get(p.id), i + 1)}
+                                    </div>
 
                                     <div className="relative hidden sm:block">
                                         <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400 font-black border border-slate-700 group-hover:border-indigo-500/50 transition-colors">
