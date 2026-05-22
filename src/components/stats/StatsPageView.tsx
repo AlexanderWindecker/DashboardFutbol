@@ -50,7 +50,7 @@ export function StatsPageView({ data, settings, seasons, activeSeasonId, calcula
 
     const topAttendance = [...activeStats].sort((a, b) => b.matchesAttended - a.matchesAttended).slice(0, 5);
     const topMvp = [...activeStats].sort((a, b) => b.mvpCount - a.mvpCount).slice(0, 5);
-    const topWinners = [...activeStats].filter(p => p.matchesAttended >= 3).sort((a, b) => b.winRate - a.winRate).slice(0, 5);
+    const topWinners = [...activeStats].filter(p => p.matchesAttended >= 3).sort((a, b) => b.wins - a.wins || b.winRate - a.winRate).slice(0, 5);
     const topAbsences = [...activeStats].sort((a, b) => b.absences - a.absences).slice(0, 5);
     const topScorers = [...activeStats].sort((a, b) => b.goals - a.goals).slice(0, 5);
     const topSkills = [...activeStats].sort((a, b) => b.skillsAverage - a.skillsAverage).slice(0, 5);
@@ -213,9 +213,10 @@ export function StatsPageView({ data, settings, seasons, activeSeasonId, calcula
                     title="Más Ganador"
                     icon={<Award size={18} className="text-indigo-400" />}
                     data={topWinners}
-                    valueKey="winRate"
-                    label="Win Rate"
-                    suffix="%"
+                    valueKey="wins"
+                    label="Vic."
+                    secondaryValueKey="winRate"
+                    secondarySuffix="% Win Rate"
                     linkHref="/stats/rankings?type=winners"
                 />
                 <RankingCard

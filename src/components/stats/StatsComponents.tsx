@@ -12,9 +12,11 @@ interface RankingCardProps {
     label: string;
     linkHref?: string;
     suffix?: string;
+    secondaryValueKey?: string;
+    secondarySuffix?: string;
 }
 
-export function RankingCard({ title, icon, data, valueKey, label, linkHref, suffix = '' }: RankingCardProps) {
+export function RankingCard({ title, icon, data, valueKey, label, linkHref, suffix = '', secondaryValueKey, secondarySuffix = '' }: RankingCardProps) {
     return (
         <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden flex flex-col h-full">
             <div className="p-4 border-b border-slate-800 bg-slate-950/30 flex items-center justify-between">
@@ -44,6 +46,11 @@ export function RankingCard({ title, icon, data, valueKey, label, linkHref, suff
                         </div>
                         <span className="text-slate-400 font-mono text-sm">
                             {p[valueKey]}{suffix} <span className="text-slate-600 text-xs ml-1">{label}</span>
+                            {secondaryValueKey && (
+                                <span className="text-slate-500 text-xs ml-2">
+                                    ({p[secondaryValueKey]}{secondarySuffix})
+                                </span>
+                            )}
                         </span>
                     </div>
                 ))}
