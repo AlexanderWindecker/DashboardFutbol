@@ -189,11 +189,11 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
             label = 'MVPs';
             break;
         case 'winners':
-            title = 'Porcentaje de Victorias';
+            title = 'Más Ganador';
             data = data.filter(p => p.matchesAttended >= 3);
-            data.sort((a, b) => b.winRate - a.winRate);
-            valueKey = 'winRate';
-            label = '% Vic.';
+            data.sort((a, b) => b.wins - a.wins || b.winRate - a.winRate);
+            valueKey = 'wins';
+            label = 'Vic.';
             break;
         case 'absences':
             title = 'Más Faltador';
@@ -266,7 +266,7 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
             break;
         case 'winners':
             prevData = prevData.filter(p => p.matchesAttended >= 3);
-            prevData.sort((a, b) => b.winRate - a.winRate);
+            prevData.sort((a, b) => b.wins - a.wins || b.winRate - a.winRate);
             break;
         case 'absences':
             prevData.sort((a, b) => b.absences - a.absences);
@@ -543,6 +543,12 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
                                         <div className="flex flex-col items-end">
                                             <span className="text-[10px] text-slate-400 font-bold uppercase">Partidos</span>
                                             <span className="text-sm font-bold text-slate-300">{p.matchesAttended}</span>
+                                        </div>
+                                    )}
+                                    {type === 'winners' && (
+                                        <div className="flex flex-col items-end mr-2">
+                                            <span className="text-[10px] text-slate-500 font-bold uppercase">% Vic.</span>
+                                            <span className="text-sm font-bold text-slate-300">{p.winRate}%</span>
                                         </div>
                                     )}
                                     {isGoalType && (
