@@ -147,12 +147,50 @@ export function NewsTicker({ data }: NewsTickerProps) {
                 .filter(Boolean);
             
             if (topScorersLastMatch.length > 0) {
+                const isTie = topScorersLastMatch.length > 1;
+                
+                // Join names properly: "A y B" or "A, B y C"
+                let namesText = topScorersLastMatch.join(', ');
+                if (topScorersLastMatch.length > 1) {
+                    const last = topScorersLastMatch.pop();
+                    namesText = topScorersLastMatch.join(', ') + ' y ' + last;
+                }
+                
+                let messageOptions: string[] = [];
+                
+                if (isTie) {
+                    messageOptions = [
+                        `${namesText} compartieron el podio de artilleros con ${maxGoals} goles cada uno`,
+                        `¡Empate en la cima! ${namesText} fueron los máximos goleadores facturando ${maxGoals} veces`,
+                        `${namesText} se cansaron de mojar y lideraron la tabla con ${maxGoals} goles`,
+                        `La bota de oro se divide esta semana entre ${namesText} (${maxGoals} goles)`,
+                        `${namesText} fueron la verdadera pesadilla de los arqueros: ${maxGoals} pepas para cada uno`,
+                        `Lluvia de goles cortesía de ${namesText}, compartiendo la cima con ${maxGoals} tantos`,
+                        `¡Intratables! ${namesText} cerraron la fecha en lo más alto con ${maxGoals} goles`
+                    ];
+                } else {
+                    messageOptions = [
+                        `${namesText} con el arco entre ceja y ceja (${maxGoals} goles en el último partido)`,
+                        `${namesText} anduvo endiablado marcando ${maxGoals} pepas para su equipo`,
+                        `No lo pudieron parar: ${namesText} se llevó el botín de oro con ${maxGoals} goles`,
+                        `¡Peligro de gol! ${namesText} facturó por ${maxGoals} en la última fecha`,
+                        `La red todavía está temblando. ${namesText} clavó ${maxGoals} goles redonditos`,
+                        `El pichichi indiscutido de la fecha fue ${namesText} con una ráfaga de ${maxGoals} tantos`,
+                        `${namesText} estuvo en modo bestia y lideró la tabla en solitario con ${maxGoals} goles`
+                    ];
+                }
+                
+                // Deterministic pseudo-random based on match ID to avoid flicker on re-renders
+                const hash = lastMatch.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+                const randomIdx = (hash + maxGoals) % messageOptions.length;
+                const selectedMessage = messageOptions[randomIdx];
+
                 items.push(
                     <span className="flex items-center gap-2" key="on-fire">
                         <Flame className="text-orange-500 animate-pulse" size={18} />
                         <span className="text-orange-400 font-black italic">🔥 ON FIRE:</span>
                         <span className="text-white">
-                            {topScorersLastMatch.join(' y ')} con el arco entre ceja y ceja ({maxGoals} goles en el último partido)
+                            {selectedMessage}
                         </span>
                     </span>
                 );
