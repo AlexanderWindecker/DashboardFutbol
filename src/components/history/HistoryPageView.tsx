@@ -81,7 +81,7 @@ export function HistoryPageView({ players, matches, participations, seasons, act
             
         return sorted.slice(0, 3).map(s => ({
             player: s.player,
-            value: s[key],
+            value: s[key] as number,
             subtitle: key === 'matchesAttended' ? 'Partidos' : 
                       key === 'goals' ? 'Goles' : 
                       key === 'assists' ? 'Asistencias' : 
