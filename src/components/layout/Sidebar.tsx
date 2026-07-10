@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, Users, Trophy, MoreHorizontal, FileText, Settings as SettingsIcon, X, Menu, LogOut } from 'lucide-react';
+import { Home, Calendar, Users, Trophy, MoreHorizontal, FileText, Settings as SettingsIcon, X, Menu, LogOut, Medal } from 'lucide-react';
 import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 import { SettingsModal } from '../SettingsModal';
@@ -14,6 +14,7 @@ const API_NAV_ITEMS = [
     { name: 'Partidos', href: '/matches', icon: Calendar },
     { name: 'Jugadores', href: '/players', icon: Users },
     { name: 'Estadísticas', href: '/stats', icon: Trophy },
+    { name: 'Historial', href: '/history', icon: Medal },
 ];
 
 export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClose?: () => void; isAdmin?: boolean }) {
