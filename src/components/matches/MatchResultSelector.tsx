@@ -78,31 +78,44 @@ export function MatchResultSelector({
             </div>
             
             {match.result && (
-                <div className="flex items-center gap-2 mt-1 bg-slate-900/50 p-1.5 rounded-lg border border-slate-800">
-                    <span className="text-xs text-slate-500 mr-1 ml-1" title="Si no se cargan goles por jugador, puedes colocar el marcador final aquí">Marcador:</span>
-                    <input 
-                        type="number" 
-                        min="0"
-                        className="w-12 bg-slate-800 text-white text-xs text-center rounded px-1 py-1 border border-slate-700 focus:outline-none focus:border-sky-500" 
-                        placeholder="Cel"
-                        value={scoreCeleste}
-                        onChange={(e) => setScoreCeleste(e.target.value)}
-                    />
-                    <span className="text-slate-500">-</span>
-                    <input 
-                        type="number" 
-                        min="0"
-                        className="w-12 bg-slate-800 text-white text-xs text-center rounded px-1 py-1 border border-slate-700 focus:outline-none focus:border-blue-500" 
-                        placeholder="Azul"
-                        value={scoreAzul}
-                        onChange={(e) => setScoreAzul(e.target.value)}
-                    />
-                    <button 
-                        onClick={handleSaveScore}
-                        className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded transition-colors ml-1"
-                    >
-                        Guardar
-                    </button>
+                <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2 bg-slate-900/50 p-1.5 rounded-lg border border-slate-800">
+                        <span 
+                            className="text-xs text-slate-500 mr-1 ml-1 cursor-help" 
+                            title="Usá este marcador si no sabés quién hizo los goles. Se limpiará automáticamente si cargás goles individuales."
+                        >
+                            Marcador:
+                        </span>
+                        <input 
+                            type="number" 
+                            min="0"
+                            className="w-12 bg-slate-800 text-white text-xs text-center rounded px-1 py-1 border border-slate-700 focus:outline-none focus:border-sky-500" 
+                            placeholder="Cel"
+                            value={scoreCeleste}
+                            onChange={(e) => setScoreCeleste(e.target.value)}
+                        />
+                        <span className="text-slate-500">-</span>
+                        <input 
+                            type="number" 
+                            min="0"
+                            className="w-12 bg-slate-800 text-white text-xs text-center rounded px-1 py-1 border border-slate-700 focus:outline-none focus:border-blue-500" 
+                            placeholder="Azul"
+                            value={scoreAzul}
+                            onChange={(e) => setScoreAzul(e.target.value)}
+                        />
+                        <button 
+                            onClick={handleSaveScore}
+                            className="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded transition-colors ml-1"
+                        >
+                            Guardar
+                        </button>
+                    </div>
+                    <p className="text-[10px] text-slate-600 text-right pr-1">
+                        {(match.scoreCeleste !== undefined || match.scoreAzul !== undefined) 
+                            ? '⚡ Marcador manual activo · se limpia al cargar goles individuales'
+                            : '· calculado desde goles individuales'
+                        }
+                    </p>
                 </div>
             )}
         </div>

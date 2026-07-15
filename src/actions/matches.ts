@@ -86,6 +86,18 @@ export async function updateParticipationAction(matchId: string, playerId: strin
     }
 
     await updateParticipation(current);
+
+    // Si se están cargando goles individuales, limpiar el marcador manual
+    // para que el marcador se calcule automáticamente desde los goles de cada jugador.
+    if (updates.goals !== undefined || updates.ownGoals !== undefined) {
+        const match = await getMatch(matchId);
+        if (match && (match.scoreCeleste !== undefined || match.scoreAzul !== undefined)) {
+            match.scoreCeleste = undefined;
+            match.scoreAzul = undefined;
+            await updateMatch(match);
+        }
+    }
+
     await checkSuperclasico(matchId);
     await syncAllPlayerStats(); // Trigger recalculation
     revalidatePath(`/matches/${matchId}`);
