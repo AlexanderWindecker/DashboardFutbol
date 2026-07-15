@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     <div className="space-y-8 pb-16">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-indigo-400 to-emerald-400 bg-clip-text text-transparent">
-          Bienvenido al Dashboard
+          Inicio
         </h1>
         <p className="text-xs md:text-sm text-slate-400">Resumen de actividad del equipo.</p>
       </div>
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
                       {match.result ? (
                         (() => {
                             const matchParticipations = participations.filter((p: any) => p.matchId === match.id);
-                            const score = calculateMatchScore(matchParticipations as any);
+                            const score = calculateMatchScore(matchParticipations as any, match as any);
                             const isCelesteWinner = match.result === 'Celeste';
                             const isAzulWinner = match.result === 'Azul';
                             const isDraw = match.result === 'Empate';

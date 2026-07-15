@@ -111,7 +111,7 @@ export function MatchesTable({ matches, players, participations, settings }: Mat
                                     {match.result ? (
                                         (() => {
                                             const matchParticipations = participations.filter(p => p.matchId === match.id);
-                                            const score = calculateMatchScore(matchParticipations);
+                                            const score = calculateMatchScore(matchParticipations, match);
                                             const isCelesteWinner = match.result === 'Celeste';
                                             const isAzulWinner = match.result === 'Azul';
                                             const isDraw = match.result === 'Empate';

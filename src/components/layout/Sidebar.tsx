@@ -10,7 +10,7 @@ import { getSettings, getSeasons, getActiveSeasonId, getPlayers } from '@/lib/da
 import { AppSettings, Season, Player } from '@/types';
 
 const API_NAV_ITEMS = [
-    { name: 'Dashboard', href: '/', icon: Home },
+    { name: 'Inicio', href: '/', icon: Home },
     { name: 'Partidos', href: '/matches', icon: Calendar },
     { name: 'Jugadores', href: '/players', icon: Users },
     { name: 'Estadísticas', href: '/stats', icon: Trophy },
