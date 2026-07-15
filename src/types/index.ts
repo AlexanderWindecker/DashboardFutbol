@@ -97,6 +97,8 @@ export interface Match {
     date: string; // ISO string
     mode: MatchMode;
     result?: MatchResult;
+    scoreCeleste?: number;
+    scoreAzul?: number;
     matchMvpId?: string; // Overall MVP
     matchMvpTeam?: Team; // Just to help with UI potentially
     notes?: string;

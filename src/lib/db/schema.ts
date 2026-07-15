@@ -23,6 +23,8 @@ export const matches = pgTable('matches', {
     location: text('location'),
     mode: text('mode'),
     result: text('result'),
+    scoreCeleste: integer('score_celeste'),
+    scoreAzul: integer('score_azul'),
     seasonId: text('season_id'),
     isSuperclasico: boolean('is_superclasico').default(false),
     weather: text('weather').default('Despejado'),

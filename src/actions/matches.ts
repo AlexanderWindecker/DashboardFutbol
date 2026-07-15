@@ -28,11 +28,14 @@ export async function createMatchAction(formData: FormData) {
     redirect('/matches');
 }
 
-export async function updateMatchResultAction(matchId: string, result: MatchResult) {
+export async function updateMatchResultAction(matchId: string, result: MatchResult, scoreCeleste?: number | null, scoreAzul?: number | null) {
     const match = await getMatch(matchId);
     if (!match) return;
 
     match.result = result;
+    if (scoreCeleste !== undefined) match.scoreCeleste = scoreCeleste ?? undefined;
+    if (scoreAzul !== undefined) match.scoreAzul = scoreAzul ?? undefined;
+
     await updateMatch(match);
     await syncAllPlayerStats(); // Trigger recalculation
     revalidatePath(`/matches/${matchId}`);

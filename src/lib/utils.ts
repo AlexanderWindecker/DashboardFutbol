@@ -5,9 +5,13 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-import { PlayerStats } from '@/types';
+import { PlayerStats, Match } from '@/types';
 
-export function calculateMatchScore(participations: PlayerStats[]) {
+export function calculateMatchScore(participations: PlayerStats[], match?: Match) {
+    if (match && match.scoreCeleste !== undefined && match.scoreAzul !== undefined) {
+        return { celeste: match.scoreCeleste, azul: match.scoreAzul };
+    }
+
     let celesteGoals = 0;
     let azulGoals = 0;
 

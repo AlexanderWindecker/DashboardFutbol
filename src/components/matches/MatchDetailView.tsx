@@ -121,8 +121,7 @@ export function MatchDetailView({ match, players, participations, settings, seas
                 <div className="flex flex-col items-end gap-3">
                     {isAdmin && (
                         <MatchResultSelector
-                            matchId={match.id}
-                            currentResult={match.result}
+                            match={match}
                             settings={settings}
                             captain1Name={players.find(p => p.id === settings.captain1Id)?.name}
                             captain2Name={players.find(p => p.id === settings.captain2Id)?.name}
@@ -153,7 +152,7 @@ export function MatchDetailView({ match, players, participations, settings, seas
                     <h3 className="text-slate-400 text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-4 z-10">Marcador Final</h3>
                     
                     {(() => {
-                        const score = calculateMatchScore(participations);
+                        const score = calculateMatchScore(participations, match);
                         const isCelesteWinner = match.result === 'Celeste';
                         const isAzulWinner = match.result === 'Azul';
                         
