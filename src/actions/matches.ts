@@ -1,6 +1,6 @@
 'use server';
 
-import { addMatch, updateMatch, updateParticipation, getParticipationsForMatch, getMatch, deleteMatch, checkSuperclasico } from '@/lib/data';
+import { addMatch, updateMatch, updateParticipation, getParticipationsForMatch, getMatch, deleteMatch, checkSuperclasico, clearMatchManualScore } from '@/lib/data';
 import { Match, MatchMode, PlayerStats, MatchResult } from '@/types';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
@@ -90,12 +90,7 @@ export async function updateParticipationAction(matchId: string, playerId: strin
     // Si se están cargando goles individuales, limpiar el marcador manual
     // para que el marcador se calcule automáticamente desde los goles de cada jugador.
     if (updates.goals !== undefined || updates.ownGoals !== undefined) {
-        const match = await getMatch(matchId);
-        if (match && (match.scoreCeleste !== undefined || match.scoreAzul !== undefined)) {
-            match.scoreCeleste = undefined;
-            match.scoreAzul = undefined;
-            await updateMatch(match);
-        }
+        await clearMatchManualScore(matchId);
     }
 
     await checkSuperclasico(matchId);

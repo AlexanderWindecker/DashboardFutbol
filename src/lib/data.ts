@@ -99,6 +99,12 @@ export async function updateMatch(updatedMatch: Match) {
         .where(eq(matches.id, updatedMatch.id));
 }
 
+export async function clearMatchManualScore(matchId: string) {
+    await db.update(matches)
+        .set({ scoreCeleste: null, scoreAzul: null })
+        .where(eq(matches.id, matchId));
+}
+
 export async function getMatch(id: string) {
     const res = await db.select().from(matches).where(eq(matches.id, id));
     if (!res[0]) return null;
