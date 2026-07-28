@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Calendar, Users, Trophy, MoreHorizontal, FileText, Settings as SettingsIcon, X, Menu, LogOut, Medal } from 'lucide-react';
+import { Home, Calendar, Users, Trophy, MoreHorizontal, FileText, Settings as SettingsIcon, X, Menu, LogOut, Medal, Share2, Check } from 'lucide-react';
 import clsx from 'clsx';
 import { useState, useEffect } from 'react';
 import { SettingsModal } from '../SettingsModal';
@@ -25,6 +25,7 @@ export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClos
     const [activeSeasonId, setActiveSeasonId] = useState<string | undefined>();
     const [players, setPlayers] = useState<Player[]>([]);
     const [pressTimer, setPressTimer] = useState<any>(null);
+    const [shareCopied, setShareCopied] = useState(false);
 
     // Mismo truco para el escritorio
     const triggerAdmin = () => {
@@ -38,6 +39,25 @@ export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClos
     };
     const startT = () => setPressTimer(setTimeout(triggerAdmin, 3000));
     const clearT = () => pressTimer && clearTimeout(pressTimer);
+
+    const handleShare = async () => {
+        const shareData = {
+            title: 'Futbol Amateur - Dashboard',
+            text: '¡Mirá el dashboard de nuestro equipo de fútbol amateur!',
+            url: window.location.origin,
+        };
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(window.location.origin);
+                setShareCopied(true);
+                setTimeout(() => setShareCopied(false), 2500);
+            }
+        } catch {
+            // user cancelled or error
+        }
+    };
 
     useEffect(() => {
         if (isAdmin) {
@@ -113,6 +133,21 @@ export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClos
                         );
                     })}
                 </nav>
+
+                {/* Share Button */}
+                <div className="px-4 py-2">
+                    <button
+                        onClick={handleShare}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition-all duration-200 group"
+                    >
+                        {shareCopied ? (
+                            <Check size={20} className="text-emerald-400" />
+                        ) : (
+                            <Share2 size={20} className="text-emerald-500 group-hover:scale-110 transition-transform" />
+                        )}
+                        {shareCopied ? '¡Link copiado!' : 'Compartir App'}
+                    </button>
+                </div>
 
                 {isAdmin && (
                     <>
