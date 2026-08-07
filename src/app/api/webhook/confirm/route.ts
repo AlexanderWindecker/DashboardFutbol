@@ -371,6 +371,7 @@ export async function POST(req: NextRequest) {
                 status: newStatus,
                 assists: 0,
                 isMvp: false,
+                isBestGoalkeeper: false,
             };
         } else {
             current.status = newStatus;
