@@ -260,7 +260,12 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
     const isPrimaryGoalkeeper = player.positions?.includes('Arquero');
     const goalkeeperStatus = (player.skills as any)?.goalkeeperStatus || 'Debutante de Tres Palos 🧤';
 
-    const awardItems = [
+    const awardItems: {
+        key: 'balon' | 'botin' | 'guante';
+        label: string;
+        seasons: string[];
+        icon: JSX.Element;
+    }[] = [
         {
             key: 'balon',
             label: 'Balón de Oro',
