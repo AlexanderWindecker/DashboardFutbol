@@ -261,6 +261,13 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
     const isPrimaryGoalkeeper = player.positions?.includes('Arquero');
     const goalkeeperStatus = (player.skills as any)?.goalkeeperStatus || 'Debutante de Tres Palos 🧤';
 
+    const guanteAward = {
+        key: 'guante' as const,
+        label: 'Guante de Oro',
+        seasons: guanteDeOroSeasons,
+        icon: <Shield size={20} />,
+    };
+
     const awardItems: {
         key: 'balon' | 'botin' | 'guante';
         label: string;
@@ -279,12 +286,7 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
             seasons: botinesDeOroSeasons,
             icon: <Volleyball size={20} />,
         },
-        ...(isPrimaryGoalkeeper ? [{
-            key: 'guante',
-            label: 'Guante de Oro',
-            seasons: guanteDeOroSeasons,
-            icon: <Shield size={20} />,
-        }] : []),
+        ...(isPrimaryGoalkeeper ? [guanteAward] : []),
     ];
 
     return (
