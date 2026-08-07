@@ -146,7 +146,7 @@ export function NewsTicker({ data }: NewsTickerProps) {
                 `${gkName} fue elegido Mejor Arquero del partido. ¡Manos de seda y reflejos de gato! 🧤`,
                 `¡Atajó todo lo que le tiraron! ${gkName} se llevó el guante de oro del último partido 🏆`,
                 `${gkName} fue una muralla imposible de superar y se ganó el título de Mejor Arquero 🧱`,
-                `La camiseta de ${gkName} terminó seca, su rendimiento no: Mejor Arquero de la fecha ⭐`,
+                `Le tiraron mil pelotazos y ${gkName} se re lució: mejor arquero de la fecha ⭐`,
             ];
             const hash = lastMatch.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
             const randomIdx = hash % gkMessages.length;
