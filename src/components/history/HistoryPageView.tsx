@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Player, Match, PlayerStats, Season } from '@/types';
 import { Trophy, Medal, Star, Target, Crown, ChevronDown, ChevronUp, Swords, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -20,9 +20,29 @@ interface CategoryWinner {
 }
 
 export function HistoryPageView({ players, matches, participations, seasons, activeSeasonId }: HistoryPageViewProps) {
-    const [selectedSeason, setSelectedSeason] = useState<string>('all');
+    const [selectedSeason, setSelectedSeason] = useState<string>(() => {
+        const hasOpenSeason = seasons.some(s => {
+            const endTime = s.endDate ? new Date(s.endDate).getTime() : NaN;
+            return Number.isNaN(endTime) ? true : endTime > Date.now();
+        });
+
+        const showAccumulatedFinal = !hasOpenSeason && seasons.length > 0;
+        return activeSeasonId || (showAccumulatedFinal ? 'all' : seasons[0]?.id ?? 'all');
+    });
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [selectedBalonDeOroId, setSelectedBalonDeOroId] = useState<string | null>(null);
+
+    const hasOpenSeason = seasons.some(s => {
+        const endTime = s.endDate ? new Date(s.endDate).getTime() : NaN;
+        return Number.isNaN(endTime) ? true : endTime > Date.now();
+    });
+    const showAccumulatedFinal = !hasOpenSeason && seasons.length > 0;
+
+    useEffect(() => {
+        if (!showAccumulatedFinal && selectedSeason === 'all') {
+            setSelectedSeason(seasons[0]?.id ?? 'all');
+        }
+    }, [showAccumulatedFinal, selectedSeason, seasons]);
 
     const selectedSeasonName = selectedSeason === 'all'
         ? 'Acumulado Final'
@@ -276,18 +296,20 @@ export function HistoryPageView({ players, matches, participations, seasons, act
                             Salón de la Fama
                         </h1>
                     </div>
-                    <div className="flex items-center bg-slate-950 p-1.5 rounded-2xl border border-slate-800 shadow-inner overflow-x-auto no-scrollbar">
-                        <button
-                            onClick={() => setSelectedSeason('all')}
-                            className={cn(
-                                "px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap",
-                                selectedSeason === 'all'
-                                    ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-[0_0_15px_rgba(245,158,11,0.3)] scale-100"
-                                    : "text-slate-500 hover:text-slate-300 hover:bg-slate-900"
-                            )}
-                        >
-                            🏆 Acumulado Final
-                        </button>
+                    <div className="hidden md:flex items-center bg-slate-950 p-1.5 rounded-2xl border border-slate-800 shadow-inner overflow-x-auto no-scrollbar">
+                        {showAccumulatedFinal && (
+                            <button
+                                onClick={() => setSelectedSeason('all')}
+                                className={cn(
+                                    "px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap",
+                                    selectedSeason === 'all'
+                                        ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-[0_0_15px_rgba(245,158,11,0.3)] scale-100"
+                                        : "text-slate-500 hover:text-slate-300 hover:bg-slate-900"
+                                )}
+                            >
+                                🏆 Acumulado Final
+                            </button>
+                        )}
                         {seasons.map(s => (
                             <button
                                 key={s.id}
@@ -302,6 +324,25 @@ export function HistoryPageView({ players, matches, participations, seasons, act
                                 {s.name}
                             </button>
                         ))}
+                    </div>
+                    <div className="md:hidden mt-4">
+                        <label htmlFor="season-select" className="sr-only">Seleccionar temporada</label>
+                        <div className="relative">
+                            <select
+                                id="season-select"
+                                value={selectedSeason}
+                                onChange={event => setSelectedSeason(event.target.value)}
+                                className="w-full appearance-none rounded-2xl bg-slate-950 border border-slate-800 px-4 py-3 text-sm font-bold text-white outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20"
+                            >
+                                {showAccumulatedFinal && <option value="all">🏆 Acumulado Final</option>}
+                                {seasons.map(s => (
+                                    <option key={s.id} value={s.id}>{s.name}</option>
+                                ))}
+                            </select>
+                            <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-slate-400">
+                                <ChevronDown size={18} />
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

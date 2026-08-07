@@ -41,7 +41,12 @@ export function TickerMarquee({ items }: TickerMarqueeProps) {
                     100% { transform: translateX(-50%); } 
                 }
                 .animate-ticker {
-                    animation: ticker 120s linear infinite;
+                    animation: ticker 160s linear infinite;
+                }
+                @media (max-width: 768px) {
+                    .animate-ticker {
+                        animation: ticker 200s linear infinite;
+                    }
                 }
                 `
             }} />

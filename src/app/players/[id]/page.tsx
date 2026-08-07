@@ -1,6 +1,7 @@
 import { getData } from '@/lib/data';
 import { PlayerSkillsEditor } from '@/components/players/PlayerSkillsEditor';
-import { ArrowLeft, Activity, Trophy, UserMinus, UserX, Sword } from 'lucide-react';
+import { PlayerSeasonAwards } from '@/components/players/PlayerSeasonAwards';
+import { ArrowLeft, Activity, Trophy, UserMinus, UserX, Sword, Award, Shield, Volleyball } from 'lucide-react';
 import Link from 'next/link';
 import { StatCard } from '@/components/stats/StatsComponents';
 import { PlayerStreak, StreakResult } from '@/components/players/PlayerStreak';
@@ -168,26 +169,129 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
         };
     });
 
-    const botinesDeOro = seasonWinners
+    const balonDeOroSeasons = seasons
+        .map(season => {
+            const seasonMatchIds = new Set(matches.filter(m => m.seasonId === season.id).map(m => m.id));
+            const seasonParticipations = participations.filter(p => seasonMatchIds.has(p.matchId) && p.status === 'Attended');
+
+            const playersStats = players.map(pl => {
+                const playerSeasonParts = seasonParticipations.filter(p => p.playerId === pl.id);
+                const matchesAttendedSeason = playerSeasonParts.length;
+                if (matchesAttendedSeason === 0) return null;
+
+                const goalsSeason = playerSeasonParts.reduce((sum, p) => sum + (p.goals || 0), 0);
+                const winsSeason = playerSeasonParts.filter(p => {
+                    const match = matches.find(m => m.id === p.matchId);
+                    return match && match.result === p.team;
+                }).length;
+                const gkAwardsSeason = playerSeasonParts.filter(p => p.isBestGoalkeeper).length;
+                const absencesSeason = participations.filter(p => seasonMatchIds.has(p.matchId) && p.playerId === pl.id && (p.status === 'Absent' || p.status === 'LateCancel')).length;
+
+                const skill = pl.skills as any || {};
+                const isGk = pl.positions && pl.positions.length === 1 && pl.positions[0] === 'Arquero';
+                const skillsAverageSeason = isGk
+                    ? Math.round(((skill.reflejos || 50) + (skill.posicionamiento || 50) + (skill.estirada || 50) + (skill.saque || 50) + (skill.seguridad || 50)) / 5)
+                    : Math.round(((skill.ritmo || 50) + (skill.tiros || 50) + (skill.pases || 50) + (skill.regates || 50) + (skill.velocidad || 50)) / 5);
+
+                return {
+                    playerId: pl.id,
+                    matchesAttendedSeason,
+                    goalsSeason,
+                    winsSeason,
+                    gkAwardsSeason,
+                    absencesSeason,
+                    skillsAverageSeason
+                };
+            }).filter(Boolean) as Array<{
+                playerId: string;
+                matchesAttendedSeason: number;
+                goalsSeason: number;
+                winsSeason: number;
+                gkAwardsSeason: number;
+                absencesSeason: number;
+                skillsAverageSeason: number;
+            }>;
+
+            const maxSkill = Math.max(...playersStats.map(s => s.skillsAverageSeason), 1);
+            const maxWins = Math.max(...playersStats.map(s => s.winsSeason), 1);
+            const maxAttend = Math.max(...playersStats.map(s => s.matchesAttendedSeason), 1);
+            const maxGoals = Math.max(...playersStats.map(s => s.goalsSeason), 1);
+            const maxGkAward = Math.max(...playersStats.map(s => s.gkAwardsSeason), 1);
+            const maxAbs = Math.max(...playersStats.map(s => s.absencesSeason), 1);
+
+            const scored = playersStats.map(s => ({
+                playerId: s.playerId,
+                total: Math.round(
+                    (s.skillsAverageSeason / maxSkill) * 35 +
+                    (s.winsSeason / maxWins) * 25 +
+                    (s.matchesAttendedSeason / maxAttend) * 15 +
+                    (s.goalsSeason / maxGoals) * 15 +
+                    (s.gkAwardsSeason / maxGkAward) * 10 -
+                    (s.absencesSeason / maxAbs) * 10
+                )
+            }));
+
+            const winner = [...scored].sort((a, b) => b.total - a.total)[0];
+            return { seasonId: season.id, seasonName: season.name, winnerId: winner?.playerId || null };
+        })
+        .filter(w => w.winnerId === player.id)
+        .map(w => w.seasonName);
+
+    const guanteDeOroSeasons = seasons
+        .map(season => {
+            const seasonMatchIds = new Set(matches.filter(m => m.seasonId === season.id).map(m => m.id));
+            const gkCounts = players.map(pl => {
+                const count = participations.filter(p => p.playerId === pl.id && seasonMatchIds.has(p.matchId) && p.status === 'Attended' && p.isBestGoalkeeper).length;
+                return { playerId: pl.id, count };
+            });
+
+            const winner = [...gkCounts].sort((a, b) => b.count - a.count)[0];
+            return { seasonId: season.id, seasonName: season.name, winnerId: winner?.count ? winner.playerId : null };
+        })
+        .filter(w => w.winnerId === player.id)
+        .map(w => w.seasonName);
+
+    const botinesDeOroSeasons = seasonWinners
         .filter(w => w.topScorerId === player.id)
         .map(w => w.seasonName);
-        
+
     const bestGkCount = playerParticipations.filter(p => p.isBestGoalkeeper).length;
 
-    const isPrimaryGoalkeeper = player.positions && player.positions.length > 0 && player.positions[0] === 'Arquero';
+    const isPrimaryGoalkeeper = player.positions?.includes('Arquero');
     const goalkeeperStatus = (player.skills as any)?.goalkeeperStatus || 'Debutante de Tres Palos 🧤';
+
+    const awardItems = [
+        {
+            key: 'balon',
+            label: 'Balón de Oro',
+            seasons: balonDeOroSeasons,
+            icon: <Award size={20} />,
+        },
+        {
+            key: 'botin',
+            label: 'Botín de Oro',
+            seasons: botinesDeOroSeasons,
+            icon: <Volleyball size={20} />,
+        },
+        ...(isPrimaryGoalkeeper ? [{
+            key: 'guante',
+            label: 'Guante de Oro',
+            seasons: guanteDeOroSeasons,
+            icon: <Shield size={20} />,
+        }] : []),
+    ];
 
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
+                <div className="flex items-start gap-4 w-full">
                     <Link href="/players" className="p-2 hover:bg-slate-800 rounded-full text-slate-400 hover:text-white shrink-0">
                         <ArrowLeft size={20} />
                     </Link>
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1 space-y-3">
                         <div className="flex flex-wrap items-center gap-3">
                             <EditablePlayerName id={player.id} name={player.name} isActive={isActive} />
-                            <PlayerStreak streak={last5Streak} className="mt-1" />
+                            <PlayerSeasonAwards awards={awardItems} iconOnly />
                             {isPrimaryGoalkeeper && (
                                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-sky-600/30 to-blue-600/30 text-sky-400 border border-sky-500/30 shadow-[0_0_10px_rgba(56,189,248,0.15)] animate-pulse">
                                     {goalkeeperStatus}
@@ -195,6 +299,7 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
                             )}
                         </div>
                         <p className="text-slate-400 text-sm">Detalle de jugador</p>
+                        <PlayerStreak streak={last5Streak} className="mt-2" />
                     </div>
                 </div>
                 <div className="flex shrink-0">
@@ -227,6 +332,12 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
                     value={mvpCount}
                     icon={<Trophy size={20} className="text-amber-400" />}
                     subtext="Premios"
+                />
+                <StatCard
+                    title="Guante de Oro"
+                    value={bestGkCount}
+                    icon={<Shield size={20} className="text-cyan-400" />}
+                    subtext="Mejor arquero"
                 />
                 <StatCard
                     title="Bajas Tardías"
