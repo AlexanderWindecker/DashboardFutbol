@@ -7,6 +7,7 @@ import { StatCard } from '@/components/stats/StatsComponents';
 import { PlayerStreak, StreakResult } from '@/components/players/PlayerStreak';
 import { EditablePlayerName } from '@/components/players/EditablePlayerName';
 import { Button } from '@/components/ui/Button';
+import type { ReactNode } from 'react';
 
 export default async function PlayerProfilePage({ params }: { params: { id: string } }) {
     // Await params for Next 15
@@ -264,7 +265,7 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
         key: 'balon' | 'botin' | 'guante';
         label: string;
         seasons: string[];
-        icon: JSX.Element;
+        icon: ReactNode;
     }[] = [
         {
             key: 'balon',
