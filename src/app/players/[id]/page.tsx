@@ -264,8 +264,6 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
                     topAffinity,
                     worstAffinity,
                     allAffinity: sortedAllAffinity,
-                    bestGkCount,
-                    botinesDeOro
                 }}
                 specialtyRules={specialtyRules}
                 traitRules={traitRules}
