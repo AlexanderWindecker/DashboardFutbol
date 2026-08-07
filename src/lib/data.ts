@@ -37,6 +37,7 @@ export async function getData(): Promise<DashboardData> {
                     isActive: p.isActive ?? true,
                     isVacation: p.isVacation ?? false,
                     isInjured: p.isInjured ?? false,
+                    isEsporadico: p.isEsporadico ?? false,
                     skills: { ...defaultSkills, ...(p.skills ? JSON.parse(p.skills) : {}) },
                     traits: p.traits ? JSON.parse(p.traits) : [],
                     positions: p.positions ? JSON.parse(p.positions) : [],
@@ -57,6 +58,7 @@ export async function getData(): Promise<DashboardData> {
             participations: allParticipations.map(p => ({
                 ...p,
                 isMvp: !!p.isMvp,
+                isBestGoalkeeper: !!p.isBestGoalkeeper,
                 team: p.team as Team,
                 tacticalRole: p.tacticalRole as any,
                 skillReasons: p.skillReasons ? JSON.parse(p.skillReasons) : [],
@@ -126,6 +128,7 @@ export async function getParticipationsForMatch(matchId: string) {
     return res.map(p => ({
         ...p,
         isMvp: !!p.isMvp,
+        isBestGoalkeeper: !!p.isBestGoalkeeper,
         team: p.team as Team,
         tacticalRole: p.tacticalRole as any,
         skillReasons: p.skillReasons ? JSON.parse(p.skillReasons) : [],

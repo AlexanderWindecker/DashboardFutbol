@@ -64,6 +64,7 @@ export interface Player {
     traits?: string[];
     isInjured?: boolean;
     isVacation?: boolean;
+    isEsporadico?: boolean; // Jugador esporádico, sus stats no afectan rankings ni promedios
     phone?: string;
     telegramId?: string;
     affinities?: string[]; // Player IDs who should be in the same team
@@ -81,6 +82,7 @@ export interface PlayerStats {
     ownGoals?: number;
     rating?: number;
     isMvp: boolean; // MVP of their team
+    isBestGoalkeeper: boolean;
     skillReasons?: string[]; // Log of why skills changed
     notes?: string;
 }

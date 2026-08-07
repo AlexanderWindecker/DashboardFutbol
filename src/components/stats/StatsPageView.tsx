@@ -54,6 +54,7 @@ export function StatsPageView({ data, settings, seasons, activeSeasonId, calcula
     const topAbsences = [...activeStats].sort((a, b) => b.absences - a.absences).slice(0, 5);
     const topScorers = [...activeStats].sort((a, b) => b.goals - a.goals).slice(0, 5);
     const topSkills = [...activeStats].sort((a, b) => b.skillsAverage - a.skillsAverage).slice(0, 5);
+    const topGkAwards = [...activeStats].filter(p => (p.gkBestAwards || 0) > 0).sort((a, b) => b.gkBestAwards - a.gkBestAwards).slice(0, 5);
 
     return (
         <div className="space-y-8">
@@ -227,6 +228,16 @@ export function StatsPageView({ data, settings, seasons, activeSeasonId, calcula
                     label="Faltas"
                     linkHref="/stats/rankings?type=absences"
                 />
+                {topGkAwards.length > 0 && (
+                    <RankingCard
+                        title="Mejor Arquero"
+                        icon={<Shield size={18} className="text-cyan-400" />}
+                        data={topGkAwards}
+                        valueKey="gkBestAwards"
+                        label="Premios"
+                        linkHref="/stats/rankings?type=gk_awards"
+                    />
+                )}
             </div>
         </div>
     );

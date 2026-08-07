@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Player } from '@/types';
-import { UserPlus, UserX, UserCheck, User, Sword, Share2, Eye, EyeOff, Plus, Palmtree, Download, Upload } from 'lucide-react';
+import { UserPlus, UserX, UserCheck, User, Sword, Share2, Eye, EyeOff, Plus, Palmtree, Download, Upload, Ghost } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { cn } from '@/lib/utils';
@@ -207,6 +207,7 @@ export function PlayersListView({ players }: PlayersListViewProps) {
 
                     const isInjured = player.isInjured;
                     const isVacation = player.isVacation;
+                    const isEsporadico = player.isEsporadico;
                     const isUnavailable = !isActive || isInjured || isVacation;
 
                     return (
@@ -246,6 +247,24 @@ export function PlayersListView({ players }: PlayersListViewProps) {
                                                     isActive ? getRatingColor(avg) : "bg-slate-950 border-slate-900 text-slate-700"
                                                 )}>
                                                     {avg}
+                                                </div>
+                                                {/* Status icon overlays — top-left corner */}
+                                                <div className="absolute -top-1 -left-1 flex flex-col gap-0.5">
+                                                    {isActive && isInjured && (
+                                                        <div className="bg-red-600 rounded-full p-0.5 border border-white shadow-sm animate-pulse flex items-center justify-center">
+                                                            <Plus size={8} className="text-white stroke-[3px]" />
+                                                        </div>
+                                                    )}
+                                                    {isActive && isVacation && (
+                                                        <div className="bg-amber-500 rounded-full p-0.5 border border-white shadow-sm flex items-center justify-center">
+                                                            <Palmtree size={8} className="text-white" />
+                                                        </div>
+                                                    )}
+                                                    {isActive && isEsporadico && (
+                                                        <div className="bg-purple-600 rounded-full p-0.5 border border-white shadow-sm flex items-center justify-center">
+                                                            <Ghost size={8} className="text-white" />
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 {delta !== undefined && delta !== 0 && (
                                                     <div className={cn(
@@ -294,6 +313,7 @@ export function PlayersListView({ players }: PlayersListViewProps) {
                                 {!isActive && <Badge variant="outline" className="text-[9px] md:text-[10px] py-0.5 px-2 bg-slate-950 font-bold tracking-wider">CUENTA DESACTIVADA</Badge>}
                                 {isActive && isInjured && <Badge variant="outline" className="text-[9px] md:text-[10px] py-0.5 px-2 border-red-500/30 text-red-500 bg-red-500/10 flex items-center gap-1 font-bold"><Plus size={10} className="rotate-45" />LESIONADO</Badge>}
                                 {isActive && isVacation && <Badge variant="outline" className="text-[9px] md:text-[10px] py-0.5 px-2 border-amber-500/30 text-amber-500 bg-amber-500/10 flex items-center gap-1 font-bold"><Palmtree size={10} />VACACIONES</Badge>}
+                                {isActive && isEsporadico && <Badge variant="outline" className="text-[9px] md:text-[10px] py-0.5 px-2 border-purple-500/30 text-purple-400 bg-purple-500/10 flex items-center gap-1 font-bold"><Ghost size={10} />ESPORÁDICO</Badge>}
                                 {isActive && !isInjured && !isVacation && <Badge variant="outline" className="text-[9px] md:text-[10px] py-0.5 px-2 border-emerald-500/30 text-emerald-500 bg-emerald-500/10 font-bold">DISPONIBLE</Badge>}
                             </div>
                         </div>

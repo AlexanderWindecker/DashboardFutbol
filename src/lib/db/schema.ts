@@ -13,6 +13,7 @@ export const players = pgTable('players', {
     preferredFoot: text('preferred_foot'),
     telegramId: text('telegram_id'),
     isInjured: boolean('is_injured').default(false),
+    isEsporadico: boolean('is_esporadico').default(false),
     affinities: text('affinities'), // JSON array
     conflicts: text('conflicts'), // JSON array
 });
@@ -40,6 +41,7 @@ export const participations = pgTable('participations', {
     ownGoals: integer('own_goals').default(0),
     assists: integer('assists').default(0),
     isMvp: boolean('is_mvp').default(false),
+    isBestGoalkeeper: boolean('is_best_goalkeeper').default(false),
     rating: doublePrecision('rating'),
     tacticalRole: text('tactical_role'),
     skillReasons: text('skill_reasons'), // JSON array of strings

@@ -149,8 +149,8 @@ export default async function RankingsPage({ searchParams }: { searchParams: { t
     const matchIds = new Set(matches.map((m: Match) => m.id));
     const participations = allParticipations.filter((p: PlayerStats) => matchIds.has(p.matchId));
 
-    // Exclude completely inactive players from all rankings
-    const activePlayersForStats = players.filter((p: Player) => p.isActive !== false);
+    // Exclude completely inactive players and esporadico players from all rankings
+    const activePlayersForStats = players.filter((p: Player) => p.isActive !== false && !p.isEsporadico);
 
     const stats = calculateStats(activePlayersForStats, matches, participations, posFilter);
 

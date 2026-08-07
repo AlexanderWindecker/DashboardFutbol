@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button';
 export default async function PlayerProfilePage({ params }: { params: { id: string } }) {
     // Await params for Next 15
     const { id } = await Promise.resolve(params);
-    const { players, matches, participations, specialtyRules = [], traitRules = [] } = await getData();
+    const { players, matches, participations, seasons = [], specialtyRules = [], traitRules = [] } = await getData();
     const player = players.find(p => p.id === id);
 
     if (!player) {
@@ -138,6 +138,45 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
     const totalAttendances = participations.filter(p => p.status === 'Attended').length;
     const globalAssistsPerMatch = totalAttendances > 0 ? totalAssists / totalAttendances : 0;
 
+    // Calculate seasons top goalscorers to find Botines de Oro
+    const seasonWinners = seasons.map(season => {
+        const seasonMatches = matches.filter(m => m.seasonId === season.id);
+        const seasonMatchIds = new Set(seasonMatches.map(m => m.id));
+        
+        // Sum goals for each player in this season
+        const playerGoals: Record<string, number> = {};
+        participations
+            .filter(p => seasonMatchIds.has(p.matchId) && p.status === 'Attended')
+            .forEach(p => {
+                playerGoals[p.playerId] = (playerGoals[p.playerId] || 0) + (p.goals || 0);
+            });
+            
+        let topScorerId = '';
+        let maxGoals = 0;
+        Object.entries(playerGoals).forEach(([pid, g]) => {
+            if (g > maxGoals) {
+                maxGoals = g;
+                topScorerId = pid;
+            }
+        });
+        
+        return {
+            seasonId: season.id,
+            seasonName: season.name,
+            topScorerId: maxGoals > 0 ? topScorerId : null,
+            maxGoals
+        };
+    });
+
+    const botinesDeOro = seasonWinners
+        .filter(w => w.topScorerId === player.id)
+        .map(w => w.seasonName);
+        
+    const bestGkCount = playerParticipations.filter(p => p.isBestGoalkeeper).length;
+
+    const isPrimaryGoalkeeper = player.positions && player.positions.length > 0 && player.positions[0] === 'Arquero';
+    const goalkeeperStatus = (player.skills as any)?.goalkeeperStatus || 'Debutante de Tres Palos 🧤';
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -149,6 +188,11 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
                         <div className="flex flex-wrap items-center gap-3">
                             <EditablePlayerName id={player.id} name={player.name} isActive={isActive} />
                             <PlayerStreak streak={last5Streak} className="mt-1" />
+                            {isPrimaryGoalkeeper && (
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-gradient-to-r from-sky-600/30 to-blue-600/30 text-sky-400 border border-sky-500/30 shadow-[0_0_10px_rgba(56,189,248,0.15)] animate-pulse">
+                                    {goalkeeperStatus}
+                                </span>
+                            )}
                         </div>
                         <p className="text-slate-400 text-sm">Detalle de jugador</p>
                     </div>
@@ -219,7 +263,9 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
                     goals: totalGoals,
                     topAffinity,
                     worstAffinity,
-                    allAffinity: sortedAllAffinity
+                    allAffinity: sortedAllAffinity,
+                    bestGkCount,
+                    botinesDeOro
                 }}
                 specialtyRules={specialtyRules}
                 traitRules={traitRules}

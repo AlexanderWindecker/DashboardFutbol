@@ -42,6 +42,10 @@ export interface PlayerSkillsData {
     estirada?: number;
     saque?: number;
     seguridad?: number;
+    gkMatchesPlayed?: number;
+    gkCleanSheets?: number;
+    gkBestAwards?: number;
+    goalkeeperStatus?: string;
 }
 
 export interface ParticipationUpdate {
@@ -81,26 +85,42 @@ export function recalculateAllSkills(
             matchesPlayed: 0,
             goals: 0,
             mvps: 0,
-            reflejos: p.skills?.reflejos || 50,
-            posicionamiento: p.skills?.posicionamiento || 50,
-            estirada: p.skills?.estirada || 50,
-            saque: p.skills?.saque || 50,
-            seguridad: p.skills?.seguridad || 50
+            reflejos: 50,
+            posicionamiento: 50,
+            estirada: 50,
+            saque: 50,
+            seguridad: 50,
+            gkMatchesPlayed: 0,
+            gkCleanSheets: 0,
+            gkBestAwards: 0,
+            goalkeeperStatus: 'Debutante de Tres Palos 🧤'
         });
     }
+
+    // Build lookup for player profile data
+    const playerById = new Map<string, any>(allPlayers.map(p => [p.id, p]));
 
     // Process each match chronologically
     for (const match of allMatches) {
         const matchParts = allParticipations.filter(p => p.matchId === match.id);
-        
-        let maxGoals = 0;
         const matchAttended = matchParts.filter(p => p.status === 'Attended');
+
+        let maxGoals = 0;
         const teamGoals: Record<string, number> = {};
+        let celesteGoals = 0;
+        let azulGoals = 0;
 
         for (const p of matchAttended) {
             if ((p.goals || 0) > maxGoals) maxGoals = p.goals || 0;
             if (p.team) {
                 teamGoals[p.team] = (teamGoals[p.team] || 0) + (p.goals || 0);
+            }
+            if (p.team === 'Celeste') {
+                celesteGoals += (p.goals || 0);
+                azulGoals += (p.ownGoals || 0);
+            } else if (p.team === 'Azul') {
+                azulGoals += (p.goals || 0);
+                celesteGoals += (p.ownGoals || 0);
             }
         }
 
@@ -222,6 +242,74 @@ export function recalculateAllSkills(
                     else if (diff <= -5) { stats.pases -= 0.3 * weatherMultiplier; stats.regates -= 0.3 * weatherMultiplier; }
                 }
 
+                // Goalkeeper-specific calculations
+                const playerProfile = playerById.get(p.playerId);
+                const playerPositions: string[] = playerProfile?.positions || [];
+                const isOwnGoalkeeper = p.tacticalRole === 'Arquero' || (playerPositions.length === 1 && playerPositions[0] === 'Arquero');
+
+                if (isOwnGoalkeeper) {
+                    stats.gkMatchesPlayed = (stats.gkMatchesPlayed || 0) + 1;
+                    
+                    // Base GK practice
+                    stats.reflejos = (stats.reflejos || 50) + 0.2 * weatherMultiplier;
+                    stats.posicionamiento = (stats.posicionamiento || 50) + 0.2 * weatherMultiplier;
+                    stats.estirada = (stats.estirada || 50) + 0.2 * weatherMultiplier;
+                    stats.saque = (stats.saque || 50) + 0.1 * weatherMultiplier;
+                    stats.seguridad = (stats.seguridad || 50) + 0.2 * weatherMultiplier;
+                    reasons.push(`Asistencia ARQ +${(0.2 * weatherMultiplier).toFixed(1)} Ref/Pos/Est/Seg`);
+                    
+                    // Clean sheet check
+                    const opponentTeam = p.team === 'Celeste' ? 'Azul' : 'Celeste';
+                    const goalsConceded = opponentTeam === 'Celeste' ? celesteGoals : azulGoals;
+                    
+                    if (goalsConceded === 0) {
+                        stats.gkCleanSheets = (stats.gkCleanSheets || 0) + 1;
+                        stats.reflejos += 0.8 * weatherMultiplier;
+                        stats.estirada += 0.8 * weatherMultiplier;
+                        stats.seguridad += 1.0 * weatherMultiplier;
+                        stats.posicionamiento += 0.6 * weatherMultiplier;
+                        reasons.push(`🧤 Valla Invicta: Muro Infranqueable +${(1.0 * weatherMultiplier).toFixed(1)} Seg, +${(0.8 * weatherMultiplier).toFixed(1)} Ref/Est, +${(0.6 * weatherMultiplier).toFixed(1)} Pos`);
+                    } else if (goalsConceded >= 5) {
+                        stats.seguridad -= 0.5 * weatherMultiplier;
+                        stats.posicionamiento -= 0.3 * weatherMultiplier;
+                        reasons.push(`❌ Recibió ${goalsConceded} goles: -${(0.5 * weatherMultiplier).toFixed(1)} Seguridad, -${(0.3 * weatherMultiplier).toFixed(1)} Ubicación`);
+                    }
+                    
+                    // Best Goalkeeper award check
+                    if (p.isBestGoalkeeper) {
+                        stats.gkBestAwards = (stats.gkBestAwards || 0) + 1;
+                        stats.reflejos += 1.2 * weatherMultiplier;
+                        stats.estirada += 1.2 * weatherMultiplier;
+                        stats.seguridad += 1.0 * weatherMultiplier;
+                        stats.posicionamiento += 1.0 * weatherMultiplier;
+                        reasons.push(`🏆 Mejor Arquero de la fecha: +${(1.2 * weatherMultiplier).toFixed(1)} Ref/Est, +${(1.0 * weatherMultiplier).toFixed(1)} Seg/Pos`);
+                    }
+                    
+                    // Win/Loss check as GK
+                    let wonGK = false;
+                    let lostGK = false;
+                    if (match.result && match.result !== 'Empate') {
+                        if (match.result === p.team) wonGK = true;
+                        else lostGK = true;
+                    }
+                    
+                    if (wonGK) {
+                        stats.seguridad += 0.3 * weatherMultiplier;
+                        stats.posicionamiento += 0.3 * weatherMultiplier;
+                        reasons.push(`👍 Victoria como Arquero: +${(0.3 * weatherMultiplier).toFixed(1)} Seguridad/Posición`);
+                    } else if (lostGK) {
+                        stats.reflejos += 0.4 * weatherMultiplier;
+                        stats.seguridad -= 0.2 * weatherMultiplier;
+                        reasons.push(`👎 Derrota como Arquero: +${(0.4 * weatherMultiplier).toFixed(1)} Reflejos (Más trabajo), -${(0.2 * weatherMultiplier).toFixed(1)} Seguridad`);
+                    }
+                    
+                    // Own goals
+                    if (p.ownGoals && p.ownGoals > 0) {
+                        stats.seguridad -= 0.6 * p.ownGoals * weatherMultiplier;
+                        reasons.push(`⚠️ Gol en contra: -${(0.6 * p.ownGoals * weatherMultiplier).toFixed(1)} Seguridad`);
+                    }
+                }
+
             } else if (p.status === 'Absent' || p.status === 'LateCancel') {
                 stats.streak = 0;
                 stats.ritmo -= 0.5 * weatherMultiplier; stats.velocidad -= 0.5 * weatherMultiplier; stats.tiros -= 0.5 * weatherMultiplier; stats.pases -= 0.5 * weatherMultiplier; stats.regates -= 0.5 * weatherMultiplier;
@@ -246,6 +334,12 @@ export function recalculateAllSkills(
             stats.tiros = applyDiminishingReturns(prev.tiros, stats.tiros);
             stats.regates = applyDiminishingReturns(prev.regates, stats.regates);
             stats.pases = applyDiminishingReturns(prev.pases, stats.pases);
+
+            if (stats.reflejos !== undefined && prev.reflejos !== undefined) stats.reflejos = applyDiminishingReturns(prev.reflejos, stats.reflejos);
+            if (stats.posicionamiento !== undefined && prev.posicionamiento !== undefined) stats.posicionamiento = applyDiminishingReturns(prev.posicionamiento, stats.posicionamiento);
+            if (stats.estirada !== undefined && prev.estirada !== undefined) stats.estirada = applyDiminishingReturns(prev.estirada, stats.estirada);
+            if (stats.saque !== undefined && prev.saque !== undefined) stats.saque = applyDiminishingReturns(prev.saque, stats.saque);
+            if (stats.seguridad !== undefined && prev.seguridad !== undefined) stats.seguridad = applyDiminishingReturns(prev.seguridad, stats.seguridad);
 
             // Calculate exact deltas
             stats.deltas = {
@@ -327,6 +421,44 @@ export function recalculateAllSkills(
                     if (stats.seguridad !== undefined) stats.seguridad = Number(stats.seguridad.toFixed(1));
                 }
             }
+        }
+    }
+
+    // Assign dynamic goalkeeper status for primary goalkeepers
+    for (const [playerId, stats] of playerStats.entries()) {
+        const p = allPlayers.find(pl => pl.id === playerId);
+        if (!p) continue;
+        
+        const positions = p.positions ? (typeof p.positions === 'string' ? JSON.parse(p.positions) : p.positions) : [];
+        const isPrimaryGoalkeeper = positions.length > 0 && positions[0] === 'Arquero';
+        
+        if (isPrimaryGoalkeeper) {
+            const gkAverage = ((stats.reflejos || 50) + (stats.posicionamiento || 50) + (stats.estirada || 50) + (stats.saque || 50) + (stats.seguridad || 50)) / 5;
+            let status = "Arquero de Alquiler 🧤";
+            
+            if ((stats.gkMatchesPlayed || 0) === 0) {
+                status = "Debutante de Tres Palos 🧤";
+            } else if (gkAverage < 48) {
+                status = "Colador Histórico 🕳️";
+            } else if (gkAverage < 52) {
+                status = "Manos de Manteca 🧈";
+            } else if ((stats.gkBestAwards || 0) >= 5) {
+                status = "Guante de Oro Leyenda 🏆🧤";
+            } else if ((stats.reflejos || 50) >= 80 && (stats.gkCleanSheets || 0) >= 3) {
+                status = `San ${p.name} 👑`;
+            } else if ((stats.reflejos || 50) >= 75 && (stats.gkBestAwards || 0) >= 2) {
+                status = "El Pulpo de los Tres Palos 🐙";
+            } else if (gkAverage >= 72 && (stats.gkCleanSheets || 0) >= 2) {
+                status = "Muralla de Concreto 🧱";
+            } else if (gkAverage >= 80) {
+                status = "Cerrojo Galáctico 🌌";
+            } else if (gkAverage >= 70) {
+                status = "Guardián del Arco 🛡️";
+            } else if (gkAverage >= 60) {
+                status = "Promesa de los Tres Palos 🧤";
+            }
+            
+            stats.goalkeeperStatus = status;
         }
     }
 

@@ -67,7 +67,7 @@ export async function updateParticipationAction(matchId: string, playerId: strin
     const existing = await getParticipationsForMatch(matchId);
     let current = existing.find(p => p.playerId === playerId);
 
-    if ((updates.goals && updates.goals > 0) || updates.isMvp === true) {
+    if ((updates.goals && updates.goals > 0) || updates.isMvp === true || updates.isBestGoalkeeper === true) {
         updates.status = 'Attended';
     }
 
@@ -79,6 +79,7 @@ export async function updateParticipationAction(matchId: string, playerId: strin
             status: 'Confirmed',
             assists: 0,
             isMvp: false,
+            isBestGoalkeeper: false,
             ...updates
         };
     } else {
@@ -117,6 +118,7 @@ export async function addPlayerToMatchAction(matchId: string, playerId: string) 
         status: 'Confirmed',
         assists: 0,
         isMvp: false,
+        isBestGoalkeeper: false,
     };
     await updateParticipation(newStats);
     await checkSuperclasico(matchId);

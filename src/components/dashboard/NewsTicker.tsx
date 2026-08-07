@@ -107,7 +107,7 @@ export function NewsTicker({ data }: NewsTickerProps) {
         const top3 = sortedScorers[2];
         
         items.push(
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-2" key="goleadores">
                 <Flame className="text-amber-500" size={18} />
                 <span className="text-amber-500 font-black">GOLEADORES:</span>
                 <span className="text-white">🥇 {top1.name} <span className="text-amber-400">({top1.goals})</span></span>
@@ -134,6 +134,27 @@ export function NewsTicker({ data }: NewsTickerProps) {
                     <Trophy className="text-yellow-400" size={18} />
                     <span className="text-yellow-400 font-black">MVP DEL PARTIDO ANTERIOR:</span>
                     <span className="text-white">{mvpNames.join(' y ')}</span>
+                </span>
+            );
+        }
+
+        // Mejor Arquero del partido anterior
+        const bestGkPart = lastMatchParts.find(p => p.isBestGoalkeeper);
+        if (bestGkPart) {
+            const gkName = players.find(pl => pl.id === bestGkPart.playerId)?.name || 'El arquero';
+            const gkMessages = [
+                `${gkName} fue elegido Mejor Arquero del partido. ¡Manos de seda y reflejos de gato! 🧤`,
+                `¡Atajó todo lo que le tiraron! ${gkName} se llevó el guante de oro del último partido 🏆`,
+                `${gkName} fue una muralla imposible de superar y se ganó el título de Mejor Arquero 🧱`,
+                `La camiseta de ${gkName} terminó seca, su rendimiento no: Mejor Arquero de la fecha ⭐`,
+            ];
+            const hash = lastMatch.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            const randomIdx = hash % gkMessages.length;
+            items.push(
+                <span className="flex items-center gap-2" key="best-gk">
+                    <Trophy className="text-cyan-400" size={18} />
+                    <span className="text-cyan-400 font-black">🧤 MEJOR ARQUERO:</span>
+                    <span className="text-white">{gkMessages[randomIdx]}</span>
                 </span>
             );
         }

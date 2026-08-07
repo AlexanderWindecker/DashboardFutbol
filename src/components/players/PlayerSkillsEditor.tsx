@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { updatePlayerSkillsAction, deletePlayerAction } from '@/actions/players';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { Loader2, Save, Plus, Users, TrendingUp, Info, Palmtree, Target, Waves, Trash2 } from 'lucide-react';
+import { Loader2, Save, Plus, Users, TrendingUp, Info, Palmtree, Target, Waves, Trash2, Ghost } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { cn } from '@/lib/utils';
 import { Tooltip } from '@/components/ui/Tooltip';
@@ -71,6 +71,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
     const [telegramId, setTelegramId] = useState(player.telegramId || '');
     const [playerName, setPlayerName] = useState(player.name);
     const [isVacation, setIsVacation] = useState(player.isVacation || false);
+    const [isEsporadico, setIsEsporadico] = useState(player.isEsporadico || false);
     const [isPending, setIsPending] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [showGuide, setShowGuide] = useState(false);
@@ -120,6 +121,7 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
             traits: userTraits,
             isInjured,
             isVacation,
+            isEsporadico,
             phone,
             telegramId
         });
@@ -210,6 +212,13 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                                         </div>
                                     </Tooltip>
                                 )}
+                                {isEsporadico && (
+                                    <Tooltip content="Jugador Esporádico — sus stats no afectan rankings">
+                                        <div className="bg-purple-600 rounded-full p-0.5 border border-white shadow-sm flex items-center justify-center">
+                                            <Ghost size={10} className="text-white" />
+                                        </div>
+                                    </Tooltip>
+                                )}
                             </div>
                         </div>
                         <span className="text-xs md:text-sm text-slate-400 font-medium italic">
@@ -245,6 +254,19 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                                         <Palmtree size={10} className="text-amber-500 md:hidden" />
                                         <span className="hidden md:inline"><Palmtree size={12} className="text-amber-500" /></span>
                                         Vacaciones
+                                    </span>
+                                </label>
+                                <label className="flex items-center gap-1.5 cursor-pointer bg-slate-800/50 px-2 md:px-3 py-1 rounded-full border border-slate-700 hover:bg-slate-800 transition-colors">
+                                    <input
+                                        type="checkbox"
+                                        checked={isEsporadico}
+                                        onChange={(e) => setIsEsporadico(e.target.checked)}
+                                        className="w-3.5 h-3.5 md:w-4 md:h-4 rounded border-slate-600 text-purple-500 focus:ring-purple-500 bg-slate-900"
+                                    />
+                                    <span className="text-[10px] md:text-xs text-slate-300 font-medium flex items-center gap-1">
+                                        <Ghost size={10} className="text-purple-400 md:hidden" />
+                                        <span className="hidden md:inline"><Ghost size={12} className="text-purple-400" /></span>
+                                        Esporádico
                                     </span>
                                 </label>
                             </div>

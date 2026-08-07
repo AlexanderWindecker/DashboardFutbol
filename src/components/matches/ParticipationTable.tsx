@@ -142,6 +142,7 @@ export function ParticipationTable({
                             <th className="p-3 text-center text-red-400/80">En contra</th>
                             <th className="p-3 text-center">Asistió</th>
                             <th className="p-3 text-center">MVP Equipo</th>
+                            <th className="p-3 text-center text-sky-400/90">Mejor ARQ</th>
                             <th className="p-3 text-left">Notas</th>
                         </tr>
                     </thead>
@@ -299,8 +300,26 @@ export function ParticipationTable({
                                             handleLocalUpdate(p.playerId, updates);
                                         }}
                                         className={cn("transition-colors", p.isMvp ? "text-amber-400" : "text-slate-700", isAdmin && "hover:text-amber-400/50", !isAdmin && "cursor-default")}
+                                        title="MVP de Equipo"
                                     >
                                         <Star size={18} fill={p.isMvp ? "currentColor" : "none"} />
+                                    </button>
+                                </td>
+                                <td className="p-3 text-center">
+                                    <button
+                                        disabled={!isAdmin}
+                                        onClick={() => {
+                                            const isBestGoalkeeper = !p.isBestGoalkeeper;
+                                            const updates: Partial<PlayerStats> = { isBestGoalkeeper };
+                                            if (isBestGoalkeeper && p.status === 'Confirmed') {
+                                                updates.status = 'Attended';
+                                            }
+                                            handleLocalUpdate(p.playerId, updates);
+                                        }}
+                                        className={cn("transition-colors", p.isBestGoalkeeper ? "text-sky-400" : "text-slate-700", isAdmin && "hover:text-sky-400/50", !isAdmin && "cursor-default")}
+                                        title="Mejor Arquero de la fecha"
+                                    >
+                                        <Shield size={18} fill={p.isBestGoalkeeper ? "currentColor" : "none"} />
                                     </button>
                                 </td>
                                 <td className="p-3">
@@ -337,7 +356,7 @@ export function ParticipationTable({
                             </tr>
                         ))}
                         {matchPlayers.length === 0 && (
-                            <tr><td colSpan={7} className="p-4 text-center text-slate-500">Sin jugadores presentes asignados.</td></tr>
+                            <tr><td colSpan={9} className="p-4 text-center text-slate-500">Sin jugadores presentes asignados.</td></tr>
                         )}
                     </tbody>
                 </table>

@@ -116,6 +116,7 @@ export async function updatePlayerSkillsAction(playerId: string, data: Partial<P
     if (data.traits) player.traits = data.traits;
     if (data.isInjured !== undefined) player.isInjured = data.isInjured;
     if (data.isVacation !== undefined) player.isVacation = data.isVacation;
+    if (data.isEsporadico !== undefined) player.isEsporadico = data.isEsporadico;
     if (data.phone !== undefined) player.phone = data.phone;
     if (data.telegramId !== undefined) player.telegramId = data.telegramId;
     if (data.name !== undefined) player.name = data.name;

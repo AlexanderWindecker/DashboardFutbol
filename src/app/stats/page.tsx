@@ -26,6 +26,9 @@ function calculateStats(players: Player[], matches: Match[], participations: Pla
         // MVPs
         const mvpCount = attendedStats.filter(p => p.isMvp).length;
 
+        // Best Goalkeeper awards
+        const gkBestAwards = attendedStats.filter(p => p.isBestGoalkeeper).length;
+
         // Wins
         const wins = attendedStats.filter(p => {
             const match = matches.find(m => m.id === p.matchId);
@@ -72,6 +75,7 @@ function calculateStats(players: Player[], matches: Match[], participations: Pla
             matchesAttended,
             absences,
             mvpCount,
+            gkBestAwards,
             wins,
             winRate: matchesAttended >= 3 ? Math.round((wins / matchesAttended) * 100) : (matchesAttended > 0 ? Math.round((wins / matchesAttended) * 100) : 0),
             celesteApps,
@@ -120,7 +124,7 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         : data.matches;
 
     const calculatedStats = {
-        ...calculateStats(data.players, filteredMatches, data.participations, settings),
+        ...calculateStats(data.players.filter((p: any) => !p.isEsporadico), filteredMatches, data.participations, settings),
         filteredMatches
     };
 
