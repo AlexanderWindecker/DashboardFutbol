@@ -28,7 +28,7 @@ export function PlayerSeasonAwards({ awards, iconOnly = false }: PlayerSeasonAwa
                     const unlocked = item.seasons.length > 0;
                     const isSelected = selectedAward === item.key;
                     const tooltipContent = item.seasons.length > 0
-                        ? item.seasons.join(', ')
+                        ? item.seasons.map(season => `${item.label} - ${season.replace(/^Año\s+/i, '')}`).join(', ')
                         : 'Aún no ganó este premio';
 
                     return (
@@ -43,9 +43,9 @@ export function PlayerSeasonAwards({ awards, iconOnly = false }: PlayerSeasonAwa
                             </button>
 
                             {isSelected && (
-                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max min-w-[140px] rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-slate-200 shadow-xl z-50">
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max min-w-[180px] rounded-2xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-slate-200 shadow-xl z-50 text-center">
                                     {tooltipContent}
-                                    <div className="absolute left-1/2 top-full -translate-x-1/2 h-3 w-3 bg-slate-950 border-r border-b border-slate-800 rotate-45" />
+                                    <div className="absolute left-1/2 bottom-full -translate-x-1/2 h-3 w-3 bg-slate-950 border-l border-t border-slate-800 rotate-45 translate-y-1.5" />
                                 </div>
                             )}
                         </div>
