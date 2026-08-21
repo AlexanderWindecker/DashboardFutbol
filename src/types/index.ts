@@ -94,6 +94,16 @@ export interface Season {
     endDate: string;
 }
 
+export interface SeasonAwards {
+    seasonKey: string;
+    seasonLabel: string;
+    rulesVersion?: number;
+    balonDeOroPlayerId: string;
+    botinDeOroPlayerId: string | null;
+    guanteDeOroPlayerId: string | null;
+    revealedAt: string;
+}
+
 export interface Match {
     id: string;
     date: string; // ISO string
@@ -118,5 +128,6 @@ export interface DashboardData {
     traitRules?: CustomRule[];
     settings?: AppSettings;
     seasons?: Season[];
+    seasonAwards?: SeasonAwards[];
     activeSeasonId?: string;
 }

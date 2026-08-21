@@ -258,7 +258,7 @@ export function recalculateAllSkills(
                     stats.seguridad = (stats.seguridad || 50) + 0.2 * weatherMultiplier;
                     reasons.push(`Asistencia ARQ +${(0.2 * weatherMultiplier).toFixed(1)} Ref/Pos/Est/Seg`);
                     
-                    // Clean sheet check
+                    // Clean sheet check (Tiered system for small courts)
                     const opponentTeam = p.team === 'Celeste' ? 'Azul' : 'Celeste';
                     const goalsConceded = opponentTeam === 'Celeste' ? celesteGoals : azulGoals;
                     
@@ -269,6 +269,16 @@ export function recalculateAllSkills(
                         stats.seguridad += 1.0 * weatherMultiplier;
                         stats.posicionamiento += 0.6 * weatherMultiplier;
                         reasons.push(`🧤 Valla Invicta: Muro Infranqueable +${(1.0 * weatherMultiplier).toFixed(1)} Seg, +${(0.8 * weatherMultiplier).toFixed(1)} Ref/Est, +${(0.6 * weatherMultiplier).toFixed(1)} Pos`);
+                    } else if (goalsConceded === 1) {
+                        stats.gkCleanSheets = (stats.gkCleanSheets || 0) + 0.5;
+                        stats.reflejos += 0.4 * weatherMultiplier;
+                        stats.estirada += 0.4 * weatherMultiplier;
+                        stats.seguridad += 0.5 * weatherMultiplier;
+                        stats.posicionamiento += 0.3 * weatherMultiplier;
+                        reasons.push(`🧤 Valla Casi Invicta (1 gol): +${(0.5 * weatherMultiplier).toFixed(1)} Seg, +${(0.4 * weatherMultiplier).toFixed(1)} Ref/Est, +${(0.3 * weatherMultiplier).toFixed(1)} Pos`);
+                    } else if (goalsConceded === 2) {
+                        stats.seguridad += 0.1 * weatherMultiplier;
+                        reasons.push(`🧤 Buen Partido (2 goles): +${(0.1 * weatherMultiplier).toFixed(1)} Seguridad`);
                     } else if (goalsConceded >= 5) {
                         stats.seguridad -= 0.5 * weatherMultiplier;
                         stats.posicionamiento -= 0.3 * weatherMultiplier;

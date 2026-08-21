@@ -57,6 +57,20 @@ export function SkillsEngineGuideModal() {
                     </div>
 
                     <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+                        <h4 className="font-bold text-cyan-400">🧤 Arqueros (Reglas Especiales)</h4>
+                        <p className="text-xs text-slate-400">Para balancear la dificultad del puesto en canchas chicas, se utiliza un sistema de valla invicta escalonada:</p>
+                        <ul className="list-disc pl-5 space-y-1 text-slate-400">
+                            <li><strong>Asistencia Básica:</strong> <span className="text-emerald-400">+0.2</span> en Reflejos, Posicionamiento, Estirada y Seguridad, y <span className="text-emerald-400">+0.1</span> en Saque.</li>
+                            <li><strong>0 Goles Recibidos:</strong> <span className="text-emerald-400">+1.0 Valla Invicta</span>, con grandes bonus de stat (<span className="text-emerald-400">+1.0 Seguridad</span>, <span className="text-emerald-400">+0.8 Reflejos/Estirada</span>).</li>
+                            <li><strong>1 Gol Recibido (Casi Invicta):</strong> <span className="text-emerald-400">+0.5 Valla Invicta</span>, con bonus moderados (<span className="text-emerald-400">+0.5 Seguridad</span>, <span className="text-emerald-400">+0.4 Reflejos/Estirada</span>).</li>
+                            <li><strong>2 Goles Recibidos:</strong> Pequeño bonus de práctica (<span className="text-emerald-400">+0.1 Seguridad</span>).</li>
+                            <li><strong>Mejor Arquero de la Fecha:</strong> Súper boost de <span className="text-emerald-400">+1.2</span> en Reflejos/Estirada y <span className="text-emerald-400">+1.0</span> en Seguridad/Posicionamiento.</li>
+                            <li><strong>Victoria del Equipo:</strong> <span className="text-emerald-400">+0.3</span> en Seguridad/Posicionamiento.</li>
+                            <li><strong>Goleadas recibidas (5+ goles):</strong> Castigo de <span className="text-rose-500">-0.5 Seguridad</span> y <span className="text-rose-500">-0.3 Posicionamiento</span>.</li>
+                        </ul>
+                    </div>
+
+                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
                         <h4 className="font-bold text-sky-400">🛡️ Tope de Habilidad (Soft-Cap 85)</h4>
                         <p className="text-slate-400">
                             Para mantener el realismo, cuando una habilidad supera los <strong>85 puntos</strong>, su crecimiento se hace un <span className="text-sky-400 font-bold">50% más lento</span>.

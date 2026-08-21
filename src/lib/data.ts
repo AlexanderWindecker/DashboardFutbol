@@ -3,7 +3,7 @@
 
 import { db } from './db';
 import { players, matches, participations, seasons, settings, specialtyRules, traitRules } from './db/schema';
-import { DashboardData, Match, Player, PlayerStats, Season, MatchMode, MatchResult, Team, AppSettings } from '@/types';
+import { DashboardData, Match, Player, PlayerStats, Season, SeasonAwards, MatchMode, MatchResult, Team, AppSettings } from '@/types';
 import { eq, and } from 'drizzle-orm';
 
 export async function getData(): Promise<DashboardData> {
@@ -17,6 +17,13 @@ export async function getData(): Promise<DashboardData> {
         const tRules = await db.select().from(traitRules);
 
         const activeSeasonSetting = allSettingsList.find(s => s.key === 'activeSeasonId');
+        const seasonAwardsSetting = allSettingsList.find(s => s.key === 'seasonAwards');
+        let seasonAwards: SeasonAwards[] = [];
+        try {
+            seasonAwards = seasonAwardsSetting?.value ? JSON.parse(seasonAwardsSetting.value) : [];
+        } catch {
+            seasonAwards = [];
+        }
 
         const settingsObj: AppSettings = {
             n8nWebhookUrl: allSettingsList.find(s => s.key === 'n8nWebhookUrl')?.value || '',
@@ -83,6 +90,7 @@ export async function getData(): Promise<DashboardData> {
                 startDate: s.startDate || '',
                 endDate: s.endDate || ''
             })) as Season[],
+            seasonAwards,
             activeSeasonId: activeSeasonSetting?.value || undefined
         };
     } catch (error) {

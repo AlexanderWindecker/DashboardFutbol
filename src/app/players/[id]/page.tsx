@@ -12,7 +12,7 @@ import type { ReactNode } from 'react';
 export default async function PlayerProfilePage({ params }: { params: { id: string } }) {
     // Await params for Next 15
     const { id } = await Promise.resolve(params);
-    const { players, matches, participations, seasons = [], specialtyRules = [], traitRules = [] } = await getData();
+    const { players, matches, participations, seasons = [], seasonAwards = [], specialtyRules = [], traitRules = [] } = await getData();
     const player = players.find(p => p.id === id);
 
     if (!player) {
@@ -140,121 +140,17 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
     const totalAttendances = participations.filter(p => p.status === 'Attended').length;
     const globalAssistsPerMatch = totalAttendances > 0 ? totalAssists / totalAttendances : 0;
 
-    // Calculate seasons top goalscorers to find Botines de Oro
-    const seasonWinners = seasons.map(season => {
-        const seasonMatches = matches.filter(m => m.seasonId === season.id);
-        const seasonMatchIds = new Set(seasonMatches.map(m => m.id));
-        
-        // Sum goals for each player in this season
-        const playerGoals: Record<string, number> = {};
-        participations
-            .filter(p => seasonMatchIds.has(p.matchId) && p.status === 'Attended')
-            .forEach(p => {
-                playerGoals[p.playerId] = (playerGoals[p.playerId] || 0) + (p.goals || 0);
-            });
-            
-        let topScorerId = '';
-        let maxGoals = 0;
-        Object.entries(playerGoals).forEach(([pid, g]) => {
-            if (g > maxGoals) {
-                maxGoals = g;
-                topScorerId = pid;
-            }
-        });
-        
-        return {
-            seasonId: season.id,
-            seasonName: season.name,
-            topScorerId: maxGoals > 0 ? topScorerId : null,
-            maxGoals
-        };
-    });
+    const balonDeOroSeasons = seasonAwards
+        .filter(award => award.rulesVersion === 2 && award.balonDeOroPlayerId === player.id)
+        .map(award => award.seasonLabel);
 
-    const balonDeOroSeasons = seasons
-        .map(season => {
-            const seasonMatchIds = new Set(matches.filter(m => m.seasonId === season.id).map(m => m.id));
-            const seasonParticipations = participations.filter(p => seasonMatchIds.has(p.matchId) && p.status === 'Attended');
+    const botinesDeOroSeasons = seasonAwards
+        .filter(award => award.rulesVersion === 2 && award.botinDeOroPlayerId === player.id)
+        .map(award => award.seasonLabel);
 
-            const playersStats = players.map(pl => {
-                const playerSeasonParts = seasonParticipations.filter(p => p.playerId === pl.id);
-                const matchesAttendedSeason = playerSeasonParts.length;
-                if (matchesAttendedSeason === 0) return null;
-
-                const goalsSeason = playerSeasonParts.reduce((sum, p) => sum + (p.goals || 0), 0);
-                const winsSeason = playerSeasonParts.filter(p => {
-                    const match = matches.find(m => m.id === p.matchId);
-                    return match && match.result === p.team;
-                }).length;
-                const gkAwardsSeason = playerSeasonParts.filter(p => p.isBestGoalkeeper).length;
-                const absencesSeason = participations.filter(p => seasonMatchIds.has(p.matchId) && p.playerId === pl.id && (p.status === 'Absent' || p.status === 'LateCancel')).length;
-
-                const skill = pl.skills as any || {};
-                const isGk = pl.positions && pl.positions.length === 1 && pl.positions[0] === 'Arquero';
-                const skillsAverageSeason = isGk
-                    ? Math.round(((skill.reflejos || 50) + (skill.posicionamiento || 50) + (skill.estirada || 50) + (skill.saque || 50) + (skill.seguridad || 50)) / 5)
-                    : Math.round(((skill.ritmo || 50) + (skill.tiros || 50) + (skill.pases || 50) + (skill.regates || 50) + (skill.velocidad || 50)) / 5);
-
-                return {
-                    playerId: pl.id,
-                    matchesAttendedSeason,
-                    goalsSeason,
-                    winsSeason,
-                    gkAwardsSeason,
-                    absencesSeason,
-                    skillsAverageSeason
-                };
-            }).filter(Boolean) as Array<{
-                playerId: string;
-                matchesAttendedSeason: number;
-                goalsSeason: number;
-                winsSeason: number;
-                gkAwardsSeason: number;
-                absencesSeason: number;
-                skillsAverageSeason: number;
-            }>;
-
-            const maxSkill = Math.max(...playersStats.map(s => s.skillsAverageSeason), 1);
-            const maxWins = Math.max(...playersStats.map(s => s.winsSeason), 1);
-            const maxAttend = Math.max(...playersStats.map(s => s.matchesAttendedSeason), 1);
-            const maxGoals = Math.max(...playersStats.map(s => s.goalsSeason), 1);
-            const maxGkAward = Math.max(...playersStats.map(s => s.gkAwardsSeason), 1);
-            const maxAbs = Math.max(...playersStats.map(s => s.absencesSeason), 1);
-
-            const scored = playersStats.map(s => ({
-                playerId: s.playerId,
-                total: Math.round(
-                    (s.skillsAverageSeason / maxSkill) * 35 +
-                    (s.winsSeason / maxWins) * 25 +
-                    (s.matchesAttendedSeason / maxAttend) * 15 +
-                    (s.goalsSeason / maxGoals) * 15 +
-                    (s.gkAwardsSeason / maxGkAward) * 10 -
-                    (s.absencesSeason / maxAbs) * 10
-                )
-            }));
-
-            const winner = [...scored].sort((a, b) => b.total - a.total)[0];
-            return { seasonId: season.id, seasonName: season.name, winnerId: winner?.playerId || null };
-        })
-        .filter(w => w.winnerId === player.id)
-        .map(w => w.seasonName);
-
-    const guanteDeOroSeasons = seasons
-        .map(season => {
-            const seasonMatchIds = new Set(matches.filter(m => m.seasonId === season.id).map(m => m.id));
-            const gkCounts = players.map(pl => {
-                const count = participations.filter(p => p.playerId === pl.id && seasonMatchIds.has(p.matchId) && p.status === 'Attended' && p.isBestGoalkeeper).length;
-                return { playerId: pl.id, count };
-            });
-
-            const winner = [...gkCounts].sort((a, b) => b.count - a.count)[0];
-            return { seasonId: season.id, seasonName: season.name, winnerId: winner?.count ? winner.playerId : null };
-        })
-        .filter(w => w.winnerId === player.id)
-        .map(w => w.seasonName);
-
-    const botinesDeOroSeasons = seasonWinners
-        .filter(w => w.topScorerId === player.id)
-        .map(w => w.seasonName);
+    const guanteDeOroSeasons = seasonAwards
+        .filter(award => award.rulesVersion === 2 && award.guanteDeOroPlayerId === player.id)
+        .map(award => award.seasonLabel);
 
     const bestGkCount = playerParticipations.filter(p => p.isBestGoalkeeper).length;
 

@@ -20,6 +20,7 @@ export default async function HistoryPage({ searchParams }: { searchParams: { se
             matches={data.matches} 
             participations={data.participations} 
             seasons={data.seasons || []}
+            seasonAwards={data.seasonAwards || []}
             activeSeasonId={data.activeSeasonId}
         />
     );
