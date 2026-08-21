@@ -433,32 +433,25 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
                                                 <div
                                                     key={nominee.player.id}
                                                     className={cn(
-                                                        "relative rounded-2xl border transition-all",
-                                                        idx === 0 ? "bg-gradient-to-br from-yellow-500/10 to-amber-600/5 border-yellow-500/30 p-5" :
-                                                        idx === 1 ? "bg-slate-800/40 border-slate-600/50 p-5" :
-                                                        idx >= 2 ? "bg-slate-800/30 border-slate-700/50 p-4 scale-[0.97] opacity-95" : "",
+                                                        "relative rounded-2xl border bg-gradient-to-br from-yellow-500/10 to-amber-600/5 border-yellow-500/30 p-5 transition-all",
                                                     )}
                                                 >
-                                                    {idx === 0 && <span className="absolute top-3 right-3 text-xl">🏅</span>}
                                                     <div className="flex items-center gap-3 mb-4">
                                                         <div className={cn(
                                                             "rounded-xl flex items-center justify-center font-black text-white shrink-0",
-                                                            idx === 0 ? "w-12 h-12 text-xl bg-gradient-to-br from-yellow-300 to-amber-600 shadow-[0_0_20px_rgba(245,158,11,0.4)]" :
-                                                            idx === 1 ? "w-12 h-12 text-xl bg-gradient-to-br from-slate-400 to-slate-600" :
-                                                            idx === 2 ? "w-11 h-11 text-lg bg-gradient-to-br from-amber-700 to-amber-900" :
-                                                            "w-10 h-10 text-base bg-gradient-to-br from-slate-600 to-slate-800"
+                                                            "w-12 h-12 text-xl bg-gradient-to-br from-yellow-300 to-amber-600 shadow-[0_0_20px_rgba(245,158,11,0.25)]"
                                                         )}>
                                                             {nominee.player.name.charAt(0)}
                                                         </div>
                                                         <div className="min-w-0">
-                                                            <div className={cn("font-bold text-slate-500", idx >= 3 ? "text-[9px]" : "text-[10px]")}>#{idx + 1}</div>
-                                                            <div className={cn("font-black text-white truncate", idx >= 3 ? "text-sm" : "text-base")}>{nominee.player.name}</div>
-                                                            <div className={cn("font-black", idx === 0 ? "text-yellow-400 text-lg" : idx >= 3 ? "text-slate-300 text-sm" : "text-slate-300 text-lg")}>
-                                                                {nominee.total} <span className={cn("font-bold text-slate-500", idx >= 3 ? "text-[10px]" : "text-xs")}>pts</span>
+                                                            <div className="text-[10px] font-bold text-slate-500">#{idx + 1}</div>
+                                                            <div className="text-base font-black text-white truncate">{nominee.player.name}</div>
+                                                            <div className="text-lg font-black text-yellow-400">
+                                                                {nominee.total} <span className="text-xs font-bold text-slate-500">pts</span>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className={cn("space-y-1.5", idx >= 3 ? "text-[9px]" : "text-[10px]")}>
+                                                    <div className="space-y-1.5 text-[10px]">
                                                         {[
                                                             { label: '⚡ Skill',  val: nominee.breakdown.skill,    max: 25, color: 'bg-violet-400' },
                                                             { label: '🏆 Vic.',   val: nominee.breakdown.wins,     max: 20, color: 'bg-emerald-400' },
