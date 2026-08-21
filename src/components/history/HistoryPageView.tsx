@@ -6,7 +6,7 @@ import { Trophy, Medal, Star, Target, Crown, ChevronDown, ChevronUp, Shield, Spa
 import { cn } from '@/lib/utils';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Modal } from '@/components/ui/Modal';
-import { revealSeasonAwardsAction } from '@/actions/awards';
+import { resetSeasonAwardsAction, revealSeasonAwardsAction } from '@/actions/awards';
 import { useRouter } from 'next/navigation';
 
 interface HistoryPageViewProps {
@@ -30,6 +30,7 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
     const [ganadorRevelado, setGanadorRevelado] = useState(false);
     const [isCriteriaOpen, setIsCriteriaOpen] = useState(false);
     const [isPreviewReveal, setIsPreviewReveal] = useState(false);
+    const [revealedWinnerId, setRevealedWinnerId] = useState<string | null>(null);
 
     const hasOpenSeason = seasons.some(s => {
         const endTime = s.endDate ? new Date(s.endDate).getTime() : NaN;
@@ -63,6 +64,7 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
 
     useEffect(() => {
         setGanadorRevelado(false);
+        setRevealedWinnerId(null);
         setOpenDropdown(null);
     }, [selectedSeason, selectedYear, view]);
 
@@ -240,11 +242,19 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
     };
 
     const ganador = balonDeOroTerna[0];
-    const premiosRevelados = seasonAwards.some(award => award.seasonKey === selectedYear && award.rulesVersion === 2);
+    const premioGuardado = seasonAwards.find(award => award.seasonKey === selectedYear && award.rulesVersion === 2);
+    const premiosRevelados = Boolean(premioGuardado);
+    const ganadorId = revealedWinnerId || premioGuardado?.balonDeOroPlayerId || null;
+    const ganadorActual = ganadorId
+        ? balonDeOroTerna.find(nominee => nominee.player.id === ganadorId) || ganador
+        : ganador;
 
     const revelarPremios = async () => {
         if (!ganador || !selectedYear) return;
 
+        const candidatos = balonDeOroTerna.slice(0, 3);
+        const sorteo = Math.random() * 100;
+        const ganadorSorteado = sorteo < 70 ? candidatos[0] : sorteo < 90 ? candidatos[1] || candidatos[0] : candidatos[2] || candidatos[1] || candidatos[0];
         const botinDeOro = [...stats].sort((a, b) => b.goals - a.goals)[0];
         const guanteDeOro = [...stats]
             .filter(s => s.gkBestAwards > 0)
@@ -254,13 +264,23 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
             seasonKey: selectedYear,
             seasonLabel: `Año ${selectedYear}`,
             rulesVersion: 2,
-            balonDeOroPlayerId: ganador.player.id,
+            balonDeOroPlayerId: ganadorSorteado.player.id,
             botinDeOroPlayerId: botinDeOro?.goals ? botinDeOro.player.id : null,
             guanteDeOroPlayerId: guanteDeOro?.gkBestAwards ? guanteDeOro.player.id : null,
             revealedAt: new Date().toISOString(),
         });
         setIsPreviewReveal(result.preview);
+        setRevealedWinnerId(ganadorSorteado.player.id);
         setGanadorRevelado(true);
+        if (!result.preview) router.refresh();
+    };
+
+    const resetearPremios = async () => {
+        if (!selectedYear) return;
+        const result = await resetSeasonAwardsAction(selectedYear);
+        setRevealedWinnerId(null);
+        setGanadorRevelado(false);
+        setIsPreviewReveal(result.preview);
         if (!result.preview) router.refresh();
     };
 
@@ -297,11 +317,11 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
                     </div>
 
                     <p>
-                        Luego se ordena desde el mayor puntaje al menor y se toman los 5 mejores para formar la terna final del Balón de Oro.
+                        Luego se ordena desde el mayor puntaje al menor y se toman los 5 mejores para formar la terna final del Balón de Oro. Al revelar, el sorteo se hace entre los tres primeros: el 1.º tiene 70% de probabilidad, el 2.º 20% y el 3.º 10%.
                     </p>
 
                     <p className="text-xs text-slate-500 italic">
-                        En otras palabras: cuanto mejor rindes, más partidos jugás, menos faltás y más aportás al equipo, más chances tenés de entrar a la terna.
+                        En otras palabras: cuanto mejor rindes, más partidos jugás, menos faltás y más aportás al equipo, más chances tenés de entrar a la terna y de ganar el sorteo. El administrador puede reiniciarlo para volver a sortear.
                     </p>
                 </div>
             </Modal>
@@ -474,7 +494,7 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
                                                 Revelar Ganador (Solo Admin)
                                                 <Sparkles size={18} />
                                             </button>
-                                        ) : ganador && (
+                                        ) : ganadorActual && (
                                             <div className="animate-reveal bg-gradient-to-br from-yellow-500/10 via-amber-500/5 to-transparent border border-yellow-500/40 rounded-2xl p-6">
                                                 <p className="text-center text-[10px] font-black text-yellow-500 uppercase tracking-[0.4em] mb-5">🏅 Ganador del Balón de Oro {selectedYear}</p>
                                                 {isPreviewReveal && (
@@ -483,27 +503,34 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
                                                 <div className="flex flex-col md:flex-row items-center gap-6">
                                                     <div className="relative shrink-0">
                                                         <div className="w-28 h-28 rounded-2xl bg-gradient-to-br from-yellow-300 to-amber-600 flex items-center justify-center text-5xl font-black text-white shadow-[0_0_40px_rgba(245,158,11,0.6)] border-2 border-yellow-400/50">
-                                                            {ganador.player.name.charAt(0)}
+                                                            {ganadorActual.player.name.charAt(0)}
                                                         </div>
                                                         <span className="absolute -top-4 -right-4 text-3xl">🏅</span>
                                                     </div>
                                                     <div className="text-center md:text-left">
                                                         <h3 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-amber-400 to-orange-400 tracking-tight">
-                                                            {ganador.player.name}
+                                                            {ganadorActual.player.name}
                                                         </h3>
                                                         <div className="flex items-baseline gap-2 mt-2 justify-center md:justify-start">
-                                                            <span className="text-4xl font-black text-yellow-400">{ganador.total}</span>
+                                                            <span className="text-4xl font-black text-yellow-400">{ganadorActual.total}</span>
                                                             <span className="text-slate-400 font-bold">puntos totales</span>
                                                         </div>
                                                         <div className="flex flex-wrap gap-2 mt-3 justify-center md:justify-start text-xs">
-                                                            <span className="bg-violet-500/20 text-violet-300 px-2 py-1 rounded-lg font-bold">⚡ {ganador.raw.skillsAverage} ranking</span>
-                                                            <span className="bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded-lg font-bold">🏆 {ganador.raw.wins} victorias</span>
-                                                            <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-lg font-bold">📅 {ganador.raw.matchesAttended} partidos</span>
-                                                            <span className="bg-orange-500/20 text-orange-300 px-2 py-1 rounded-lg font-bold">⚽ {ganador.raw.goals} goles</span>
-                                                            <span className="bg-amber-500/20 text-amber-300 px-2 py-1 rounded-lg font-bold">⭐ {ganador.raw.mvpCount} MVP</span>
+                                                            <span className="bg-violet-500/20 text-violet-300 px-2 py-1 rounded-lg font-bold">⚡ {ganadorActual.raw.skillsAverage} ranking</span>
+                                                            <span className="bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded-lg font-bold">🏆 {ganadorActual.raw.wins} victorias</span>
+                                                            <span className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded-lg font-bold">📅 {ganadorActual.raw.matchesAttended} partidos</span>
+                                                            <span className="bg-orange-500/20 text-orange-300 px-2 py-1 rounded-lg font-bold">⚽ {ganadorActual.raw.goals} goles</span>
+                                                            <span className="bg-amber-500/20 text-amber-300 px-2 py-1 rounded-lg font-bold">⭐ {ganadorActual.raw.mvpCount} MVP</span>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={resetearPremios}
+                                                    className="mt-6 w-full rounded-xl border border-slate-700 bg-slate-950/50 py-2.5 text-xs font-black uppercase tracking-widest text-slate-400 transition hover:border-yellow-500/50 hover:text-yellow-300"
+                                                >
+                                                    Reiniciar sorteo
+                                                </button>
                                             </div>
                                         )
                                     ) : (

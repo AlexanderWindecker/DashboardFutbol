@@ -21,6 +21,20 @@ export async function revealSeasonAwardsAction(award: SeasonAwards) {
     return { preview: false };
 }
 
+export async function resetSeasonAwardsAction(seasonKey: string) {
+    if (process.env.NODE_ENV !== 'production') {
+        return { preview: true };
+    }
+
+    const currentAwards = await getStoredSeasonAwards();
+    await saveSettings({
+        seasonAwards: currentAwards.filter(item => item.seasonKey !== seasonKey),
+    });
+    revalidatePath('/history');
+    revalidatePath('/players');
+    return { preview: false };
+}
+
 async function getStoredSeasonAwards(): Promise<SeasonAwards[]> {
     const { db } = await import('@/lib/db');
     const { settings } = await import('@/lib/db/schema');
