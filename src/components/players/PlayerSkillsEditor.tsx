@@ -423,12 +423,16 @@ export function PlayerSkillsEditor({ player, allPlayers, stats, specialtyRules, 
                                 </div>
                                 {['ritmo', 'velocidad', 'tiros', 'pases', 'regates'].map((key) => {
                                     const k = key as 'ritmo' | 'velocidad' | 'tiros' | 'pases' | 'regates';
+                                    const skillDelta = player.skills?.deltas?.[k];
+                                    const visibleSkillDelta = isPrimaryGoalkeeper && k === 'tiros' && skillDelta !== undefined && skillDelta < 0
+                                        ? undefined
+                                        : skillDelta;
                                     return (
                                         <div key={key}>
                                             <div className="flex justify-between text-xs mb-1">
                                                 <span className="capitalize text-slate-400">{key === 'ritmo' ? 'Ritmo (Estado Fisico)' : (key === 'velocidad' ? 'Velocidad Pura' : key)}</span>
                                                 <div className="flex items-center gap-2">
-                                                    {player.skills?.deltas && <SkillDeltaBadge delta={player.skills.deltas[k]} />}
+                                                    <SkillDeltaBadge delta={visibleSkillDelta} />
                                                     <span className="text-sky-400 font-mono">{Math.round(skills[k] as number)}</span>
                                                 </div>
                                             </div>

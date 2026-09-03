@@ -3,7 +3,7 @@ import { HistoryPageView } from '@/components/history/HistoryPageView';
 
 export const dynamic = 'force-dynamic';
 
-export default async function HistoryPage({ searchParams }: { searchParams: { seasonId?: string } }) {
+export default async function HistoryPage() {
     const data = await getData() as any;
     
     // We will pass the full data and handle the processing in the client component
@@ -22,6 +22,7 @@ export default async function HistoryPage({ searchParams }: { searchParams: { se
             seasons={data.seasons || []}
             seasonAwards={data.seasonAwards || []}
             activeSeasonId={data.activeSeasonId}
+            initialView="historia"
         />
     );
 }

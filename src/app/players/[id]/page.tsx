@@ -238,10 +238,10 @@ export default async function PlayerProfilePage({ params }: { params: { id: stri
                     subtext="Premios"
                 />
                 <StatCard
-                    title="Guante de Oro"
+                    title="Mejor arquero"
                     value={bestGkCount}
                     icon={<Shield size={20} className="text-cyan-400" />}
-                    subtext="Mejor arquero"
+                    subtext="Premios"
                 />
                 <StatCard
                     title="Bajas Tardías"

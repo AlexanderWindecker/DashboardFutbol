@@ -15,6 +15,7 @@ const API_NAV_ITEMS = [
     { name: 'Jugadores', href: '/players', icon: Users },
     { name: 'Estadísticas', href: '/stats', icon: Trophy },
     { name: 'Historial', href: '/history', icon: Medal },
+    { name: 'Premios', href: '/awards', icon: Trophy },
 ];
 
 export function Sidebar({ isOpen, onClose, isAdmin }: { isOpen?: boolean; onClose?: () => void; isAdmin?: boolean }) {

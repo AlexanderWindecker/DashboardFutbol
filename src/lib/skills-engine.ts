@@ -148,10 +148,18 @@ export function recalculateAllSkills(
             if (p.status === 'Attended') {
                 stats.matchesPlayed = (stats.matchesPlayed || 0) + 1;
                 stats.streak = (stats.streak || 0) + 1;
+                const playerProfile = playerById.get(p.playerId);
+                const playerPositions: string[] = playerProfile?.positions || [];
+                const matchRole = String(p.tacticalRole || playerPositions[0] || '').toLowerCase().trim();
+                const isOwnGoalkeeper = matchRole === 'arquero' || matchRole === 'arq';
+                const isOwnDefender = matchRole === 'defensor' || matchRole === 'def';
                 
                 // 1. Presencia (Entrenamiento base del partido)
                 stats.ritmo += 0.2 * weatherMultiplier; stats.velocidad += 0.1 * weatherMultiplier; stats.pases += 0.1 * weatherMultiplier; stats.regates += 0.1 * weatherMultiplier;
+                if (isOwnGoalkeeper) stats.tiros += 0.1 * weatherMultiplier;
+                if (isOwnDefender) stats.tiros += 0.1 * weatherMultiplier;
                 reasons.push(`Asistencia +${(0.2 * weatherMultiplier).toFixed(1)} Ritmo/Físico`);
+                if (isOwnDefender) reasons.push(`Experiencia DEF +${(0.1 * weatherMultiplier).toFixed(1)} Tiros`);
 
                 // Determine Goal Multiplier based on match mode
                 let goalMultiplier = 0.5;
@@ -167,7 +175,7 @@ export function recalculateAllSkills(
                     reasons.push(`Goles ${label} +${(goalMultiplier * p.goals * weatherMultiplier).toFixed(1)} Tiros`);
                 } else {
                     stats.goalDrought = (stats.goalDrought || 0) + 1;
-                    if (stats.goalDrought === 3) {
+                    if (stats.goalDrought === 3 && !isOwnGoalkeeper) {
                         stats.tiros -= 0.5 * weatherMultiplier; // Castigo por no meter goles en 3 partidos seguidos
                         stats.goalDrought = 0; // reset to avoid infinite stacking every game
                         reasons.push(`Sequía Goleadora -${(0.5 * weatherMultiplier).toFixed(1)} Tiros`);
@@ -243,10 +251,6 @@ export function recalculateAllSkills(
                 }
 
                 // Goalkeeper-specific calculations
-                const playerProfile = playerById.get(p.playerId);
-                const playerPositions: string[] = playerProfile?.positions || [];
-                const isOwnGoalkeeper = p.tacticalRole === 'Arquero' || (playerPositions.length === 1 && playerPositions[0] === 'Arquero');
-
                 if (isOwnGoalkeeper) {
                     stats.gkMatchesPlayed = (stats.gkMatchesPlayed || 0) + 1;
                     

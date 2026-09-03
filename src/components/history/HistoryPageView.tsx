@@ -16,9 +16,11 @@ interface HistoryPageViewProps {
     seasons: Season[];
     seasonAwards: SeasonAwards[];
     activeSeasonId?: string;
+    initialView?: 'historia' | 'salon';
+    showViewSwitcher?: boolean;
 }
 
-export function HistoryPageView({ players, matches, participations, seasons, seasonAwards, activeSeasonId }: HistoryPageViewProps) {
+export function HistoryPageView({ players, matches, participations, seasons, seasonAwards, activeSeasonId, initialView = 'historia', showViewSwitcher = false }: HistoryPageViewProps) {
     const { isAdmin } = useAdmin();
     const router = useRouter();
     const [selectedSeason, setSelectedSeason] = useState<string>(() => {
@@ -26,7 +28,7 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
     });
     const [selectedYear, setSelectedYear] = useState<string>('');
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-    const [view, setView] = useState<'historia' | 'salon'>('historia');
+    const [view, setView] = useState<'historia' | 'salon'>(initialView);
     const [ganadorRevelado, setGanadorRevelado] = useState(false);
     const [isCriteriaOpen, setIsCriteriaOpen] = useState(false);
     const [isPreviewReveal, setIsPreviewReveal] = useState(false);
@@ -343,18 +345,20 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
                                 <Crown className="text-amber-400 animate-float" size={28} />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-orange-500 tracking-tight uppercase">Historial</h1>
-                                <p className="text-xs text-slate-500 font-medium">Récords y leyendas del grupo</p>
+                                <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-orange-500 tracking-tight uppercase">{view === 'salon' ? 'Salón de la Fama' : 'Historial'}</h1>
+                                <p className="text-xs text-slate-500 font-medium">{view === 'salon' ? 'Premios y leyendas del grupo' : 'Récords y leyendas del grupo'}</p>
                             </div>
                         </div>
-                        <div className="flex items-center bg-slate-950 p-1 rounded-2xl border border-slate-800 shadow-inner self-start md:self-auto">
-                            <button onClick={() => setView('historia')} className={cn("px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all", view === 'historia' ? "bg-slate-700 text-white shadow" : "text-slate-500 hover:text-slate-300")}>
-                                📊 Historia
-                            </button>
-                            <button onClick={() => setView('salon')} className={cn("px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all", view === 'salon' ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-[0_0_12px_rgba(245,158,11,0.4)]" : "text-slate-500 hover:text-slate-300")}>
-                                🏆 Salón de la Fama
-                            </button>
-                        </div>
+                        {showViewSwitcher && (
+                            <div className="flex items-center bg-slate-950 p-1 rounded-2xl border border-slate-800 shadow-inner self-start md:self-auto">
+                                <button onClick={() => setView('historia')} className={cn("px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all", view === 'historia' ? "bg-slate-700 text-white shadow" : "text-slate-500 hover:text-slate-300")}>
+                                    📊 Historia
+                                </button>
+                                <button onClick={() => setView('salon')} className={cn("px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all", view === 'salon' ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-[0_0_12px_rgba(245,158,11,0.4)]" : "text-slate-500 hover:text-slate-300")}>
+                                    🏆 Salón de la Fama
+                                </button>
+                            </div>
+                        )}
                     </div>
                     {view === 'historia' ? (
                         <div className="flex items-center bg-slate-950 p-1.5 rounded-2xl border border-slate-800 shadow-inner overflow-x-auto no-scrollbar self-start">

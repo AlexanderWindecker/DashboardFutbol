@@ -87,6 +87,12 @@ export function ParticipationTable({
     };
 
     const selectedPlayer = matchPlayers.find(p => p.playerId === openInfoPlayerId);
+    const selectedPlayerReasons = selectedPlayer?.skillReasons?.filter(reason => {
+        const playerProfile = players.find(player => player.id === selectedPlayer.playerId);
+        const role = String(selectedPlayer.tacticalRole || playerProfile?.positions?.[0] || '').toLowerCase().trim();
+        const isGoalkeeper = role === 'arquero' || role === 'arq';
+        return !(isGoalkeeper && reason.startsWith('Sequía Goleadora'));
+    });
 
     return (
         <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden mt-8">
@@ -373,7 +379,7 @@ export function ParticipationTable({
                         Detalle de las variaciones de habilidades aplicadas en este partido basados en su desempeño y constancia.
                     </p>
                     <div className="space-y-2">
-                        {selectedPlayer?.skillReasons?.map((reason, idx) => (
+                        {selectedPlayerReasons?.map((reason, idx) => (
                             <div key={idx} className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-xl border border-amber-500/10 text-slate-200">
                                 <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
                                 <span className="text-sm">{reason}</span>
