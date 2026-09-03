@@ -33,6 +33,7 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
     const [isCriteriaOpen, setIsCriteriaOpen] = useState(false);
     const [isPreviewReveal, setIsPreviewReveal] = useState(false);
     const [revealedWinnerId, setRevealedWinnerId] = useState<string | null>(null);
+    const [openFinalistId, setOpenFinalistId] = useState<string | null>(null);
 
     const hasOpenSeason = seasons.some(s => {
         const endTime = s.endDate ? new Date(s.endDate).getTime() : NaN;
@@ -436,26 +437,36 @@ export function HistoryPageView({ players, matches, participations, seasons, sea
                                             {balonDeOroTerna.map((nominee, idx) => (
                                                 <div
                                                     key={nominee.player.id}
+                                                    role="button"
+                                                    tabIndex={0}
+                                                    onClick={() => setOpenFinalistId(current => current === nominee.player.id ? null : nominee.player.id)}
+                                                    onKeyDown={(event) => {
+                                                        if (event.key === 'Enter' || event.key === ' ') {
+                                                            event.preventDefault();
+                                                            setOpenFinalistId(current => current === nominee.player.id ? null : nominee.player.id);
+                                                        }
+                                                    }}
                                                     className={cn(
-                                                        "relative rounded-2xl border bg-gradient-to-br from-yellow-500/10 to-amber-600/5 border-yellow-500/30 p-5 transition-all",
+                                                        "relative rounded-2xl border bg-gradient-to-br from-yellow-500/10 to-amber-600/5 border-yellow-500/30 p-3 md:p-5 transition-all cursor-pointer",
                                                     )}
                                                 >
-                                                    <div className="flex items-center gap-3 mb-4">
+                                                    <div className="flex items-center gap-3 md:mb-4">
                                                         <div className={cn(
                                                             "rounded-xl flex items-center justify-center font-black text-white shrink-0",
-                                                            "w-12 h-12 text-xl bg-gradient-to-br from-yellow-300 to-amber-600 shadow-[0_0_20px_rgba(245,158,11,0.25)]"
+                                                            "w-10 h-10 md:w-12 md:h-12 text-lg md:text-xl bg-gradient-to-br from-yellow-300 to-amber-600 shadow-[0_0_20px_rgba(245,158,11,0.25)]"
                                                         )}>
                                                             {nominee.player.name.charAt(0)}
                                                         </div>
                                                         <div className="min-w-0">
                                                             <div className="text-[10px] font-bold text-slate-500">#{idx + 1}</div>
-                                                            <div className="text-base font-black text-white truncate">{nominee.player.name}</div>
-                                                            <div className="text-lg font-black text-yellow-400">
+                                                            <div className="text-sm md:text-base font-black text-white truncate">{nominee.player.name}</div>
+                                                            <div className="text-base md:text-lg font-black text-yellow-400">
                                                                 {nominee.total} <span className="text-xs font-bold text-slate-500">pts</span>
                                                             </div>
                                                         </div>
+                                                        <ChevronDown className={cn("ml-auto text-yellow-500 md:hidden transition-transform", openFinalistId === nominee.player.id && "rotate-180")} size={18} />
                                                     </div>
-                                                    <div className="space-y-1.5 text-[10px]">
+                                                    <div className={cn("space-y-1.5 text-[10px]", openFinalistId === nominee.player.id ? "block mt-3" : "hidden", "md:block md:mt-0")}>
                                                         {[
                                                             { label: '⚡ Skill',  val: nominee.breakdown.skill,    max: 25, color: 'bg-violet-400' },
                                                             { label: '🏆 Vic.',   val: nominee.breakdown.wins,     max: 20, color: 'bg-emerald-400' },
